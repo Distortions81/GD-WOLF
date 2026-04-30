@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GD-WOLF Browser Build</title>
+  <script>
+    (function () {
+      if (typeof navigator === "undefined") {
+        return;
+      }
+      const mobileLike = /Android|iPad|iPhone|iPod/i.test(navigator.userAgent) || (
+        navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1
+      );
+      if (mobileLike) {
+        document.documentElement.classList.add("mobile-like");
+      }
+    })();
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg-1: #0f1713;
+      --bg-2: #0a0d0b;
+      --panel: rgba(13, 20, 16, 0.9);
+      --panel-2: rgba(30, 43, 31, 0.92);
+      --line: #7a8a54;
+      --line-bright: #d2c76c;
+      --text: #e7e0c8;
+      --muted: #b8b39c;
+      --accent: #d3ba57;
+      --accent-2: #8ea168;
+      --danger: #8f2f20;
+      --shadow: rgba(0, 0, 0, 0.42);
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font: 16px/1.45 "Trebuchet MS", Verdana, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(162, 139, 74, 0.18), transparent 34%),
+        linear-gradient(180deg, rgba(34, 48, 35, 0.96), rgba(10, 13, 11, 0.98)),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.016) 0,
+          rgba(255, 255, 255, 0.016) 1px,
+          transparent 1px,
+          transparent 7px
+        );
+    }
+
+    .shell {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #000;
+      touch-action: none;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background:
+        linear-gradient(rgba(6, 8, 7, 0.22), rgba(6, 8, 7, 0.78)),
+        repeating-linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.028) 0,
+          rgba(255, 255, 255, 0.028) 2px,
+          transparent 2px,
+          transparent 5px
+        );
+      backdrop-filter: blur(2px);
+    }
+
+    .overlay[hidden] {
+      display: none;
+    }
+
+    .frame {
+      width: min(900px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+      gap: 18px;
+    }
+
+    .hero,
+    .sidebar {
+      position: relative;
+      border: 2px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(24, 34, 27, 0.95), rgba(10, 14, 11, 0.96));
+      box-shadow:
+        inset 0 0 0 1px rgba(231, 224, 200, 0.06),
+        0 18px 44px var(--shadow);
+    }
+
+    .hero {
+      padding: 28px 28px 26px;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, rgba(211, 186, 87, 0.1), transparent 36%),
+        linear-gradient(180deg, transparent 62%, rgba(143, 47, 32, 0.2));
+      pointer-events: none;
+    }
+
+    .sidebar {
+      padding: 20px 18px 18px;
+    }
+
+    .eyebrow,
+    .panel-title {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .logo {
+      margin: 0;
+      color: #f0e3ab;
+      font: 900 clamp(40px, 8vw, 74px)/0.9 Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow:
+        0 2px 0 #7f6a25,
+        0 4px 0 #514118,
+        0 10px 26px rgba(0, 0, 0, 0.35);
+    }
+
+    .tagline {
+      margin: 18px 0 0;
+      max-width: 32rem;
+      color: var(--text);
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.35;
+    }
+
+    .subcopy {
+      margin: 14px 0 0;
+      max-width: 36rem;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0 0;
+    }
+
+    .meta-pill {
+      padding: 8px 10px;
+      border: 1px solid rgba(210, 199, 108, 0.42);
+      background: rgba(9, 13, 11, 0.72);
+      color: #efe8c6;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 24px 0 0;
+    }
+
+    .cta,
+    .secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 16px;
+      border: 2px solid transparent;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+
+    .cta {
+      border-color: #e3d37c;
+      background: linear-gradient(180deg, #d7c463, #9a832d);
+      color: #16140b;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+    }
+
+    .secondary {
+      border-color: rgba(142, 161, 104, 0.72);
+      background: rgba(18, 25, 20, 0.88);
+      color: #dbe3c4;
+    }
+
+    .cta:hover,
+    .cta:focus-visible,
+    .secondary:hover,
+    .secondary:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .panel-title {
+      margin-bottom: 14px;
+    }
+
+    .controls {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .controls li {
+      padding: 10px 12px;
+      border: 1px solid rgba(122, 138, 84, 0.34);
+      background: rgba(7, 10, 8, 0.5);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .controls strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .kbd-row kbd {
+      display: inline-block;
+      margin: 0 5px 5px 0;
+      padding: 2px 8px 3px;
+      border: 1px solid rgba(211, 186, 87, 0.62);
+      background: linear-gradient(180deg, #ece0aa, #af9550);
+      color: #1a170d;
+      font: 800 12px/1.2 inherit;
+      text-transform: uppercase;
+    }
+
+    .utilitybar {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 4;
+    }
+
+    .utility-button {
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid rgba(122, 138, 84, 0.45);
+      background: rgba(8, 11, 9, 0.82);
+      color: #d7e0c0;
+      font: 700 12px/1 inherit "Trebuchet MS", Verdana, sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+      cursor: pointer;
+    }
+
+    .utility-button:hover,
+    .utility-button:focus-visible {
+      border-color: rgba(211, 186, 87, 0.8);
+      color: #f2ebce;
+      outline: none;
+    }
+
+    .mobile-like .utilitybar {
+      display: none;
+    }
+
+    .screenreader {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .frame {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .overlay {
+        padding: 14px;
+      }
+
+      .hero,
+      .sidebar {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .cta,
+      .secondary {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="utilitybar" aria-hidden="true">
+    <button id="fullscreen-button" class="utility-button" type="button">Fullscreen</button>
+  </div>
+
+  <iframe id="game-shell" class="shell" title="GD-WOLF player" allow="autoplay; fullscreen"></iframe>
+
+  <div id="splash" class="overlay">
+    <div class="frame">
+      <section class="hero" aria-labelledby="gdwolf-title">
+        <p class="eyebrow">Browser Build</p>
+        <h1 id="gdwolf-title" class="logo">GD-WOLF</h1>
+        <p class="tagline">Wolfenstein 3D-style gameplay in a native-feeling browser shell with embedded shareware data.</p>
+        <p class="subcopy">Use the keyboard or mouse after launch. Saves persist in browser storage on `js/wasm`, and the save/load menus expose browser import and export actions.</p>
+        <div class="meta-row">
+          <div class="meta-pill">Embedded Shareware Data</div>
+          <div class="meta-pill">Browser Save Storage</div>
+          <div id="build-pill" class="meta-pill">Build: local</div>
+        </div>
+        <div class="actions">
+          <button id="start-button" class="cta" type="button">Enter Bunker</button>
+          <a class="secondary" href="https://github.com/Distortions81/GD-WOLF">View Repository</a>
+        </div>
+      </section>
+
+      <aside class="sidebar" aria-labelledby="controls-title">
+        <h2 id="controls-title" class="panel-title">Controls</h2>
+        <ul class="controls">
+          <li>
+            <strong>Move</strong>
+            <span class="kbd-row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>Arrows</kbd></span>
+          </li>
+          <li>
+            <strong>Fire</strong>
+            <span class="kbd-row"><kbd>Ctrl</kbd><kbd>Mouse 1</kbd></span>
+          </li>
+          <li>
+            <strong>Use / Open</strong>
+            <span class="kbd-row"><kbd>Space</kbd></span>
+          </li>
+          <li>
+            <strong>Weapons</strong>
+            <span class="kbd-row"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd></span>
+          </li>
+          <li>
+            <strong>Menu</strong>
+            <span class="kbd-row"><kbd>Esc</kbd></span>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+
+  <div id="status-announcer" class="screenreader" aria-live="polite"></div>
+
+  <script src="./build-id.js"></script>
+  <script src="./launch.js"></script>
+</body>
+</html>

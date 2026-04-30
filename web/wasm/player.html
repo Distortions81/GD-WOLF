@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GD-WOLF Player</title>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #000;
+      color: #ddd;
+      font: 16px/1.4 "Trebuchet MS", Verdana, sans-serif;
+      touch-action: none;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    #loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at top, rgba(211, 186, 87, 0.12), transparent 35%),
+        linear-gradient(180deg, #121814, #070909);
+      z-index: 10;
+    }
+
+    .loading-card {
+      width: min(420px, calc(100vw - 28px));
+      padding: 20px 18px 18px;
+      border: 2px solid rgba(211, 186, 87, 0.45);
+      background: rgba(12, 16, 13, 0.92);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35);
+      text-align: center;
+    }
+
+    .loading-title {
+      margin: 0;
+      color: #efe0a5;
+      font: 900 32px/0.95 Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .loading-copy {
+      margin: 12px 0 0;
+      color: #d2d0c0;
+      font-size: 14px;
+    }
+
+    .loading-status {
+      margin: 12px 0 0;
+      color: #b9c39a;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      margin: 18px auto 0;
+      border: 4px solid rgba(255, 255, 255, 0.16);
+      border-top-color: #e7d58a;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      image-rendering: pixelated;
+      outline: none;
+      touch-action: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <div class="loading-card">
+      <h1 class="loading-title">GD-WOLF</h1>
+      <div id="loading-copy" class="loading-copy">Preparing browser runtime.</div>
+      <div id="loading-status" class="loading-status">Booting</div>
+      <div class="spinner" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <script src="./build-id.js"></script>
+  <script>
+    const loading = document.getElementById("loading");
+    const loadingCopy = document.getElementById("loading-copy");
+    const loadingStatus = document.getElementById("loading-status");
+    let runtimeExited = false;
+
+    function setLoading(status, copy) {
+      if (loadingStatus && status) {
+        loadingStatus.textContent = status;
+      }
+      if (loadingCopy && copy) {
+        loadingCopy.textContent = copy;
+      }
+    }
+
+    function getBuildID() {
+      const params = new URLSearchParams(window.location.search);
+      const fromQuery = params.get("v");
+      if (fromQuery) {
+        return fromQuery;
+      }
+      return typeof window.__gdwolfBuildID === "string" ? window.__gdwolfBuildID : "";
+    }
+
+    function assetURL(path) {
+      const url = new URL(path, window.location.href);
+      const buildID = getBuildID();
+      if (buildID) {
+        url.searchParams.set("v", buildID);
+      }
+      return url.toString();
+    }
+
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`failed to load ${src}`));
+        document.head.appendChild(script);
+      });
+    }
+
+    function focusPlayerSurface() {
+      if (runtimeExited) {
+        return false;
+      }
+      try {
+        window.focus();
+      } catch (_err) {
+      }
+      if (document.body && document.activeElement !== document.body) {
+        if (!document.body.hasAttribute("tabindex")) {
+          document.body.tabIndex = -1;
+        }
+        try {
+          document.body.focus({ preventScroll: true });
+        } catch (_err) {
+        }
+      }
+      const canvas = document.querySelector("canvas");
+      if (!canvas) {
+        return false;
+      }
+      if (!canvas.hasAttribute("tabindex")) {
+        canvas.tabIndex = 0;
+      }
+      try {
+        canvas.focus({ preventScroll: true });
+      } catch (_err) {
+        canvas.focus();
+      }
+      return document.activeElement === canvas;
+    }
+
+    window.gdwolfImportSave = function gdwolfImportSave() {
+      if (!window.parent || window.parent === window || typeof window.parent.gdwolfImportSave !== "function") {
+        return false;
+      }
+      return window.parent.gdwolfImportSave();
+    };
+
+    window.gdwolfExportSave = function gdwolfExportSave(key) {
+      if (!window.parent || window.parent === window || typeof window.parent.gdwolfExportSave !== "function") {
+        return false;
+      }
+      return window.parent.gdwolfExportSave(key);
+    };
+
+    window.gdwolfExportAllSaves = function gdwolfExportAllSaves() {
+      if (!window.parent || window.parent === window || typeof window.parent.gdwolfExportAllSaves !== "function") {
+        return false;
+      }
+      return window.parent.gdwolfExportAllSaves();
+    };
+
+    async function fetchCompressedWASMBytes(url) {
+      if (typeof DecompressionStream !== "function") {
+        throw new Error("DecompressionStream is not supported");
+      }
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`fetch failed for ${url}: ${response.status}`);
+      }
+      const ds = new DecompressionStream("gzip");
+      const buf = await new Response(response.body.pipeThrough(ds)).arrayBuffer();
+      return new Uint8Array(buf);
+    }
+
+    async function instantiateGame(go) {
+      if (typeof DecompressionStream === "function") {
+        try {
+          setLoading("Loading Wasm", "Fetching compressed browser bundle.");
+          const bytes = await fetchCompressedWASMBytes(assetURL("./gdwolf.wasm.gz"));
+          return await WebAssembly.instantiate(bytes, go.importObject);
+        } catch (_err) {
+          setLoading("Retrying", "Compressed load unavailable. Falling back to standard fetch.");
+        }
+      }
+
+      setLoading("Loading Wasm", "Fetching browser bundle.");
+      const response = await fetch(assetURL("./gdwolf.wasm"), { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`fetch failed for gdwolf.wasm: ${response.status}`);
+      }
+      if (WebAssembly.instantiateStreaming) {
+        try {
+          return await WebAssembly.instantiateStreaming(response, go.importObject);
+        } catch (_err) {
+        }
+      }
+      const bytes = await response.arrayBuffer();
+      return WebAssembly.instantiate(bytes, go.importObject);
+    }
+
+    window.addEventListener("message", (event) => {
+      if (event.origin !== window.location.origin || !event.data) {
+        return;
+      }
+      if (event.data.type !== "gdwolf-claim-focus") {
+        return;
+      }
+      if (focusPlayerSurface()) {
+        return;
+      }
+      window.requestAnimationFrame(() => {
+        focusPlayerSurface();
+      });
+    });
+
+    setLoading("Loading Runtime", "Fetching wasm_exec.js.");
+    loadScript(assetURL("./wasm_exec.js"))
+      .then(() => {
+        setLoading("Starting", "Creating Go runtime.");
+        const go = new Go();
+        go.argv = ["gdwolf"];
+        return instantiateGame(go).then((result) => {
+          setLoading("Launching", "Handing control to GD-WOLF.");
+          if (loading) {
+            loading.remove();
+          }
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: "gdwolf-player-ready" }, window.location.origin);
+          }
+          window.requestAnimationFrame(() => {
+            focusPlayerSurface();
+          });
+          return Promise.resolve(go.run(result.instance)).finally(() => {
+            runtimeExited = true;
+          });
+        });
+      })
+      .catch((err) => {
+        runtimeExited = true;
+        console.error(err);
+        setLoading("Launch Failed", String(err));
+      });
+  </script>
+</body>
+</html>
