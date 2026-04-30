@@ -1,7 +1,5 @@
 # GD-WOLF
 
-[![Go CI](https://github.com/Distortions81/GD-WOLF/actions/workflows/ci.yml/badge.svg)](https://github.com/Distortions81/GD-WOLF/actions/workflows/ci.yml)
-[![Go Vulncheck](https://github.com/Distortions81/GD-WOLF/actions/workflows/govulncheck.yml/badge.svg)](https://github.com/Distortions81/GD-WOLF/actions/workflows/govulncheck.yml)
 [![GitHub Release](https://img.shields.io/github/v/release/Distortions81/GD-WOLF)](https://github.com/Distortions81/GD-WOLF/releases/latest)
 [![License](https://img.shields.io/github/license/Distortions81/GD-WOLF)](https://github.com/Distortions81/GD-WOLF/blob/main/LICENSE)
 
