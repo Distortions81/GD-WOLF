@@ -1,8 +1,5 @@
 # GD-WOLF
 
-[![GitHub Release](https://img.shields.io/github/v/release/Distortions81/GD-WOLF)](https://github.com/Distortions81/GD-WOLF/releases/latest)
-[![License](https://img.shields.io/github/license/Distortions81/GD-WOLF)](https://github.com/Distortions81/GD-WOLF/blob/main/LICENSE)
-
 `GD-WOLF` is a Go/Ebiten Wolfenstein 3D port focused on gameplay parity with the original game while also adding a few modern conveniences for native and browser builds.
 
 ## Screenshot
