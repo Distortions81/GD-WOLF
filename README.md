@@ -7,6 +7,10 @@
 
 `GD-WOLF` is a Go/Ebiten Wolfenstein 3D port focused on gameplay parity with the original game while also adding a few modern conveniences for native and browser builds.
 
+## Screenshot
+
+![GD-WOLF E1F1 screenshot](e1f1.png)
+
 ## Current Status
 
 The project currently includes:
