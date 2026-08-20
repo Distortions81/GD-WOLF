@@ -1,6 +1,7 @@
 module gd-wolf
 
-go 1.25.0
+go 1.26.6
+toolchain go1.26.6
 
 require (
 	github.com/Distortions81/impsynth v0.1.3
