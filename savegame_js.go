@@ -224,29 +224,33 @@ func (g *game) supportsBrowserSaveActions() bool {
 		global.Get("gdwolfExportAllSaves").Type() == js.TypeFunction
 }
 
-func (g *game) triggerBrowserSaveImport() error {
+func (g *game) runBrowserSaveAction(name string, args ...any) (err error) {
 	if !g.supportsBrowserSaveActions() {
 		return errSaveUnsupported
 	}
-	js.Global().Call("gdwolfImportSave")
+	defer func() {
+		if recovered := recover(); recovered != nil {
+			err = fmt.Errorf("browser save action %s failed: %v", name, recovered)
+		}
+	}()
+	result := js.Global().Call(name, args...)
+	if result.Type() == js.TypeBoolean && !result.Bool() {
+		return fmt.Errorf("browser save action %s did not complete", name)
+	}
 	return nil
+}
+
+func (g *game) triggerBrowserSaveImport() error {
+	return g.runBrowserSaveAction("gdwolfImportSave")
 }
 
 func (g *game) triggerBrowserSaveExport(path string) error {
 	if path == "" {
 		return fmt.Errorf("save slot path is empty")
 	}
-	if !g.supportsBrowserSaveActions() {
-		return errSaveUnsupported
-	}
-	js.Global().Call("gdwolfExportSave", path)
-	return nil
+	return g.runBrowserSaveAction("gdwolfExportSave", path)
 }
 
 func (g *game) triggerBrowserSaveExportAll() error {
-	if !g.supportsBrowserSaveActions() {
-		return errSaveUnsupported
-	}
-	js.Global().Call("gdwolfExportAllSaves")
-	return nil
+	return g.runBrowserSaveAction("gdwolfExportAllSaves")
 }

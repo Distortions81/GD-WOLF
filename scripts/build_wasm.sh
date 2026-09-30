@@ -72,6 +72,7 @@ printf 'window.__gdwolfBuildID = %s;\n' "$(js_string_literal "${BUILD_ID}")" > "
 cp "${ROOT_DIR}/web/wasm/index.html" "${OUT_DIR}/index.html"
 cp "${ROOT_DIR}/web/wasm/player.html" "${OUT_DIR}/player.html"
 cp "${ROOT_DIR}/web/wasm/launch.js" "${OUT_DIR}/launch.js"
+cp "${ROOT_DIR}/web/wasm/save-actions.js" "${OUT_DIR}/save-actions.js"
 cp "${ROOT_DIR}/cmd/wasmserve/main.go" "${OUT_DIR}/server.go"
 
 gzip -n -f -c "${OUT_DIR}/gdwolf.wasm" > "${OUT_DIR}/gdwolf.wasm.gz"

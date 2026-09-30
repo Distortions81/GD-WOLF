@@ -2,23 +2,12 @@ package wl6
 
 import (
 	"math/bits"
-	"os"
 	"reflect"
 	"testing"
 )
 
 func TestExtractGamePalBytes(t *testing.T) {
-	path, err := findRepoFile("WOLFSRC/OBJ/GAMEPAL.OBJ")
-	if err != nil {
-		t.Fatalf("find GAMEPAL.OBJ: %v", err)
-	}
-
-	data, err := os.ReadFile(path)
-	if err != nil {
-		t.Fatalf("read GAMEPAL.OBJ: %v", err)
-	}
-
-	raw, err := extractGamePalBytes(data)
+	raw, err := extractGamePalBytes(embeddedGamePalOBJ)
 	if err != nil {
 		t.Fatalf("extract palette: %v", err)
 	}

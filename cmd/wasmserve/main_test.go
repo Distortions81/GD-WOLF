@@ -18,13 +18,13 @@ func TestNewHandlerOnlyServesKnownFiles(t *testing.T) {
 		}
 	}
 
-	for _, name := range []string{"index.html", "player.html", "launch.js", "build-id.js", "wasm_exec.js", "gdwolf.wasm"} {
+	for _, name := range []string{"index.html", "player.html", "launch.js", "save-actions.js", "build-id.js", "wasm_exec.js", "gdwolf.wasm"} {
 		writeFile(name)
 	}
 
 	handler := newHandler(dir)
 
-	for _, path := range []string{"/", "/index.html", "/player.html", "/launch.js", "/build-id.js", "/wasm_exec.js", "/gdwolf.wasm"} {
+	for _, path := range []string{"/", "/index.html", "/player.html", "/launch.js", "/save-actions.js", "/build-id.js", "/wasm_exec.js", "/gdwolf.wasm"} {
 		req := httptest.NewRequest(http.MethodGet, path, nil)
 		rec := httptest.NewRecorder()
 		handler.ServeHTTP(rec, req)
@@ -147,7 +147,7 @@ func TestPreferredWASMEncoding(t *testing.T) {
 
 func TestHasAppFiles(t *testing.T) {
 	dir := t.TempDir()
-	for _, name := range []string{"index.html", "player.html", "launch.js", "build-id.js", "wasm_exec.js", "gdwolf.wasm"} {
+	for _, name := range []string{"index.html", "player.html", "launch.js", "save-actions.js", "build-id.js", "wasm_exec.js", "gdwolf.wasm"} {
 		path := filepath.Join(dir, name)
 		if err := os.WriteFile(path, []byte(name), 0o644); err != nil {
 			t.Fatalf("write %s: %v", name, err)
@@ -158,10 +158,16 @@ func TestHasAppFiles(t *testing.T) {
 		t.Fatalf("hasAppFiles(%q)=false want true", dir)
 	}
 
-	if err := os.Remove(filepath.Join(dir, "gdwolf.wasm")); err != nil {
-		t.Fatalf("remove gdwolf.wasm: %v", err)
-	}
-	if hasAppFiles(dir) {
-		t.Fatalf("hasAppFiles(%q)=true want false after removing gdwolf.wasm", dir)
+	for _, name := range []string{"gdwolf.wasm", "save-actions.js"} {
+		path := filepath.Join(dir, name)
+		if err := os.Remove(path); err != nil {
+			t.Fatalf("remove %s: %v", name, err)
+		}
+		if hasAppFiles(dir) {
+			t.Fatalf("hasAppFiles(%q)=true want false after removing %s", dir, name)
+		}
+		if err := os.WriteFile(path, []byte(name), 0o644); err != nil {
+			t.Fatalf("restore %s: %v", name, err)
+		}
 	}
 }

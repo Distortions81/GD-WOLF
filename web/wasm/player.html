@@ -77,6 +77,14 @@
       animation: spin 1s linear infinite;
     }
 
+    #status-announcer {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
     canvas {
       display: block;
       width: 100%;
@@ -103,6 +111,7 @@
     </div>
   </div>
 
+  <div id="status-announcer" role="status" aria-live="polite"></div>
   <script src="./build-id.js"></script>
   <script>
     const loading = document.getElementById("loading");
@@ -179,27 +188,6 @@
       return document.activeElement === canvas;
     }
 
-    window.gdwolfImportSave = function gdwolfImportSave() {
-      if (!window.parent || window.parent === window || typeof window.parent.gdwolfImportSave !== "function") {
-        return false;
-      }
-      return window.parent.gdwolfImportSave();
-    };
-
-    window.gdwolfExportSave = function gdwolfExportSave(key) {
-      if (!window.parent || window.parent === window || typeof window.parent.gdwolfExportSave !== "function") {
-        return false;
-      }
-      return window.parent.gdwolfExportSave(key);
-    };
-
-    window.gdwolfExportAllSaves = function gdwolfExportAllSaves() {
-      if (!window.parent || window.parent === window || typeof window.parent.gdwolfExportAllSaves !== "function") {
-        return false;
-      }
-      return window.parent.gdwolfExportAllSaves();
-    };
-
     async function fetchCompressedWASMBytes(url) {
       if (typeof DecompressionStream !== "function") {
         throw new Error("DecompressionStream is not supported");
@@ -254,8 +242,11 @@
       });
     });
 
-    setLoading("Loading Runtime", "Fetching wasm_exec.js.");
-    loadScript(assetURL("./wasm_exec.js"))
+    setLoading("Loading Runtime", "Fetching browser runtime.");
+    Promise.all([
+      loadScript(assetURL("./save-actions.js")),
+      loadScript(assetURL("./wasm_exec.js")),
+    ])
       .then(() => {
         setLoading("Starting", "Creating Go runtime.");
         const go = new Go();

@@ -60,6 +60,25 @@ If no local data directory is found, the runtime falls back to embedded sharewar
 
 For local native runs, optional runtime PNG replacements can be placed under [hd-assets](/home/dist/github/GD-WOLF/hd-assets/README.md). Matching filenames override decoded pictures, sprites, and wall textures without changing the underlying game data files.
 
+## Build and Test
+
+Build the native game and run the Go tests with:
+
+```bash
+go build -o gd-wolf .
+go test ./...
+```
+
+Go resolves the pinned dependencies from `go.mod`. The palette test uses the embedded fixture included in this repo.
+
+On headless Linux, run the tests under a virtual display with `xvfb-run -a go test ./...` so Ebiten can initialize.
+
+Browser save import/export regression tests use Node.js 22 or later:
+
+```bash
+node web/wasm/save-actions.test.cjs
+```
+
 ## Browser Build
 
 `GD-WOLF` also has a browser build. To build it locally:

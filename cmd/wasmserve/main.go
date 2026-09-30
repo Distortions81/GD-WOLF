@@ -36,7 +36,7 @@ func defaultServeDir() string {
 }
 
 func hasAppFiles(dir string) bool {
-	for _, name := range []string{"index.html", "player.html", "launch.js", "wasm_exec.js", "gdwolf.wasm"} {
+	for _, name := range []string{"index.html", "player.html", "launch.js", "save-actions.js", "wasm_exec.js", "gdwolf.wasm"} {
 		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
 			return false
 		}
@@ -46,15 +46,16 @@ func hasAppFiles(dir string) bool {
 
 func newHandler(dir string) http.Handler {
 	files := map[string]string{
-		"/":               "index.html",
-		"/index.html":     "index.html",
-		"/player.html":    "player.html",
-		"/favicon.ico":    "",
-		"/launch.js":      "launch.js",
-		"/build-id.js":    "build-id.js",
-		"/wasm_exec.js":   "wasm_exec.js",
-		"/gdwolf.wasm":    "gdwolf.wasm",
-		"/gdwolf.wasm.gz": "gdwolf.wasm.gz",
+		"/":                "index.html",
+		"/index.html":      "index.html",
+		"/player.html":     "player.html",
+		"/favicon.ico":     "",
+		"/launch.js":       "launch.js",
+		"/save-actions.js": "save-actions.js",
+		"/build-id.js":     "build-id.js",
+		"/wasm_exec.js":    "wasm_exec.js",
+		"/gdwolf.wasm":     "gdwolf.wasm",
+		"/gdwolf.wasm.gz":  "gdwolf.wasm.gz",
 	}
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -113,7 +114,7 @@ func newHandler(dir string) http.Handler {
 			w.Header().Set("Content-Type", "application/gzip")
 		}
 		switch name {
-		case "index.html", "player.html", "launch.js", "build-id.js", "wasm_exec.js", "gdwolf.wasm", "gdwolf.wasm.gz":
+		case "index.html", "player.html", "launch.js", "save-actions.js", "build-id.js", "wasm_exec.js", "gdwolf.wasm", "gdwolf.wasm.gz":
 			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 			w.Header().Set("Pragma", "no-cache")
 			w.Header().Set("Expires", "0")
