@@ -1,0 +1,49 @@
+{
+  "mode": "Built-in image_gen tool",
+  "notes": "Original decoded game sprites used as authoritative references. Experimental HD restoration with rounded blood and reduced black contours per user direction. Atlas extraction and registration use original occupied bounds; see README and frames.json.",
+  "prompts": [
+    {
+      "id": "front-initial",
+      "prompt": "Faithfully restore and upscale the provided original Wolfenstein 3D brown guard animation sprite sheet. This is a resolution upgrade of these exact sprites, not a character redesign. Use the attached sheet as the authoritative edit target. Preserve the 4-column by 4-row layout, all 14 occupied cells in their exact order, and the two empty cells at bottom right. Keep every pose, facing direction, limb angle, gun placement, helmet shape, body proportions, facial character, death pose, and tiny red blood accents matching the original. Brown/tan uniform, dark gray helmet, black belt and diagonal shoulder strap, original saturated dark-blue/black boots; preserve the original colors and simple bright-front/dark-side shading. Keep the charming stylized 1992 game illustration look. Render higher-resolution clean sprite details within that same design: refine the existing face, fabric folds, helmet rim, hands, pistol, and boots; use compact flat color shapes with restrained shading, not photorealism, modern soldier styling, elaborate textures, or a new palette. Keep identical square cell boundaries and normalized registration: each sprite's silhouette should occupy the same relative area and foot position within its original 64x64 cell. Never enlarge or recenter individual frames. Restore every frame, including all four death frames. Row 1: idle, walk 1, walk 2, walk 3. Row 2: walk 4, ready pistol, aimed pistol, firing pistol with original muzzle flash. Row 3: hurt 1, hurt 2, death 1, death 2. Row 4: death 3, dead body, empty, empty. Output one high-resolution square PNG sprite atlas, preferably 1536x1536 or larger, with true transparent background and empty space. No ground, drop shadow, background, grid lines, text, labels, decorations, extra frames, or changed cropping.",
+      "references": [
+        "references/front-original.png"
+      ]
+    },
+    {
+      "id": "front-rounded-blood",
+      "prompt": "Edit the attached HD Wolfenstein 3D brown-guard animation atlas. Keep all fourteen existing sprites in exactly the same positions and poses, keep the 4-by-4 square cell layout and the two empty bottom-right cells, keep transparent background, uniform colors, original retro character design, framing and scale. Make one focused correction: the blood droplets on the two hurt poses and four death poses must look like small organically rounded red droplets and fluid splashes, with clean high-resolution curves, NOT square pixel blocks, voxel cubes, or outlined tiles. Preserve their original amounts and general placement; do not add extra blood. Clean the unrelated red/yellow/blue stray colored fringes around healthy guard silhouettes so the alpha boundary is crisp and clean with no red or yellow outlines. Keep red only in the actual injury effects and muzzle flash. The first reference is the HD edit target; the second is the original game sprite layout for pose/color fidelity. Preserve the overall old-game look; no character redesign, no photographic restyling, no new accessories. Output a transparent high-resolution PNG atlas; no text or grid lines.",
+      "references": [
+        "Initial generated front atlas",
+        "references/front-original.png"
+      ],
+      "output": "front-actions.png"
+    },
+    {
+      "id": "movement-initial",
+      "prompt": "Create a faithful high-resolution restoration of the original Wolfenstein 3D brown guard movement atlas in the FIRST reference. The SECOND reference shows the matching HD style for this same guard. Preserve the first reference's exact 8 columns by 5 rows grid, all 40 distinct frames, facing directions, limb poses, frame order, original normalized sprite size and camera registration. Do not repeat a single generic pose across the sheet. Row 1 has eight standing directions. Rows 2 through 5 are the four walking phases, each with eight directions. Column 1 faces viewer/front; 2 three-quarter toward left; 3 left side; 4 rear three-quarter left; 5 directly back; 6 rear three-quarter right; 7 right side; 8 front three-quarter right. Read every original frame individually, keep the varied arm swings, knees and boots, and retain the original direction of the diagonal strap in each view. This must remain the same classic stylized game character, not a redesign. Same brown/tan uniform, dark gray helmet, black belt with small gray buckle and diagonal black shoulder strap, original dark blue boots, compact proportions, face and simple warm-front/dark-side shading. Match the supplied HD reference's refined retro sprite details while keeping the original silhouette; avoid photorealism, new textures, accessories, outlines or different lighting. Smooth higher-resolution contours within the original style; NO red/yellow fringes, colored halos, blood, shadows or effects on these healthy standing/walking sprites. True transparent background. Target atlas 2048x1280 with 8x5 identical square 256px cells, each representing the corresponding original 64px cell. Keep the exact original foot baselines and relative placement, no per-frame resizing or recentering. No text, borders, gridlines, ground, scenery, labels, or additional frames.",
+      "references": [
+        "references/movement-original.png",
+        "front-actions.png"
+      ],
+      "output": "movement.png"
+    },
+    {
+      "id": "front-reduce-outlines",
+      "prompt": "Edit ONLY the artificial outlines in the first attached brown-guard HD animation sprite atlas. Keep the same 14 frames and exact poses, 4x4 layout, two empty bottom-right cells, uniform palette, compact proportions, face, helmet, blue boots, guns, rounded red blood droplets, lighting, scale and transparent background. The second image is the original game's reference. The user likes the existing look but the newly added heavy BLACK contour lines are wrong. Remove the black/cartoon ink stroke around the outside of the body, arms, hands, trousers, falling body, blood droplets and corpse. The outer edge must simply end with the local material color: warm brown cloth, peach skin, gray helmet or dark blue boot. Shade contours naturally with darker tones of the same material, following the original game's soft volumetric shaded edges, rather than tracing them with black lines. Remove the thick black dividing outlines around knees, sleeves, cheeks and fabric folds too, replacing them with the original subtle material shading. Keep actual black objects black: belt, shoulder strap, pistol, and genuine darkest helmet/boot shadow areas. Blood remains rounded red droplets without black rims. Also remove stray red/yellow/blue fringe pixels around healthy silhouettes. Do not add new outlines of any other color. Do not redraw the character as a different style, enlarge the figures, change any poses or add accessories. Transparent high-resolution PNG with clean alpha silhouettes, no backgrounds, shadows, text or gridlines.",
+      "references": [
+        "front-actions.png",
+        "references/front-original.png"
+      ],
+      "output": "front-actions-no-outline.png"
+    },
+    {
+      "id": "movement-reduce-outlines",
+      "prompt": "Edit the FIRST attached HD brown-guard movement atlas to REMOVE its heavy black cartoon contour strokes, matching the original game's shaded edges in the SECOND reference. Keep all forty existing poses and direction order in an 8-column by 5-row atlas, same brown/tan uniform, gray helmet, black belt and diagonal strap, blue boots, faces, body proportions, retro illustration style and lighting. Replace black ink-like silhouette contours and the thick black lines dividing cloth folds, knees, sleeves and cheeks with naturally darker shades of the local material, as in the original. Brown cloth edges must be brown, skin edges peach/shaded skin, helmet gray, boots dark blue. Black is retained only for actual black objects (belt, strap) and deepest genuine helmet/boot shadows; it must not trace the whole body. No black outline, no outlines of any other color, no red/yellow/green edge glow or colored matte residue, no blood on healthy movement frames. Every one of the forty figures must have both boots complete and a clear transparent gap around it, especially the bottom row: do not crop feet. Preserve the original foot poses, direction and swing for each frame. Do not redesign the character, invent new accessories, alter the faces or substitute generic repeated poses. True alpha-transparent high-resolution PNG atlas. No gridlines, labels, text, background, shadows, floor or extra frames.",
+      "references": [
+        "movement.png",
+        "references/movement-original.png"
+      ],
+      "output": "movement-no-outline.png"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HD walls · first batch</title><style>
+*{box-sizing:border-box}body{margin:0;background:#11151b;color:#eff0f3;font:15px/1.5 system-ui,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:28px}h1{margin:0 0 4px;font-size:27px}p{margin:0 0 18px;color:#bfc6d2}
+.controls{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:22px 0}
+select{font:inherit;background:#252d39;color:inherit;border:1px solid #536078;border-radius:6px;padding:8px}
+label{display:flex;gap:8px;align-items:center}.pair{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+figure{margin:0}figcaption{margin-bottom:8px;color:#c7d0df}figure img{display:block;width:100%;height:auto}
+.original{image-rendering:pixelated}.surface{border:1px solid #36404e;background:#191f28}
+.strip{display:flex;overflow:hidden;width:100%;margin:10px 0 24px}.strip img{width:33.333333%;height:auto;display:block}
+.side img{filter:brightness(.66)}h2{font-size:18px;margin:24px 0 6px}
+button{font:inherit;padding:7px 12px;color:#e9effb;background:#29384f;border:1px solid #587093;border-radius:6px;cursor:pointer}
+a{color:#a8c8ff}details{margin:25px 0}.zoom{overflow:auto}.zoom img{width:1254px;max-width:none;display:block}
+@media(max-width:700px){main{padding:18px}.pair{grid-template-columns:1fr}.strip{min-height:160px}}
+</style></head><body><main><h1>HD wall textures</h1><p>Tile02 has the approved rough stone finish with natural fracture edges. The base stone and banner background still need to match it.</p>
+<div class="controls"><label for="wall">Wall <select id="wall"><option value="01">01 · gray stone</option><option value="02">02 · alternate gray stone</option><option value="03">03 · plain red banner</option><option value="12">12 · wood panels</option></select></label><button id="draft">Show previous stone draft</button></div>
+<div class="pair"><figure><figcaption>Original · 64 × 64</figcaption><img class="original surface" id="original" alt="Original wall texture"></figure><figure><figcaption id="current-caption">HD · 1254 × 1254</figcaption><img class="surface" id="current" alt="Current HD wall texture"></figure></div>
+<h2>Repeated across three wall sections</h2><p>Shows neighboring joins at normal brightness.</p><div class="strip surface" id="repeat"></div>
+<h2>Shaded wall orientation</h2><p>The game applies 66% brightness to the second orientation.</p><div class="strip side surface" id="shaded"></div>
+<details><summary>View the texture at its native resolution</summary><div class="zoom"><img id="native" alt="HD wall at native resolution"></div></details>
+<p><a href="README.md">Batch notes</a> · <a href="prompts.json">Prompts and source information</a></p>
+</main><script>
+const wall=document.getElementById('wall'), draft=document.getElementById('draft');
+let previous=false;
+function update(){
+ const id=wall.value;
+ if(id==='12') previous=false;
+ const src=previous?'previous/tile-'+id+'-stepped-contours.png':'walls/horizontal/tile-'+id+'.png';
+ document.getElementById('original').src='references/horizontal/tile-'+id+'-original.png';
+ for(const key of ['current','native']) document.getElementById(key).src=src;
+ document.getElementById('current-caption').textContent=previous?'Previous draft · stepped edges':'HD · 1254 × 1254';
+ for(const key of ['repeat','shaded']){
+  const box=document.getElementById(key);box.replaceChildren();
+  for(let i=0;i<3;i++){const img=new Image();img.src=src;img.alt='Wall section '+(i+1);box.appendChild(img);}
+ }
+ draft.hidden=id==='12';draft.textContent=previous?'Show corrected stone':'Show previous stone draft';
+}
+wall.addEventListener('change',()=>{previous=false;update()});
+draft.addEventListener('click',()=>{previous=!previous;update()});update();
+</script></body></html>

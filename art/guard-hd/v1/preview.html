@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brown guard — HD animation comparison</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#17191b;color:#eee}
+body{max-width:1040px;margin:auto;padding:28px}h1{margin:0 0 10px;font-size:28px}p{color:#b8bec3;line-height:1.5}
+.controls{display:flex;gap:16px;flex-wrap:wrap;align-items:end;margin:24px 0}label{display:grid;gap:6px;font-size:14px}
+select,button{font:inherit;padding:10px 14px;background:#292e33;border:1px solid #53606a;border-radius:6px;color:#fff}button{cursor:pointer}button:focus-visible,select:focus-visible{outline:2px solid #e9ac6c;outline-offset:3px}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:20px}.panel{border:1px solid #454b52;border-radius:10px;overflow:hidden;background:#262b30}
+h2{font-size:16px;margin:0;padding:14px 18px;background:#30363c}canvas{display:block;width:100%;aspect-ratio:1;background:#555c60;background-image:linear-gradient(45deg,#4b5155 25%,transparent 25%),linear-gradient(-45deg,#4b5155 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#4b5155 75%),linear-gradient(-45deg,transparent 75%,#4b5155 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}
+.caption{padding:12px 18px;font-size:14px;font-variant-numeric:tabular-nums;color:#d5d9dc}a{color:#e9ac6c}.note{font-size:14px}#status{min-height:22px;color:#e9ac6c}
+@media(max-width:600px){body{padding:16px}.compare{gap:10px}h2,.caption{padding:10px;font-size:13px}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<h1>Brown guard: original and HD</h1>
+<p>The same brown uniform, helmet, blue boots, and animation poses, with higher-resolution detail and rounded blood droplets.</p>
+<div class="controls">
+<label>Animation<select id="animation"><option value="patrol">Walking</option><option value="chase">Chasing</option><option value="stand">Standing</option><option value="shoot">Shooting</option><option value="pain1">Hit reaction 1</option><option value="pain2">Hit reaction 2</option><option value="death">Death</option></select></label>
+<label>Viewing direction<select id="direction"><option value="0">Front</option><option value="1">Front left</option><option value="2">Left</option><option value="3">Back left</option><option value="4">Back</option><option value="5">Back right</option><option value="6">Right</option><option value="7">Front right</option></select></label>
+<button id="pause" type="button">Pause</button><button id="restart" type="button">Restart</button>
+</div>
+<div class="compare">
+<section class="panel"><h2>Original</h2><canvas id="original" width="448" height="448" aria-label="Original guard animation"></canvas><div class="caption">64 × 64 frame</div></section>
+<section class="panel"><h2>HD experiment · v1</h2><canvas id="hd" width="448" height="448" aria-label="HD guard animation"></canvas><div class="caption" id="caption">Loading…</div></section>
+</div>
+<p id="status" role="status" aria-live="polite">Loading all 49 frames…</p>
+<p class="note">The sequences use the game's 70-tic timing. Shooting and hit reactions repeat for comparison; death holds the corpse briefly before repeating. Colored edge fringes remain in this draft. <a href="front-actions-no-outline.png">Action atlas</a> · <a href="movement-no-outline.png">Movement atlas</a> · <a href="README.md">Asset notes</a></p>
+<script>
+'use strict';
+const animation=document.querySelector('#animation'),direction=document.querySelector('#direction');
+const status=document.querySelector('#status'),caption=document.querySelector('#caption');
+const canvases=[document.querySelector('#original'),document.querySelector('#hd')];
+const images=[new Map(),new Map()];
+const definitions={stand:[[50,70]],patrol:[[58,25],[66,15],[74,25],[82,15]],chase:[[58,13],[66,8],[74,13],[82,8]],shoot:[[96,20],[97,20],[98,20]],pain1:[[90,10],[50,35]],pain2:[[94,10],[50,35]],death:[[91,15],[92,15],[93,15],[95,105]]};
+let started=performance.now(),paused=false,pausedAt=0,ready=false,currentShape=-1;
+function restart(){started=performance.now();if(paused)pausedAt=started;currentShape=-1;}
+animation.addEventListener('change',()=>{direction.disabled=['shoot','pain1','pain2','death'].includes(animation.value);restart();});
+direction.addEventListener('change',restart);
+document.querySelector('#restart').addEventListener('click',restart);
+document.querySelector('#pause').addEventListener('click',()=>{const now=performance.now();if(paused){started+=now-pausedAt;}else{pausedAt=now;}paused=!paused;document.querySelector('#pause').textContent=paused?'Play':'Pause';});
+function load(path){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Unable to load '+path));img.src=path;});}
+Promise.all([0,1].flatMap(kind=>Array.from({length:49},(_,i)=>{const shape=50+i;return load((kind?'sprites/':'references/sprites/')+'shape-'+String(shape).padStart(3,'0')+'.png').then(img=>images[kind].set(shape,img));}))).then(()=>{ready=true;status.textContent='49 of 49 frames loaded. Select a direction to compare the complete walk cycle.';}).catch(err=>{status.textContent=err.message;});
+function render(now){
+ if(ready){
+  const seq=definitions[animation.value],duration=seq.reduce((sum,item)=>sum+item[1],0);
+  let tick=((paused?pausedAt:now)-started)*70/1000%duration,shape=seq[0][0];
+  for(const frame of seq){shape=frame[0];if(tick<frame[1])break;tick-=frame[1];}
+  if(shape>=50&&shape<=89&&!direction.disabled)shape+=Number(direction.value);
+  if(shape!==currentShape){
+   currentShape=shape;
+   for(let kind=0;kind<2;kind++){const ctx=canvases[kind].getContext('2d');ctx.clearRect(0,0,448,448);ctx.imageSmoothingEnabled=false;ctx.drawImage(images[kind].get(shape),0,0,448,448);}
+   const img=images[1].get(shape);caption.textContent=img.naturalWidth+' × '+img.naturalHeight+' · shape-'+String(shape).padStart(3,'0')+'.png';
+  }
+ }
+ requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+</script>
+</body>
+</html>

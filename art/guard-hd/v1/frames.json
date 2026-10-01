@@ -1,0 +1,1769 @@
+{
+  "canvas": 256,
+  "frames": [
+    {
+      "shape": 50,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 0,
+          "Y": 0
+        },
+        "Max": {
+          "X": 198,
+          "Y": 225
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 52,
+          "Y": 35
+        },
+        "Max": {
+          "X": 149,
+          "Y": 211
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 84,
+          "Y": 64
+        },
+        "Max": {
+          "X": 172,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 51,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 198,
+          "Y": 0
+        },
+        "Max": {
+          "X": 396,
+          "Y": 225
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 264,
+          "Y": 34
+        },
+        "Max": {
+          "X": 342,
+          "Y": 211
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 100,
+          "Y": 64
+        },
+        "Max": {
+          "X": 168,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 52,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 396,
+          "Y": 0
+        },
+        "Max": {
+          "X": 594,
+          "Y": 225
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 466,
+          "Y": 34
+        },
+        "Max": {
+          "X": 527,
+          "Y": 211
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 108,
+          "Y": 64
+        },
+        "Max": {
+          "X": 164,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 53,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 594,
+          "Y": 0
+        },
+        "Max": {
+          "X": 793,
+          "Y": 225
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 653,
+          "Y": 34
+        },
+        "Max": {
+          "X": 733,
+          "Y": 211
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 88,
+          "Y": 64
+        },
+        "Max": {
+          "X": 152,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 54,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 793,
+          "Y": 0
+        },
+        "Max": {
+          "X": 991,
+          "Y": 225
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 842,
+          "Y": 36
+        },
+        "Max": {
+          "X": 940,
+          "Y": 210
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 88,
+          "Y": 64
+        },
+        "Max": {
+          "X": 172,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 55,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 991,
+          "Y": 0
+        },
+        "Max": {
+          "X": 1189,
+          "Y": 225
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1046,
+          "Y": 34
+        },
+        "Max": {
+          "X": 1126,
+          "Y": 211
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 100,
+          "Y": 64
+        },
+        "Max": {
+          "X": 168,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 56,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 1189,
+          "Y": 0
+        },
+        "Max": {
+          "X": 1387,
+          "Y": 225
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1259,
+          "Y": 35
+        },
+        "Max": {
+          "X": 1321,
+          "Y": 211
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 92,
+          "Y": 64
+        },
+        "Max": {
+          "X": 148,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 57,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 1387,
+          "Y": 0
+        },
+        "Max": {
+          "X": 1585,
+          "Y": 225
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1437,
+          "Y": 36
+        },
+        "Max": {
+          "X": 1523,
+          "Y": 211
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 92,
+          "Y": 64
+        },
+        "Max": {
+          "X": 160,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 58,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 0,
+          "Y": 225
+        },
+        "Max": {
+          "X": 198,
+          "Y": 427
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 58,
+          "Y": 237
+        },
+        "Max": {
+          "X": 140,
+          "Y": 417
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 96,
+          "Y": 72
+        },
+        "Max": {
+          "X": 168,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 59,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 198,
+          "Y": 225
+        },
+        "Max": {
+          "X": 396,
+          "Y": 427
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 248,
+          "Y": 237
+        },
+        "Max": {
+          "X": 349,
+          "Y": 416
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 80,
+          "Y": 68
+        },
+        "Max": {
+          "X": 180,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 60,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 396,
+          "Y": 225
+        },
+        "Max": {
+          "X": 594,
+          "Y": 427
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 446,
+          "Y": 237
+        },
+        "Max": {
+          "X": 559,
+          "Y": 416
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 80,
+          "Y": 64
+        },
+        "Max": {
+          "X": 196,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 61,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 594,
+          "Y": 225
+        },
+        "Max": {
+          "X": 793,
+          "Y": 427
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 635,
+          "Y": 237
+        },
+        "Max": {
+          "X": 743,
+          "Y": 418
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 68,
+          "Y": 64
+        },
+        "Max": {
+          "X": 172,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 62,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 793,
+          "Y": 225
+        },
+        "Max": {
+          "X": 991,
+          "Y": 427
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 848,
+          "Y": 238
+        },
+        "Max": {
+          "X": 936,
+          "Y": 416
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 92,
+          "Y": 64
+        },
+        "Max": {
+          "X": 172,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 63,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 991,
+          "Y": 225
+        },
+        "Max": {
+          "X": 1189,
+          "Y": 427
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1038,
+          "Y": 237
+        },
+        "Max": {
+          "X": 1142,
+          "Y": 418
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 88,
+          "Y": 64
+        },
+        "Max": {
+          "X": 188,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 64,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 1189,
+          "Y": 225
+        },
+        "Max": {
+          "X": 1387,
+          "Y": 427
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1225,
+          "Y": 237
+        },
+        "Max": {
+          "X": 1335,
+          "Y": 418
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 60,
+          "Y": 64
+        },
+        "Max": {
+          "X": 172,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 65,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 1387,
+          "Y": 225
+        },
+        "Max": {
+          "X": 1585,
+          "Y": 427
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1437,
+          "Y": 237
+        },
+        "Max": {
+          "X": 1529,
+          "Y": 417
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 88,
+          "Y": 68
+        },
+        "Max": {
+          "X": 176,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 66,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 0,
+          "Y": 427
+        },
+        "Max": {
+          "X": 198,
+          "Y": 633
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 52,
+          "Y": 440
+        },
+        "Max": {
+          "X": 148,
+          "Y": 623
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 84,
+          "Y": 68
+        },
+        "Max": {
+          "X": 176,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 67,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 198,
+          "Y": 427
+        },
+        "Max": {
+          "X": 396,
+          "Y": 633
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 255,
+          "Y": 438
+        },
+        "Max": {
+          "X": 342,
+          "Y": 624
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 84,
+          "Y": 64
+        },
+        "Max": {
+          "X": 168,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 68,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 396,
+          "Y": 427
+        },
+        "Max": {
+          "X": 594,
+          "Y": 633
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 465,
+          "Y": 438
+        },
+        "Max": {
+          "X": 538,
+          "Y": 624
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 104,
+          "Y": 64
+        },
+        "Max": {
+          "X": 172,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 69,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 594,
+          "Y": 427
+        },
+        "Max": {
+          "X": 793,
+          "Y": 633
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 653,
+          "Y": 438
+        },
+        "Max": {
+          "X": 730,
+          "Y": 624
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 92,
+          "Y": 64
+        },
+        "Max": {
+          "X": 152,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 70,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 793,
+          "Y": 427
+        },
+        "Max": {
+          "X": 991,
+          "Y": 633
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 842,
+          "Y": 440
+        },
+        "Max": {
+          "X": 940,
+          "Y": 624
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 88,
+          "Y": 64
+        },
+        "Max": {
+          "X": 172,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 71,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 991,
+          "Y": 427
+        },
+        "Max": {
+          "X": 1189,
+          "Y": 633
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1050,
+          "Y": 440
+        },
+        "Max": {
+          "X": 1126,
+          "Y": 624
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 104,
+          "Y": 64
+        },
+        "Max": {
+          "X": 168,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 72,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 1189,
+          "Y": 427
+        },
+        "Max": {
+          "X": 1387,
+          "Y": 633
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1249,
+          "Y": 439
+        },
+        "Max": {
+          "X": 1322,
+          "Y": 624
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 88,
+          "Y": 64
+        },
+        "Max": {
+          "X": 152,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 73,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 1387,
+          "Y": 427
+        },
+        "Max": {
+          "X": 1585,
+          "Y": 633
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1438,
+          "Y": 440
+        },
+        "Max": {
+          "X": 1532,
+          "Y": 623
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 92,
+          "Y": 64
+        },
+        "Max": {
+          "X": 180,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 74,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 0,
+          "Y": 633
+        },
+        "Max": {
+          "X": 198,
+          "Y": 824
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 58,
+          "Y": 650
+        },
+        "Max": {
+          "X": 140,
+          "Y": 816
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 92,
+          "Y": 72
+        },
+        "Max": {
+          "X": 164,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 75,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 198,
+          "Y": 633
+        },
+        "Max": {
+          "X": 396,
+          "Y": 824
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 250,
+          "Y": 645
+        },
+        "Max": {
+          "X": 360,
+          "Y": 816
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 80,
+          "Y": 72
+        },
+        "Max": {
+          "X": 188,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 76,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 396,
+          "Y": 633
+        },
+        "Max": {
+          "X": 594,
+          "Y": 824
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 446,
+          "Y": 644
+        },
+        "Max": {
+          "X": 559,
+          "Y": 817
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 80,
+          "Y": 64
+        },
+        "Max": {
+          "X": 196,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 77,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 594,
+          "Y": 633
+        },
+        "Max": {
+          "X": 793,
+          "Y": 824
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 645,
+          "Y": 643
+        },
+        "Max": {
+          "X": 736,
+          "Y": 817
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 80,
+          "Y": 64
+        },
+        "Max": {
+          "X": 164,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 78,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 793,
+          "Y": 633
+        },
+        "Max": {
+          "X": 991,
+          "Y": 824
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 848,
+          "Y": 645
+        },
+        "Max": {
+          "X": 933,
+          "Y": 817
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 92,
+          "Y": 64
+        },
+        "Max": {
+          "X": 168,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 79,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 991,
+          "Y": 633
+        },
+        "Max": {
+          "X": 1189,
+          "Y": 824
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1042,
+          "Y": 645
+        },
+        "Max": {
+          "X": 1138,
+          "Y": 817
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 96,
+          "Y": 64
+        },
+        "Max": {
+          "X": 180,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 80,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 1189,
+          "Y": 633
+        },
+        "Max": {
+          "X": 1387,
+          "Y": 824
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1225,
+          "Y": 645
+        },
+        "Max": {
+          "X": 1338,
+          "Y": 817
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 60,
+          "Y": 64
+        },
+        "Max": {
+          "X": 176,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 81,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 1387,
+          "Y": 633
+        },
+        "Max": {
+          "X": 1585,
+          "Y": 824
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1434,
+          "Y": 649
+        },
+        "Max": {
+          "X": 1533,
+          "Y": 817
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 84,
+          "Y": 72
+        },
+        "Max": {
+          "X": 184,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 82,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 0,
+          "Y": 824
+        },
+        "Max": {
+          "X": 198,
+          "Y": 992
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 54,
+          "Y": 834
+        },
+        "Max": {
+          "X": 146,
+          "Y": 992
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 84,
+          "Y": 68
+        },
+        "Max": {
+          "X": 176,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 83,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 198,
+          "Y": 824
+        },
+        "Max": {
+          "X": 396,
+          "Y": 992
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 256,
+          "Y": 832
+        },
+        "Max": {
+          "X": 343,
+          "Y": 992
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 84,
+          "Y": 68
+        },
+        "Max": {
+          "X": 168,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 84,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 396,
+          "Y": 824
+        },
+        "Max": {
+          "X": 594,
+          "Y": 992
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 466,
+          "Y": 831
+        },
+        "Max": {
+          "X": 529,
+          "Y": 991
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 104,
+          "Y": 64
+        },
+        "Max": {
+          "X": 172,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 85,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 594,
+          "Y": 824
+        },
+        "Max": {
+          "X": 793,
+          "Y": 992
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 654,
+          "Y": 830
+        },
+        "Max": {
+          "X": 728,
+          "Y": 992
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 92,
+          "Y": 64
+        },
+        "Max": {
+          "X": 152,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 86,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 793,
+          "Y": 824
+        },
+        "Max": {
+          "X": 991,
+          "Y": 992
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 842,
+          "Y": 833
+        },
+        "Max": {
+          "X": 940,
+          "Y": 992
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 88,
+          "Y": 64
+        },
+        "Max": {
+          "X": 172,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 87,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 991,
+          "Y": 824
+        },
+        "Max": {
+          "X": 1189,
+          "Y": 992
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1055,
+          "Y": 832
+        },
+        "Max": {
+          "X": 1126,
+          "Y": 992
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 104,
+          "Y": 64
+        },
+        "Max": {
+          "X": 168,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 88,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 1189,
+          "Y": 824
+        },
+        "Max": {
+          "X": 1387,
+          "Y": 992
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1251,
+          "Y": 832
+        },
+        "Max": {
+          "X": 1319,
+          "Y": 992
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 88,
+          "Y": 64
+        },
+        "Max": {
+          "X": 152,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 89,
+      "atlas": "movement-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 1387,
+          "Y": 824
+        },
+        "Max": {
+          "X": 1585,
+          "Y": 992
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1437,
+          "Y": 834
+        },
+        "Max": {
+          "X": 1532,
+          "Y": 992
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 92,
+          "Y": 64
+        },
+        "Max": {
+          "X": 180,
+          "Y": 252
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 90,
+      "atlas": "front-actions-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 0,
+          "Y": 655
+        },
+        "Max": {
+          "X": 314,
+          "Y": 997
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 77,
+          "Y": 700
+        },
+        "Max": {
+          "X": 223,
+          "Y": 941
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 84,
+          "Y": 72
+        },
+        "Max": {
+          "X": 188,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 91,
+      "atlas": "front-actions-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 627,
+          "Y": 655
+        },
+        "Max": {
+          "X": 941,
+          "Y": 997
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 726,
+          "Y": 680
+        },
+        "Max": {
+          "X": 886,
+          "Y": 931
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 100,
+          "Y": 48
+        },
+        "Max": {
+          "X": 236,
+          "Y": 240
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 92,
+      "atlas": "front-actions-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 941,
+          "Y": 655
+        },
+        "Max": {
+          "X": 1254,
+          "Y": 997
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1052,
+          "Y": 712
+        },
+        "Max": {
+          "X": 1242,
+          "Y": 910
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 104,
+          "Y": 68
+        },
+        "Max": {
+          "X": 252,
+          "Y": 220
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 93,
+      "atlas": "front-actions-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 0,
+          "Y": 997
+        },
+        "Max": {
+          "X": 314,
+          "Y": 1254
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 96,
+          "Y": 1055
+        },
+        "Max": {
+          "X": 283,
+          "Y": 1223
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 104,
+          "Y": 112
+        },
+        "Max": {
+          "X": 256,
+          "Y": 236
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 94,
+      "atlas": "front-actions-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 314,
+          "Y": 655
+        },
+        "Max": {
+          "X": 627,
+          "Y": 997
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 386,
+          "Y": 700
+        },
+        "Max": {
+          "X": 553,
+          "Y": 948
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 72,
+          "Y": 68
+        },
+        "Max": {
+          "X": 180,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 95,
+      "atlas": "front-actions-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 314,
+          "Y": 997
+        },
+        "Max": {
+          "X": 680,
+          "Y": 1254
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 352,
+          "Y": 1173
+        },
+        "Max": {
+          "X": 637,
+          "Y": 1254
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 60,
+          "Y": 200
+        },
+        "Max": {
+          "X": 252,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 96,
+      "atlas": "front-actions-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 314,
+          "Y": 350
+        },
+        "Max": {
+          "X": 627,
+          "Y": 655
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 383,
+          "Y": 383
+        },
+        "Max": {
+          "X": 539,
+          "Y": 635
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 72,
+          "Y": 64
+        },
+        "Max": {
+          "X": 184,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 97,
+      "atlas": "front-actions-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 627,
+          "Y": 350
+        },
+        "Max": {
+          "X": 941,
+          "Y": 655
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 716,
+          "Y": 394
+        },
+        "Max": {
+          "X": 854,
+          "Y": 635
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 80,
+          "Y": 72
+        },
+        "Max": {
+          "X": 180,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    },
+    {
+      "shape": 98,
+      "atlas": "front-actions-no-outline.png",
+      "sourceRect": {
+        "Min": {
+          "X": 941,
+          "Y": 350
+        },
+        "Max": {
+          "X": 1254,
+          "Y": 655
+        }
+      },
+      "sourceContentBounds": {
+        "Min": {
+          "X": 1035,
+          "Y": 394
+        },
+        "Max": {
+          "X": 1174,
+          "Y": 635
+        }
+      },
+      "renderBounds": {
+        "Min": {
+          "X": 80,
+          "Y": 72
+        },
+        "Max": {
+          "X": 180,
+          "Y": 256
+        }
+      },
+      "width": 256,
+      "height": 256
+    }
+  ]
+}

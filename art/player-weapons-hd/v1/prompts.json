@@ -1,0 +1,60 @@
+{
+  "mode": "Built-in image_gen tool",
+  "transparentBackground": true,
+  "notes": "Original decoded Wolfenstein 3D sprites are authoritative. The automatic-weapon revisions correct limb visibility: chaingun has no visible limbs; machine gun has only the original lower-left forearm/hand. See register_weapon_frames.go and frames.json for mechanical canvas registration.",
+  "prompts": [
+    {
+      "weapon": "knife",
+      "prompt": "Faithfully remaster the attached Wolfenstein 3D FIRST-PERSON KNIFE animation strip at higher resolution. Use this original decoded sprite strip as the authoritative edit target. Output exactly one row of FIVE equal square cells in the same order: ready, attack1, attack2, attack3, attack4. Preserve every blade angle, movement stage, wrist/hand pose, camera perspective, visible gray sleeve and warm peach skin tone. Keep the original silver triangular knife silhouette and simple gray metal shading. The ready frame shows only the tiny blade tip coming up from the bottom edge; do NOT invent a fully exposed hand or weapon in that frame. The following frames reveal the original right hand/forearm in gray sleeve as it thrusts and withdraws; retain precisely how much is visible and how it is cropped at the bottom of each 64x64 source cell. Same classic stylized game illustration look, higher-resolution clean shapes and subtle existing shading. Refine the existing fingers, blade edge and cloth folds without changing proportions or adding details that alter the design. Use material-colored contour shading, no heavy black cartoon outline and no colored edge halo. Keep the same blade lengths, screen positions, silhouette extents, and animation registration. Hands and sleeves continue through the bottom edge, not floating detached cutouts. Identical five-square-cell horizontal strip, preferably 2560x512, with true transparent background; all alpha-only spaces remain empty. No background, grid, labels, text, drop shadows, additional props, blood, gloves, new cuffs or modern restyling.",
+      "references": [
+        "references/knife-original.png"
+      ],
+      "output": "knife.png"
+    },
+    {
+      "weapon": "pistol",
+      "prompt": "Faithfully remaster the FIRST reference: the original Wolfenstein 3D first-person PISTOL animation strip. This is a higher-resolution version of these same sprites. Keep exactly FIVE frames in one horizontal row, in this exact order: ready, attack1, muzzle-flash/fire attack2, raised recoil attack3, recovery attack4. All remain a centered first-person view from behind the pistol, looking along the barrel away from the player. Preserve the distinctive original gray/dark-gray pistol silhouette and apparent size, its raised/lowered stages, warm peach bare hand and original gray sleeves visible at the bottom, hand grip, wrist positions, and every pose's original 64x64 screen registration. Frame3 alone has the original small red/orange/yellow/white muzzle flash at the barrel; other frames have no flash. Keep the flame's original overall shape/extent but render its edges cleanly at higher resolution. The SECOND reference is the HD knife strip only for matching skin, sleeve, and subtle shaded illustration style. It must not alter the pistol design. Keep the original classic game look with refined existing metal planes, simple sights, fingers and cloth folds. No photorealistic restyling, textured modern firearms, logos, extra accessories, extra fingers, new gloves or changed uniform. Natural material-colored shaded contours; no heavy black cartoon outline or colored halos. Dark gray metal remains dark gray, with gray highlights as in the original. Hands/arms keep the original bottom-of-screen cropping. Output a high-resolution PNG atlas with exactly 5 frames, equal cell spacing, true transparent background and empty space between sprites, preferably 2560x512. No text, labels, gridlines, ground, background, shadow or extra frames.",
+      "references": [
+        "references/pistol-original.png",
+        "knife.png"
+      ],
+      "output": "pistol.png"
+    },
+    {
+      "weapon": "machinegun-initial",
+      "prompt": "Faithfully remaster the FIRST reference, the original Wolfenstein 3D first-person MACHINE GUN animation strip, into higher-resolution sprites. Preserve these exact weapon shapes and first-person viewpoint from directly behind the weapon, its centered barrel silhouette, grayscale metal highlights and shading, original gray sleeves and the small visible warm peach hand portions near the bottom. Exactly FIVE frames in one horizontal row: ready, attack1, firing attack2 with muzzle flash, recoil attack3, recovery attack4. Match the geometry, changing weapon height, recoil poses and original 64x64-cell normalized screen placement of every frame. The third frame alone contains the original medium-size orange/red/yellow/white muzzle flash; do not add effects to the other four. Higher-resolution smooth contours and refined original metal planes, muzzle and fabric folds, keeping the classic simplified shaded game illustration look. The SECOND reference is the HD knife strip only to match the skin/sleeve rendering and gentle shading; retain the original machine gun design completely. It is the original slim centered gray machine gun, not a modern assault rifle: no stock sticking sideways, scope, tactical rails, added grip, logos, gloves, accessories or photographic textures. Do not invent big exposed hands where the original weapon obscures them. No heavy black cartoon strokes around metal or sleeves, no colored halos, no unrelated red/yellow matte colors. The arms and weapon retain their bottom-of-screen cropping. Transparent PNG atlas, exactly one row of five equally spaced separate frames, preferably 2560x512, no clipping of flash or muzzle. No background, shadows, floor, text, gridlines, labels or extra frames.",
+      "references": [
+        "references/machinegun-original.png",
+        "knife.png"
+      ],
+      "output": "previous/machinegun.png"
+    },
+    {
+      "weapon": "chaingun-initial",
+      "prompt": "Faithfully remaster the FIRST reference: the original Wolfenstein 3D first-person CHAINGUN animation strip. Use these decoded original sprites as the exact design and pose reference. Five frames, in ONE horizontal row, in original order: ready, attack1 raised weapon, attack2 firing, attack3 firing/recoil, attack4 recovery. Keep the original broad cyan/turquoise/silver metal highlights, white central reflection, dark teal sides and horizontal top rim, weapon silhouette, perspective looking along the gun from behind, gray-sleeved arms and any small original warm peach skin portions at the bottom. The original bright cyan look is essential; do not replace it with a generic black modern minigun or a different visible-barrel arrangement. Preserve the original proportions, apparent size, centered screen placement and each frame's raised/lowered motion. Frames THREE and FOUR have their original differently shaped large red/orange/yellow/white muzzle flashes; frames ONE, TWO and FIVE have no flash. Restore those same flash shapes and placement with clean higher-resolution flame contours. Refine existing metal planes, highlights, hand and cloth shading while keeping the recognizable classic game's simple stylized illustration look. The SECOND reference is the HD knife strip only for matching gray sleeves, skin and restrained shaded rendering. Avoid photographic textures, elaborate new mechanics, logos, rails, extra handles, gloves, clothing changes or accessories. No heavy black cartoon contour around metal or arms, no colored edge halos or chroma-matte fringe. Preserve the original bottom-of-screen cropping. True transparent PNG atlas with five complete separated frames at equal horizontal spacing, preferably 2560x512; flashes must fit entirely in each frame with no neighbor overlap. No background, grid, shadows, text, labels or additional sprites.",
+      "references": [
+        "references/chaingun-original.png",
+        "knife.png"
+      ],
+      "output": "previous/chaingun.png"
+    },
+    {
+      "weapon": "machinegun-corrected",
+      "prompt": "Correct the extra arm in the FIRST attached HD Wolfenstein 3D MACHINE GUN animation atlas. The SECOND reference is the original game sprite strip, and controls exactly which limbs may be visible. The original machine gun has at most ONE visible gray-sleeved forearm entering from the LOWER LEFT, with only the tiny peach hand portion shown in the original. The FIRST HD atlas incorrectly invented a mirrored second gray-sleeved arm and peach hand on the LOWER RIGHT. REMOVE that entire right-hand arm, sleeve, wrist, fingers and skin in all five frames, making that area transparent alpha. Keep only the original lower-left forearm/hand where actually visible, mostly cropped offscreen; reduce its exposed size to match the original reference, rather than inventing a full hand. Do not add or mirror any other arm. The centered gray machine gun is a gun, not a third gray arm: retain the metal barrel/receiver shape and grayscale shading. Keep the HD metal finish, slim original weapon silhouette, recoil stages, and existing muzzle flash ONLY in frame3. Preserve the five frames in their exact order: ready, attack1, firing attack2, recoil attack3, recovery attack4. Keep material-colored contours and the previous classic illustration look; no black cartoon ink stroke, new accessories, new cloth panels, extra fingers, extra support hand or second arm. On the screen-right side there is only the original gun metal where the source shows it, otherwise empty transparency. The only sleeve is the source's small left-side sleeve. Output the same one-row five-frame high-resolution PNG atlas with true transparent background, no background, text, labels, gridlines, floor or shadows.",
+      "references": [
+        "previous/machinegun.png",
+        "references/machinegun-original.png"
+      ],
+      "output": "machinegun.png"
+    },
+    {
+      "weapon": "chaingun-corrected",
+      "prompt": "Correct the anatomy error in the FIRST attached HD Wolfenstein 3D CHAINGUN atlas. The SECOND reference is the original game sprite atlas and is authoritative. In the original chaingun view there are ZERO VISIBLE ARMS, ZERO VISIBLE HANDS, and ZERO SLEEVES in ALL FIVE frames. The first HD atlas incorrectly invented peach hands and gray-sleeved arms to the left and right of every weapon. REMOVE ALL of those added hands, fingers, wrists, forearms, sleeves and shoulder shapes completely. Their pixels become transparent alpha, not replacement limbs or gray panels. The only visible objects in these five sprites must be the original cyan/turquoise/silver chaingun itself, plus its muzzle flash in frames 3 and 4. Follow the original silhouette: the gun alone rises from the lower center and continues beyond the bottom crop. Preserve the current HD weapon's lovely cyan reflections, white center reflection, dark teal sides, horizontal rim, simple metal shading, original geometry and five recoil poses. Preserve both firing flashes, and no flash on frames1,2,5. Keep the same one-row five-frame atlas, transparent background, current HD material style, no black cartoon strokes. Absolutely no human skin, gray cloth, arms or hands anywhere, and no newly invented accessories. Do not change the chaingun into another gun. Output a high-resolution transparent PNG with all five corrected frames, no background, text, labels, shadows or grid.",
+      "references": [
+        "previous/chaingun.png",
+        "references/chaingun-original.png"
+      ],
+      "output": "chaingun.png"
+    }
+  ]
+}

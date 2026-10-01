@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>First-level HD sprite pack</title>
+<style>
+:root{font-family:system-ui,sans-serif;color-scheme:dark;background:#17191d;color:#eceef2}body{max-width:1160px;margin:auto;padding:30px}h1{font-size:30px;margin:0 0 10px}h2{font-size:22px;margin:32px 0 12px}p{color:#bfc4cc;line-height:1.5}a{color:#edb87b}.controls{display:flex;gap:16px;flex-wrap:wrap;align-items:end;margin:18px 0}label{display:grid;gap:5px;font-size:14px}select,button{font:inherit;padding:10px 12px;background:#292e38;color:#fff;border:1px solid #606978;border-radius:6px}button{cursor:pointer}select:focus-visible,button:focus-visible{outline:2px solid #edb87b;outline-offset:3px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel,.card{border:1px solid #464c57;border-radius:10px;overflow:hidden;background:#252a32}.panel header{padding:14px;background:#303640}.sprite-bg{background-color:#697078;background-image:linear-gradient(45deg,#555c65 25%,transparent 25%),linear-gradient(-45deg,#555c65 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#555c65 75%),linear-gradient(-45deg,transparent 75%,#555c65 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}body[data-background=dark] .sprite-bg{background:#20242b}body[data-background=light] .sprite-bg{background:#e5e7eb}canvas{display:block;width:100%;height:auto}.gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card header{padding:12px;min-height:42px;font-size:14px}.thumbs{display:grid;grid-template-columns:1fr 1fr}.thumbs a{display:block}.thumbs img{display:block;width:100%;aspect-ratio:1;object-fit:contain}.original{image-rendering:pixelated}.card footer{display:flex;justify-content:space-around;padding:8px;font-size:12px;color:#bfc4cc}#status{color:#edb87b;min-height:24px}.links{display:flex;gap:20px;flex-wrap:wrap;margin:20px 0}.metadata{font-variant-numeric:tabular-nums;color:#edb87b}@media(max-width:900px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){body{padding:16px}h1{font-size:25px}.gallery{grid-template-columns:1fr}.pair{gap:8px}}
+</style>
+</head>
+<body data-background="checker">
+<h1>First-level HD sprites</h1>
+<p>136 sprite frames covering the demo’s first level on every difficulty: guards, dogs, scenery, pickups, enemy drops, all four player weapons, and the map’s player marker.</p>
+<div class="links"><a href="../guard-hd/v1/preview.html">Guard animations</a><a href="../player-weapons-hd/v1/preview.html">Player weapons</a><a href="requirements.json">Map-derived inventory</a><a href="README.md">Asset notes</a></div>
+<h2>Dog animations</h2>
+<div class="controls">
+<label>Animation<select id="animation"><option value="patrol">Patrol</option><option value="chase">Chase</option><option value="bite">Bite</option><option value="death">Death</option><option value="stand">Standing</option></select></label>
+<label>Direction<select id="direction"><option value="0">Front</option><option value="1">Front-left</option><option value="2">Left</option><option value="3">Rear-left</option><option value="4">Back</option><option value="5">Rear-right</option><option value="6">Right</option><option value="7">Front-right</option></select></label>
+<label>Speed<select id="speed"><option value="1">1×</option><option value="0.5" selected>0.5×</option><option value="0.25">0.25×</option></select></label>
+<label>Background<select id="background"><option value="checker">Checkerboard</option><option value="dark">Dark</option><option value="light">Light</option></select></label>
+<button id="pause" type="button">Pause</button><button id="step" type="button">Next frame</button>
+</div>
+<div class="pair"><section class="panel"><header>Original · 64 × 64</header><canvas id="original" width="512" height="320" class="sprite-bg" aria-label="Original dog animation"></canvas></section><section class="panel"><header>HD · 256 × 256</header><canvas id="hd" width="512" height="320" class="sprite-bg" aria-label="HD dog animation"></canvas></section></div>
+<p id="phase" class="metadata">Loading…</p><p id="status" role="status">Loading all 136 HD frames…</p>
+<h2>Frame gallery</h2>
+<div class="controls"><label>Show<select id="category"><option value="scenery">Scenery and pickups · 27</option><option value="dog">Dog frames · 39</option><option value="guard">Guard frames · 49</option><option value="weapons">Weapon frames · 20</option><option value="player">Map player · 1</option><option value="all">All 136 frames</option></select></label></div>
+<div id="gallery" class="gallery"></div>
+<script>
+'use strict';
+const scenery=[2,3,4,5,6,8,10,11,13,14,15,16,18,21,25,26,27,28,29,31,32,33,35,37,38,39,41];
+const range=(start,count)=>Array.from({length:count},(_,i)=>start+i);
+const groups={scenery,dog:range(99,39),guard:range(50,49),weapons:range(416,20),player:[408]};groups.all=[...scenery,...range(50,88),408,...range(416,20)];
+const names={2:'Water puddle',3:'Green metal barrel',4:'Table and chairs',5:'Floor lamp',6:'Chandelier',8:'Dog food',10:'Potted tree',11:'Skeleton',13:'Dried plant',14:'Blue vase',15:'Pedestal table',16:'Hanging lamp · existing HD artwork',18:'Suit of armor',21:'Bone pile',25:'Bucket',26:'Food platter',27:'First aid',28:'Ammunition · pickup and enemy drop',29:'Machine-gun pickup',31:'Jeweled cross',32:'Chalice',33:'Treasure chest',35:'Extra life',37:'Wooden barrel',38:'Well with water',39:'Empty well',41:'Flag',408:'Map player marker'};
+const controls=Object.fromEntries(['animation','direction','speed','background','pause','step','category'].map(id=>[id,document.getElementById(id)]));
+const images=[new Map(),new Map()],canvases=[document.getElementById('original'),document.getElementById('hd')];
+const filename=shape=>'shape-'+String(shape).padStart(3,'0')+'.png';
+const path=(kind,shape)=>(kind?'sprites/':'references/sprites/')+filename(shape);
+let ready=false,paused=false,elapsed=0,lastTime=performance.now(),key='',manualFrame=null,currentIndex=0;
+function sequence(){const d=Number(controls.direction.value);switch(controls.animation.value){case 'stand':return [[99+d,0]];case 'bite':return [[135,10],[136,10],[137,10],[135,10],[99,20]];case 'death':return [[131,15],[132,15],[133,15],[134,45]];case 'chase':return [[99+d,13],[107+d,8],[115+d,13],[123+d,8]];default:return [[99+d,25],[107+d,15],[115+d,25],[123+d,15]];}}
+function reset(){elapsed=0;lastTime=performance.now();key='';manualFrame=null;controls.direction.disabled=['bite','death'].includes(controls.animation.value);}
+for(const id of ['animation','direction','speed'])controls[id].addEventListener('change',reset);
+controls.background.addEventListener('change',()=>document.body.dataset.background=controls.background.value);
+controls.pause.addEventListener('click',()=>{paused=!paused;manualFrame=null;controls.pause.textContent=paused?'Play':'Pause';lastTime=performance.now();});
+controls.step.addEventListener('click',()=>{paused=true;controls.pause.textContent='Play';manualFrame=(currentIndex+1)%sequence().length;key='';});
+function gallery(){const shapes=groups[controls.category.value];const fragment=document.createDocumentFragment();for(const shape of shapes){const card=document.createElement('section');card.className='card';const title=document.createElement('header');title.textContent=filename(shape)+' · '+(names[shape]||((shape<99?'Guard':shape<138?'Dog':'Weapon')+' animation frame'));card.append(title);const pair=document.createElement('div');pair.className='thumbs sprite-bg';for(let kind=0;kind<2;kind++){const a=document.createElement('a');a.href=path(kind,shape);a.title='Open '+(kind?'HD':'original')+' frame';const img=document.createElement('img');img.src=a.href;img.alt=(kind?'HD ':'Original ')+filename(shape);img.loading='lazy';if(!kind)img.className='original';a.append(img);pair.append(a);}const footer=document.createElement('footer');footer.innerHTML='<span>Original</span><span>HD</span>';card.append(pair,footer);fragment.append(card);}document.getElementById('gallery').replaceChildren(fragment);}
+controls.category.addEventListener('change',gallery);gallery();
+function load(kind,shape){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{images[kind].set(shape,img);resolve();};img.onerror=()=>reject(new Error('Unable to load '+path(kind,shape)));img.src=path(kind,shape);});}
+Promise.all([0,1].flatMap(kind=>groups.all.map(shape=>load(kind,shape)))).then(()=>{ready=true;document.getElementById('status').textContent='136 of 136 HD frames loaded. All original references loaded.';reset();}).catch(err=>document.getElementById('status').textContent=err.message);
+function render(now){if(!paused)elapsed+=(now-lastTime)*Number(controls.speed.value);lastTime=now;if(ready){const frames=sequence();if(manualFrame!==null)currentIndex=manualFrame;else{let tick=elapsed*70/1000%(frames.reduce((n,f)=>n+f[1],0)||1);currentIndex=0;for(let i=0;i<frames.length;i++){currentIndex=i;if(tick<frames[i][1]||frames[i][1]===0)break;tick-=frames[i][1];}}const shape=frames[currentIndex][0];if(String(shape)!==key){key=String(shape);for(let kind=0;kind<2;kind++){const ctx=canvases[kind].getContext('2d');ctx.clearRect(0,0,512,320);ctx.imageSmoothingEnabled=false;ctx.drawImage(images[kind].get(shape),128,48,256,256);}document.getElementById('phase').textContent=controls.animation.options[controls.animation.selectedIndex].text+' · '+filename(shape);}}requestAnimationFrame(render);}
+requestAnimationFrame(render);
+</script>
+</body>
+</html>

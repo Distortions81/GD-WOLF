@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Player weapons — original and HD</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#17191b;color:#eee}body{max-width:1120px;margin:auto;padding:28px}h1{margin:0 0 10px;font-size:28px}p{color:#b8bec3;line-height:1.5}.controls{display:flex;gap:14px;flex-wrap:wrap;align-items:end;margin:24px 0}label{display:grid;gap:6px;font-size:14px}select,button{font:inherit;padding:10px 12px;background:#292e33;border:1px solid #53606a;border-radius:6px;color:#fff}button{cursor:pointer}button:focus-visible,select:focus-visible{outline:2px solid #e9ac6c;outline-offset:3px}.compare{display:grid;grid-template-columns:1fr 1fr;gap:20px}.panel{border:1px solid #454b52;border-radius:10px;overflow:hidden;background:#262b30}h2{font-size:16px;margin:0;padding:14px 18px;background:#30363c}canvas{display:block;width:100%;aspect-ratio:8/5;background:#555c60;background-image:linear-gradient(45deg,#4b5155 25%,transparent 25%),linear-gradient(-45deg,#4b5155 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#4b5155 75%),linear-gradient(-45deg,transparent 75%,#4b5155 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}.caption{padding:12px 18px;font-size:14px;font-variant-numeric:tabular-nums;color:#d5d9dc}a{color:#e9ac6c}.note{font-size:14px}#status{min-height:22px;color:#e9ac6c}#phase{min-height:20px;color:#d5d9dc;margin:0 0 12px}.atlases{display:flex;gap:16px;flex-wrap:wrap}@media(max-width:650px){body{padding:16px}.compare{gap:10px}h2,.caption{padding:10px;font-size:13px}h1{font-size:23px}.controls{gap:10px}}
+</style>
+</head>
+<body>
+<h1>Player arms and weapons: original and HD</h1>
+<p>The original weapons, hand positions, gray sleeves, and firing poses, with higher-resolution shading and clean material edges.</p>
+<div class="controls">
+<label>Weapon<select id="weapon"><option value="0">Knife</option><option value="1" selected>Pistol</option><option value="2">Machine gun</option><option value="3">Chaingun</option></select></label>
+<label>Playback<select id="mode"><option value="attack">Attack loop</option><option value="ready">Ready pose</option><option value="frame">Single frame</option></select></label>
+<label>Frame<select id="frame" disabled><option value="0">Ready</option><option value="1">Attack 1</option><option value="2">Attack 2</option><option value="3">Attack 3</option><option value="4">Attack 4</option></select></label>
+<label>Zoom<select id="zoom"><option value="1">1× game scale</option><option value="2" selected>2× detail view</option><option value="3">3× close-up</option></select></label>
+<label>Speed<select id="speed"><option value="1">1×</option><option value="0.5" selected>0.5×</option><option value="0.25">0.25×</option></select></label>
+<button id="pause" type="button">Pause</button><button id="step" type="button">Next frame</button>
+</div>
+<p id="phase">Loading…</p>
+<div class="compare">
+<section class="panel"><h2>Original</h2><canvas id="original" width="640" height="400" aria-label="Original player weapon animation"></canvas><div class="caption">64 × 64 frame</div></section>
+<section class="panel"><h2>HD experiment · v1</h2><canvas id="hd" width="640" height="400" aria-label="HD player weapon animation"></canvas><div class="caption">512 × 512 registered frame</div></section>
+</div>
+<p id="status" role="status" aria-live="polite">Loading all 20 weapon frames…</p>
+<p class="note">Use slow motion or step through frames to inspect the hands and recoil. Zoom 1× shows the normal weapon scale; 2× and 3× enlarge the details.</p>
+<div class="atlases"><a href="knife.png">Knife atlas</a><a href="pistol.png">Pistol atlas</a><a href="machinegun.png">Machine gun atlas</a><a href="chaingun.png">Chaingun atlas</a><a href="README.md">Asset notes</a></div>
+<script>
+'use strict';
+const controls=Object.fromEntries(['weapon','mode','frame','zoom','speed','pause','step'].map(id=>[id,document.getElementById(id)]));
+const status=document.getElementById('status'),phase=document.getElementById('phase');
+const canvases=[document.getElementById('original'),document.getElementById('hd')],images=[new Map(),new Map()];
+const names=['Knife','Pistol','Machine gun','Chaingun'];
+let ready=false,paused=false,elapsed=0,lastTime=performance.now(),currentPhase=0,renderKey='';
+function reset(){elapsed=0;lastTime=performance.now();renderKey='';}
+for(const id of ['weapon','mode','frame','zoom','speed'])controls[id].addEventListener('change',()=>{controls.frame.disabled=controls.mode.value!=='frame';reset();});
+controls.pause.addEventListener('click',()=>{paused=!paused;controls.pause.textContent=paused?'Play':'Pause';lastTime=performance.now();});
+controls.step.addEventListener('click',()=>{controls.mode.value='frame';controls.frame.disabled=false;controls.frame.value=String((currentPhase+1)%5);reset();});
+function load(path){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Unable to load '+path));img.src=path;});}
+Promise.all([0,1].flatMap(kind=>Array.from({length:20},(_,i)=>{const shape=416+i;return load((kind?'sprites/':'references/sprites/')+'shape-'+shape+'.png').then(img=>images[kind].set(shape,img));}))).then(()=>{ready=true;status.textContent='20 of 20 frames loaded: all four weapons.';reset();}).catch(err=>{status.textContent=err.message;});
+function render(now){
+ if(!paused)elapsed+=(now-lastTime)*Number(controls.speed.value);lastTime=now;
+ if(ready){
+  if(controls.mode.value==='ready')currentPhase=0;
+  else if(controls.mode.value==='frame')currentPhase=Number(controls.frame.value);
+  else{const tick=elapsed*70/1000%60;currentPhase=tick<36?0:Math.min(4,1+Math.floor((tick-36)/6));}
+  const weapon=Number(controls.weapon.value),shape=416+weapon*5+currentPhase;
+  const key=shape+':'+controls.zoom.value;
+  if(key!==renderKey){renderKey=key;
+   for(let kind=0;kind<2;kind++){const ctx=canvases[kind].getContext('2d');ctx.clearRect(0,0,640,400);ctx.imageSmoothingEnabled=false;const size=320*Number(controls.zoom.value);ctx.drawImage(images[kind].get(shape),(640-size)/2,400-size,size,size);}
+   phase.textContent=names[weapon]+' · '+(currentPhase===0?'Ready':'Attack '+currentPhase)+' · shape-'+shape+'.png';
+  }
+ }
+ requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+{
+  "mode": "built-in image_gen",
+  "selected": [
+    {
+      "tile": 1,
+      "path": "walls/horizontal/tile-01.png",
+      "contourGuide": "alternatives/tile-01-direct.png",
+      "references": [
+        "alternatives/tile-01-direct.png",
+        "previous/tile-01-stepped-contours.png"
+      ],
+      "prompt": "Use case: style-transfer\nAsset type: opaque HD classic game wall texture, gray stone tile01.\nImage1 is a manually drawn continuous-curve contour guide. Use EXACTLY its stone placement, sizes and smooth continuous outer contours. Image2 supplies ONLY the matte natural stone face material, fine fissures and muted gray palette.\nRender the blocks in image1 as natural gray cut stone instead of the smooth plastic-looking guide. Give the faces subtle cloudy tonal variation, very fine low-contrast mineral grain, and a few thin organic curved hairline cracks. Create realistic smooth shallow bevels and quiet dark recessed mortar. Match image2's softly illustrated classic game remaster material quality.\nCritical geometry constraint: every outer edge and every corner must keep image1's continuous curved silhouette. Do not import any outline from image2. Do not add jagged chips, rectangular notches, stair steps, polygon facets, tiny hard angular corners, or pixel-era broken outlines. All blocks are gently worn cut stone with smooth subtly irregular contours, never chunky chipped pixel-art shapes. Stone cracks may appear only on the faces and must not create broken steps in the perimeter. Preserve the same number of stones and pattern from image1.\nOne front-on flat square texture filling the full image, entirely opaque. Quiet even illumination with a little top-left bevel shading, no directional lighting gradient or vignette. No border, perspective, added objects, characters, text, symbols or watermark. High-resolution curves and material detail from scratch, not pixel art and not an upscale."
+    },
+    {
+      "tile": 2,
+      "path": "walls/horizontal/tile-02.png",
+      "references": [
+        "references/stone-user-style.png"
+      ],
+      "prompt": "Use case: precise-object-edit\nEdit this gray stone wall texture. Keep the rough stone surface, fine pitting, cracks, gray palette, bright chiseled top/left bevels, darker lower/right bevels, dark mortar, stone count, positions and sizes. The user likes this exact look.\nCHANGE ONLY THE LARGE PIXEL-ART SHAPES IN THE STONE PERIMETERS AND THEIR ADJACENT BEVELS. Replace their coarse horizontal/vertical staircase notches with natural irregular rock fracture contours drawn at full resolution. Preserve asymmetric irregular stone shapes; do not turn the stones into squares, neat rectangles, rounded rectangles, pillow shapes or buttons.\nSpecific corrections: the lower-right side of the tall central stone currently descends in several big square steps—replace those steps with a continuous oblique broken-rock edge, gently bowed and finely irregular. The small stone immediately below it must follow that new broken diagonal gap naturally. The middle-left stone's lower-left stepped bite becomes an asymmetric natural curved/diagonal fracture. The bottom-center horizontal stone's top-right rectangular step becomes a natural sloping fractured shoulder. Replace similar large square notches elsewhere with organic broken-stone edges. Keep the broad individual identities and the same arrangement.\nThe outlines can have small naturally uneven chips with fine high-resolution detail, but NEVER conspicuous coarse 90-degree staircases or inherited pixel-grid geometry. Bevel faces must follow the newly sculpted silhouettes with irregular chiseled stone planes, not uniform rounded radii. Do not smooth or flatten the rough stone faces, do not invent a new all-over surface pattern, and do not add cracks or change the lighting. No other redesign.\nReturn one opaque square texture, same framing and composition, edge to edge, no border, margin, scene, text or watermark."
+    },
+    {
+      "tile": 3,
+      "path": "walls/horizontal/tile-03.png",
+      "references": [
+        "walls/horizontal/tile-01.png"
+      ],
+      "prompt": "Use case: precise-object-edit\nAsset type: opaque high-resolution classic game wall texture, tile03: a plain red cloth banner on a gray stone wall.\nUse the reference as the exact gray stone background and finish. Preserve its stone block layout, joint locations, palette, smooth continuous bevels and fine low-contrast grain. Add a centered plain crimson red fabric banner hanging from a thin warm gold rod with small simple round finials. The rod spans about 78% of the width at 8% of the image height. The banner itself spans about 58% of the width from x=21% to x=79%, with its top at y=13% and straight horizontal bottom at y=90%. The cloth is rectangular with softly modeled vertical folds, subtle edge seams and natural smooth red shading, front-facing and hanging flat against the stone. A small quiet shadow behind the fabric grounds it against the wall. The cloth is completely unmarked: no emblem, medallion, insignia, symbol, stripes, lettering or decoration. Keep the gold rod simple and thin, no ornate sculptural elements.\nMatch the reference's clean smoothly illustrated high-resolution game remaster finish. Fine continuous edges, soft dimensional fabric folds, no chunky mottling, pixel art, square noise, stair steps or black outline. One flat orthographic square wall texture filling the entire frame, all pixels opaque. No perspective, borders, margins, vignette, scene, floor, text or watermark.\nCritical update: keep the reference's newly corrected continuous stone contours exactly. All outer stone edges and corners must remain smooth curves, with no pixel-era stair steps, square chips, jagged notches or faceted broken outlines. Preserve this stone layout behind the new plain red cloth banner."
+    },
+    {
+      "tile": 12,
+      "path": "walls/horizontal/tile-12.png",
+      "references": [
+        "references/horizontal/tile-12-enlarged.png"
+      ],
+      "prompt": "Use case: style-transfer\nAsset type: opaque square high-resolution Wolfenstein 3D wall texture, tile12 wood paneling.\nInput1 is the authoritative original texture, enlarged without adding detail. Redraw this exact wood wall at high resolution, keeping the original plank and narrow groove/batten positions, number of panels, widths, tall vertical geometry and slim horizontal trim rail at the very top. It must remain the same recognizable warm medium-brown original wall, simply with smooth detailed wood grain and shaded edge bevels instead of large pixels. Copy the exact original restrained brown palette, dark grooves, golden-brown edge highlights and broad wavy grain knots. Fine natural grain details, no strong varnish gloss, no new cross rails, no different board count, no nails, no decoration, no distressed peeling paint.\nComposition: one perfectly flat orthographic front-on 1024x1024 wall texture, fills the entire square edge to edge. Seamless repeat horizontally: the original partial board/groove at the left edge continues correctly at the right edge. Full wall height is from the original slim top trim down to the existing board ends, with no extra baseboard or added border. Even baked material shading, no scene lighting gradient, perspective, cast object shadow or vignette. All pixels opaque. No margins, transparency, room scene, separate plank objects, text, numbers, symbols or watermark. Faithful HD remaster, preserve the input's structural geometry."
+    }
+  ],
+  "directDrawing": {
+    "stoneSource": "remake_stone.go",
+    "woodSource": "remake_wood.go",
+    "notes": "Earlier continuous-curve contour guides and the direct wood alternative are retained for reference. Tile02 now uses the user's rough-stone reference with only its large stepped outline notches reshaped. The base stone wall and banner still need to match that approved direction."
+  },
+  "discarded": [
+    {
+      "path": "previous/tile-01-blocky-mottling.png",
+      "reason": "Coarse faceted grain read as pixels"
+    },
+    {
+      "path": "previous/tile-02-blocky-mottling.png",
+      "reason": "Coarse faceted grain read as pixels"
+    },
+    {
+      "path": "previous/tile-01-stepped-contours.png",
+      "reason": "Stone outlines retained stepped chips"
+    },
+    {
+      "path": "previous/tile-02-stepped-contours.png",
+      "reason": "Stone outlines retained stepped chips"
+    },
+    {
+      "path": "previous/tile-03-stepped-contours.png",
+      "reason": "Stone background retained stepped chips"
+    },
+    {
+      "path": "previous/tile-02-rounded-blocks.png",
+      "reason": "The user requested the earlier rough chiseled surface with natural irregular silhouettes, rather than rounded rectangular blocks."
+    }
+  ]
+}

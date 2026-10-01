@@ -1,0 +1,893 @@
+[
+  {
+    "shape": 2,
+    "uses": [
+      "map info 23"
+    ]
+  },
+  {
+    "shape": 3,
+    "uses": [
+      "map info 24"
+    ]
+  },
+  {
+    "shape": 4,
+    "uses": [
+      "map info 25"
+    ]
+  },
+  {
+    "shape": 5,
+    "uses": [
+      "map info 26"
+    ]
+  },
+  {
+    "shape": 6,
+    "uses": [
+      "map info 27"
+    ]
+  },
+  {
+    "shape": 8,
+    "uses": [
+      "map info 29"
+    ]
+  },
+  {
+    "shape": 10,
+    "uses": [
+      "map info 31"
+    ]
+  },
+  {
+    "shape": 11,
+    "uses": [
+      "map info 32"
+    ]
+  },
+  {
+    "shape": 13,
+    "uses": [
+      "map info 34"
+    ]
+  },
+  {
+    "shape": 14,
+    "uses": [
+      "map info 35"
+    ]
+  },
+  {
+    "shape": 15,
+    "uses": [
+      "map info 36"
+    ]
+  },
+  {
+    "shape": 16,
+    "uses": [
+      "map info 37"
+    ]
+  },
+  {
+    "shape": 18,
+    "uses": [
+      "map info 39"
+    ]
+  },
+  {
+    "shape": 21,
+    "uses": [
+      "map info 42"
+    ]
+  },
+  {
+    "shape": 25,
+    "uses": [
+      "map info 46"
+    ]
+  },
+  {
+    "shape": 26,
+    "uses": [
+      "map info 47"
+    ]
+  },
+  {
+    "shape": 27,
+    "uses": [
+      "map info 48"
+    ]
+  },
+  {
+    "shape": 28,
+    "uses": [
+      "enemy drop",
+      "map info 49"
+    ]
+  },
+  {
+    "shape": 29,
+    "uses": [
+      "map info 50"
+    ]
+  },
+  {
+    "shape": 31,
+    "uses": [
+      "map info 52"
+    ]
+  },
+  {
+    "shape": 32,
+    "uses": [
+      "map info 53"
+    ]
+  },
+  {
+    "shape": 33,
+    "uses": [
+      "map info 54"
+    ]
+  },
+  {
+    "shape": 35,
+    "uses": [
+      "map info 56"
+    ]
+  },
+  {
+    "shape": 37,
+    "uses": [
+      "map info 58"
+    ]
+  },
+  {
+    "shape": 38,
+    "uses": [
+      "map info 59"
+    ]
+  },
+  {
+    "shape": 39,
+    "uses": [
+      "map info 60"
+    ]
+  },
+  {
+    "shape": 41,
+    "uses": [
+      "map info 62"
+    ]
+  },
+  {
+    "shape": 50,
+    "uses": [
+      "actor.guard.stand"
+    ]
+  },
+  {
+    "shape": 51,
+    "uses": [
+      "actor.guard.stand"
+    ]
+  },
+  {
+    "shape": 52,
+    "uses": [
+      "actor.guard.stand"
+    ]
+  },
+  {
+    "shape": 53,
+    "uses": [
+      "actor.guard.stand"
+    ]
+  },
+  {
+    "shape": 54,
+    "uses": [
+      "actor.guard.stand"
+    ]
+  },
+  {
+    "shape": 55,
+    "uses": [
+      "actor.guard.stand"
+    ]
+  },
+  {
+    "shape": 56,
+    "uses": [
+      "actor.guard.stand"
+    ]
+  },
+  {
+    "shape": 57,
+    "uses": [
+      "actor.guard.stand"
+    ]
+  },
+  {
+    "shape": 58,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 59,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 60,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 61,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 62,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 63,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 64,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 65,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 66,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 67,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 68,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 69,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 70,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 71,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 72,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 73,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 74,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 75,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 76,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 77,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 78,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 79,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 80,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 81,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 82,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 83,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 84,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 85,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 86,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 87,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 88,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 89,
+    "uses": [
+      "actor.guard.chase",
+      "actor.guard.patrol"
+    ]
+  },
+  {
+    "shape": 90,
+    "uses": [
+      "actor.guard.pain"
+    ]
+  },
+  {
+    "shape": 91,
+    "uses": [
+      "actor.guard.death"
+    ]
+  },
+  {
+    "shape": 92,
+    "uses": [
+      "actor.guard.death"
+    ]
+  },
+  {
+    "shape": 93,
+    "uses": [
+      "actor.guard.death"
+    ]
+  },
+  {
+    "shape": 94,
+    "uses": [
+      "actor.guard.pain2"
+    ]
+  },
+  {
+    "shape": 95,
+    "uses": [
+      "actor.guard.death",
+      "map info 124"
+    ]
+  },
+  {
+    "shape": 96,
+    "uses": [
+      "actor.guard.shoot"
+    ]
+  },
+  {
+    "shape": 97,
+    "uses": [
+      "actor.guard.shoot"
+    ]
+  },
+  {
+    "shape": 98,
+    "uses": [
+      "actor.guard.shoot"
+    ]
+  },
+  {
+    "shape": 99,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.jump",
+      "actor.dog.patrol",
+      "actor.dog.stand"
+    ]
+  },
+  {
+    "shape": 100,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol",
+      "actor.dog.stand"
+    ]
+  },
+  {
+    "shape": 101,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol",
+      "actor.dog.stand"
+    ]
+  },
+  {
+    "shape": 102,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol",
+      "actor.dog.stand"
+    ]
+  },
+  {
+    "shape": 103,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol",
+      "actor.dog.stand"
+    ]
+  },
+  {
+    "shape": 104,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol",
+      "actor.dog.stand"
+    ]
+  },
+  {
+    "shape": 105,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol",
+      "actor.dog.stand"
+    ]
+  },
+  {
+    "shape": 106,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol",
+      "actor.dog.stand"
+    ]
+  },
+  {
+    "shape": 107,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 108,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 109,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 110,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 111,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 112,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 113,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 114,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 115,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 116,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 117,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 118,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 119,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 120,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 121,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 122,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 123,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 124,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 125,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 126,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 127,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 128,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 129,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 130,
+    "uses": [
+      "actor.dog.chase",
+      "actor.dog.patrol"
+    ]
+  },
+  {
+    "shape": 131,
+    "uses": [
+      "actor.dog.death"
+    ]
+  },
+  {
+    "shape": 132,
+    "uses": [
+      "actor.dog.death"
+    ]
+  },
+  {
+    "shape": 133,
+    "uses": [
+      "actor.dog.death"
+    ]
+  },
+  {
+    "shape": 134,
+    "uses": [
+      "actor.dog.death"
+    ]
+  },
+  {
+    "shape": 135,
+    "uses": [
+      "actor.dog.jump"
+    ]
+  },
+  {
+    "shape": 136,
+    "uses": [
+      "actor.dog.jump"
+    ]
+  },
+  {
+    "shape": 137,
+    "uses": [
+      "actor.dog.jump"
+    ]
+  },
+  {
+    "shape": 408,
+    "uses": [
+      "map player marker"
+    ]
+  },
+  {
+    "shape": 416,
+    "uses": [
+      "weapon 0 ready"
+    ]
+  },
+  {
+    "shape": 417,
+    "uses": [
+      "weapon.knife.attack"
+    ]
+  },
+  {
+    "shape": 418,
+    "uses": [
+      "weapon.knife.attack"
+    ]
+  },
+  {
+    "shape": 419,
+    "uses": [
+      "weapon.knife.attack"
+    ]
+  },
+  {
+    "shape": 420,
+    "uses": [
+      "weapon.knife.attack"
+    ]
+  },
+  {
+    "shape": 421,
+    "uses": [
+      "weapon 1 ready"
+    ]
+  },
+  {
+    "shape": 422,
+    "uses": [
+      "weapon.pistol.attack"
+    ]
+  },
+  {
+    "shape": 423,
+    "uses": [
+      "weapon.pistol.attack"
+    ]
+  },
+  {
+    "shape": 424,
+    "uses": [
+      "weapon.pistol.attack"
+    ]
+  },
+  {
+    "shape": 425,
+    "uses": [
+      "weapon.pistol.attack"
+    ]
+  },
+  {
+    "shape": 426,
+    "uses": [
+      "weapon 2 ready"
+    ]
+  },
+  {
+    "shape": 427,
+    "uses": [
+      "weapon.machinegun.attack"
+    ]
+  },
+  {
+    "shape": 428,
+    "uses": [
+      "weapon.machinegun.attack"
+    ]
+  },
+  {
+    "shape": 429,
+    "uses": [
+      "weapon.machinegun.attack"
+    ]
+  },
+  {
+    "shape": 430,
+    "uses": [
+      "weapon.machinegun.attack"
+    ]
+  },
+  {
+    "shape": 431,
+    "uses": [
+      "weapon 3 ready"
+    ]
+  },
+  {
+    "shape": 432,
+    "uses": [
+      "weapon.chaingun.attack"
+    ]
+  },
+  {
+    "shape": 433,
+    "uses": [
+      "weapon.chaingun.attack"
+    ]
+  },
+  {
+    "shape": 434,
+    "uses": [
+      "weapon.chaingun.attack"
+    ]
+  },
+  {
+    "shape": 435,
+    "uses": [
+      "weapon.chaingun.attack"
+    ]
+  }
+]

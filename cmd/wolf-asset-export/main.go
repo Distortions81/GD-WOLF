@@ -301,16 +301,20 @@ func exportSprites(files *wl6.Files, outDir, imageLayout string, magnifyScale in
 	if err != nil {
 		return fmt.Errorf("load sprite set: %w", err)
 	}
+	walls, err := files.LoadWallSet()
+	if err != nil {
+		return fmt.Errorf("load palette for sprites: %w", err)
+	}
 	dir := filepath.Join(outDir, "sprites")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
 	entries := make([]sheetEntry, 0, len(set.Pages))
 	for i, spr := range set.Pages {
-		if spr.Width <= 0 || spr.Height <= 0 || len(spr.Pixels) == 0 {
+		if spr.Width <= 0 || spr.Height <= 0 || (!spr.IndexedFormat && len(spr.Pixels) == 0) {
 			continue
 		}
-		img := spriteImage(spr)
+		img := spriteImage(spr, walls.Palette)
 		entries = append(entries, sheetEntry{
 			Name:  fmt.Sprintf("shape-%03d", i),
 			Image: magnifyImage(img, magnifyScale),
@@ -423,8 +427,19 @@ func wallTextureImage(tex wl6.WallTexture) image.Image {
 	return img
 }
 
-func spriteImage(spr wl6.Sprite) image.Image {
+func spriteImage(spr wl6.Sprite, palette [256]uint32) image.Image {
 	img := image.NewRGBA(image.Rect(0, 0, spr.Width, spr.Height))
+	if spr.IndexedFormat {
+		for x, column := range spr.Columns {
+			for _, post := range column.Posts {
+				for i, index := range post.Indexed {
+					rgba := palette[index]
+					img.SetRGBA(x, post.StartY+i, color.RGBA{R: byte(rgba >> 24), G: byte(rgba >> 16), B: byte(rgba >> 8), A: byte(rgba)})
+				}
+			}
+		}
+		return img
+	}
 	for y := 0; y < spr.Height; y++ {
 		for x := 0; x < spr.Width; x++ {
 			rgba := spr.Pixels[y*spr.Width+x]
