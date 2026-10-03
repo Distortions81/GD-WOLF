@@ -5,6 +5,50 @@ import (
 	"testing"
 )
 
+func TestDemoActorSpawnTimersMatchOriginalFirstMap(t *testing.T) {
+	files, err := wl6.OpenEmbeddedShareware()
+	if err != nil {
+		t.Fatal(err)
+	}
+	demo, err := files.LoadDemo(0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	g, err := buildEnemyAIFuzzBaseline(files, demo.Map)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := g.startDemo(demo); err != nil {
+		t.Fatal(err)
+	}
+	// Golden states from compiled original ScanInfoPlane/SpawnNewObj.
+	indices := []int{17, 18, 19, 20, 25, 26, 27, 28, 31}
+	remaining := []int{8, 9, 0, 2, 1, 9, 7, 15, 8}
+	if g.rng.index != 9 {
+		t.Fatalf("initial RNG index = %d, want 9", g.rng.index)
+	}
+	for i, index := range indices {
+		a := &g.actors[index]
+		if a.frameTimer != 20-remaining[i] {
+			t.Fatalf("actor %d frame timer = %d, want %d", index, a.frameTimer, 20-remaining[i])
+		}
+	}
+	frozen := &g.actors[19]
+	g.advanceActorSequence(frozen, 40)
+	if frozen.frameIndex != 0 || !frozen.spawnAnimationFrozen {
+		t.Fatal("original zero ticcount must hold the initial state")
+	}
+	g.startActorSequence(frozen, frozen.chaseSequence(), true)
+	g.advanceActorSequence(frozen, 4)
+	if frozen.spawnAnimationFrozen || frozen.frameTimer != 4 {
+		t.Fatal("entering a new state must clear the spawn freeze")
+	}
+	g.prepareDemoCommand(demo.Commands[0])
+	if g.rng.index != 10 || g.demoPlayback.faceCount != 4 {
+		t.Fatalf("first player command skipped face RNG: index=%d face count=%d", g.rng.index, g.demoPlayback.faceCount)
+	}
+}
+
 func demoMovementTestGame() *game {
 	level := blankLevel(7, 7)
 	for y := 0; y < 7; y++ {

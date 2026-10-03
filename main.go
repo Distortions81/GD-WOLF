@@ -5240,7 +5240,11 @@ func (g *game) statusFaceChunk() int {
 	if band > 6 {
 		band = 6
 	}
-	return g.files.Variant.Face1APicChunk + band*3
+	frame := 0
+	if g.demoPlayback != nil {
+		frame = g.demoPlayback.faceFrame
+	}
+	return g.files.Variant.Face1APicChunk + band*3 + frame
 }
 
 func (g *game) castRay(dirX, dirY float64) (dist float64, wallID uint16, side int, texU float64, texOverride int) {
@@ -7734,6 +7738,9 @@ func (g *game) applyPickup(pickup pickupType) bool {
 	case pickupChaingun:
 		g.giveWeapon(3)
 		g.playSound(soundPickupChaingun)
+		if g.demoPlayback != nil {
+			g.demoPlayback.faceCount = 0
+		}
 	case pickupKey1:
 		g.keys |= 1 << 0
 		g.playSound(soundPickupKey)

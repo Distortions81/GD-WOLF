@@ -79,10 +79,11 @@ outside its scope. Completed implementation items below do not establish
 complete enemy AI parity. Sight/hearing, state timing, combat and interactions
 between systems still need independent original-engine comparison.
 
-The [demo player comparison](docs/wolf-demo-compare.md) now replays recorded
+The [demo comparison](docs/wolf-demo-compare.md) now replays recorded
 inputs through the actual port and records actor, door, RNG and combat state.
-Its C reference only compares conditional player movement; enemy/combat parity
-remains unverified.
+The player C reference compares conditional movement. A separate C startup
+reference verifies actor initialization on all four demo maps and conditional
+face RNG updates. Subsequent enemy/combat parity remains unverified.
 
 ### 1. Guard
 
@@ -375,7 +376,7 @@ For an enemy to move from `[partial]` or `[next]` to `[done]`, it should have:
 
 Current note:
 - the shared enemy AI shell has Go regressions based on source behavior for notice, chase, attack entry, door waiting, area-connectivity, and death/drop behavior
-- independent compiled C coverage currently verifies isolated movement decisions only; complete runtime parity remains unverified
+- independent compiled C coverage verifies isolated movement decisions and actor initialization on all four built-in demo maps, plus conditional player movement and face RNG updates; complete runtime parity remains unverified
 
 This section is intentionally strict:
 - "looks close in playtesting" is not enough

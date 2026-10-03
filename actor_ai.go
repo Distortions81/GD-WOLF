@@ -79,15 +79,16 @@ type actorInstance struct {
 	jumpSeq     AnimSequenceID
 	deathSeq    AnimSequenceID
 
-	aiState         ActorAIState
-	spawnMode       ActorSpawnMode
-	reactionTimer   int
-	sequenceID      AnimSequenceID
-	sequenceLoop    bool
-	frameIndex      int
-	frameTimer      int
-	frameActionDone bool
-	moveDistance    float64
+	aiState              ActorAIState
+	spawnMode            ActorSpawnMode
+	reactionTimer        int
+	sequenceID           AnimSequenceID
+	sequenceLoop         bool
+	frameIndex           int
+	frameTimer           int
+	frameActionDone      bool
+	spawnAnimationFrozen bool
+	moveDistance         float64
 }
 
 const actorDoorWaitDistance = -1.0
@@ -1513,12 +1514,13 @@ func (g *game) startActorSequence(a *actorInstance, id AnimSequenceID, loop bool
 	a.frameIndex = 0
 	a.frameTimer = 0
 	a.frameActionDone = false
+	a.spawnAnimationFrozen = false
 	a.shapenum = seq.Frames[0].Shape
 	return true
 }
 
 func (g *game) advanceActorSequence(a *actorInstance, tics int) {
-	if a.sequenceID == "" {
+	if a.sequenceID == "" || a.spawnAnimationFrozen {
 		return
 	}
 	seq, ok := LookupAnimSequence(a.sequenceID)

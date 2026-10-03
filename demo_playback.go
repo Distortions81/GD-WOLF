@@ -20,6 +20,8 @@ type wolfDemoPlayback struct {
 	buttons   byte
 	angle     int // Original counterclockwise integer degrees.
 	angleFrac int
+	faceCount int
+	faceFrame int
 }
 
 // WOLFSRC BuildTables accumulates a float (32-bit) angle and stores sine
@@ -53,10 +55,48 @@ func (g *game) startDemo(demo *wl6.Demo) error {
 		return err
 	}
 	g.demoPlayback = &wolfDemoPlayback{demo: demo, angle: wolfDemoAngle(g.playerA)}
+	g.initializeDemoActorTimers()
 	g.fadePhase = 0
 	g.uiState = uiStatePlaying
 	g.mode = modeRaycast
 	return nil
+}
+
+// SpawnNewObj consumes one shared random byte for each timed initial state.
+// A random zero ticcount is special: DoActor thinks without advancing states
+// until another state is entered. Stand states consume no random bytes.
+func (g *game) initializeDemoActorTimers() {
+	for i := range g.actors {
+		a := &g.actors[i]
+		seq, ok := LookupAnimSequence(a.sequenceID)
+		if !ok || len(seq.Frames) == 0 || seq.Frames[0].Tics <= 0 {
+			continue
+		}
+		tics := seq.Frames[0].Tics
+		remaining := g.rng.Intn(tics)
+		a.frameTimer = tics - remaining
+		a.spawnAnimationFrozen = remaining == 0
+		// SpawnPatrol keeps the physical spawn area's number while reserving
+		// the next tile. Movement later updates the area on tile arrival.
+		a.area = g.actorAreaAt(int(a.x), int(a.y))
+	}
+}
+
+// UpdateFace uses the gameplay RNG, even if the face does not change. Sound
+// suppression is supplied explicitly so comparisons can isolate its timing.
+func (g *game) updateDemoFace(tics int, gatlingSound bool) {
+	if gatlingSound {
+		return
+	}
+	d := g.demoPlayback
+	d.faceCount += tics
+	if d.faceCount > g.rng.Intn(256) {
+		d.faceFrame = g.rng.Intn(256) >> 6
+		if d.faceFrame == 3 {
+			d.faceFrame = 1
+		}
+		d.faceCount = 0
+	}
 }
 
 func wolfDemoAngle(radians float64) int {
@@ -93,6 +133,7 @@ func (g *game) prepareDemoCommand(command wl6.DemoCommand) bool {
 	g.updatePushWall(wl6.DemoTics)
 	g.updateSpriteAnimations(wl6.DemoTics)
 	g.updateScreenFlashes(wl6.DemoTics)
+	g.updateDemoFace(wl6.DemoTics, g.isSoundPlaying(soundPickupChaingun))
 	wasAttacking := g.attacking
 	if !wasAttacking {
 		if command.Buttons&demoButtonUse != 0 && d.buttons&demoButtonUse == 0 {

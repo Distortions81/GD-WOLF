@@ -34,7 +34,9 @@ go run . -data internal/wl6/shareware -demo-file /path/to/demo.wl1
 
 The four embedded demos use E1F1, E1F3, E1F5 and E1F7, with 1,152, 1,284, 671
 and 633 commands respectively. Playback starts on hard difficulty with RNG
-index zero and uses the original integer controls. Each command contains a
+index zero before spawning actors and uses the original integer controls. Timed
+initial actor states consume RNG in map order, as in original `SpawnNewObj`.
+The first demo therefore starts gameplay at RNG index 9. Each command contains a
 button bitmask and signed X/Y controls. The header's fourth byte is unused;
 it may be nonzero. Malformed lengths and unavailable maps are rejected.
 
@@ -55,7 +57,7 @@ are not independently verified by the player reference.
 
 ```bash
 ./scripts/wolf_demo_player_compare.sh
-./scripts/wolf_demo_player_compare.sh --stop-after-commands 310
+./scripts/wolf_demo_player_compare.sh --stop-after-commands 371
 ./scripts/wolf_demo_player_compare.sh --demo-index 1 --out /tmp/wolf-demo-2
 ./scripts/wolf_demo_player_compare.sh --self-test
 ```
@@ -102,13 +104,58 @@ build/wolf-demo-player-compare/wolf-demo-player-reference \
 3. Command 248, ending at tic 996: modern door behavior prevented the original
    slide. Playback now forces original door collision and sliding.
 
+4. Before command 0: nine patrol spawns skipped the original random initial
+   timers, leaving RNG at index 0 instead of 9. Playback now consumes those
+   bytes and preserves the original zero-timer state until a state change.
+5. Every player command: the face animation omitted its shared gameplay RNG
+   draws. Playback now advances the face before use, weapons and movement,
+   as in original `T_Player`/`T_Attack`.
+
 The reference self-test matches all 360 movement angles plus strafing, reverse
-movement, speed clamps and fractional turns. The first 310 demo commands
-(1,240 tics) match conditional player movement. The port then dies before
-command 310 (zero-based), so the unrestricted 1,152-command demo run remains
+movement, speed clamps and fractional turns. After restoring spawn and face
+RNG consumption, the first 371 demo commands (1,484 tics) match conditional
+player movement, up from 310 commands. The port then dies before
+command 371 (zero-based), so the unrestricted 1,152-command demo run remains
 incomplete. This is not a verified original-versus-port death desync: the
 current reference does not simulate enemy damage.
 
-The next comparison stage needs independent original actor initialization,
-state progression, RNG consumption, visibility/targeting and combat, using
-the saved runtime trace to locate the first divergence before death.
+## Actor initialization and face RNG comparison
+
+```bash
+./scripts/wolf_demo_start_compare.sh
+./scripts/wolf_demo_start_compare.sh --out /tmp/wolf-demo-start
+```
+
+The output directory contains `build.log`, `compare.log`, and each demo's
+`demo-N-reference.json`, `demo-N-port.json` and `demo-N-input.txt`. Replay an
+initialization directly with `wolf-demo-start-reference < demo-0-input.txt`.
+
+This separate reference receives the two raw decoded map planes, rather than
+port actor snapshots. It compiles original `ScanInfoPlane`, `SpawnNewObj`,
+`SpawnStand`, `SpawnPatrol`, `SpawnDeadGuard`, `SpawnBoss`, `SpawnDoor` and
+`UpdateFace`, including the original sprite, health and random tables. Source
+hashes are checked at the same pinned revision as the movement harness. DOS
+16-bit map words and tagged pointers are adapted to host types. The bridge's
+wall-copy loop mirrors `SetupGameLevel`; player/static spawn callbacks omit
+rendering and operations that consume no RNG. Unsupported boss families,
+ghosts and the original source's undefined standing-dog spawn fail explicitly.
+
+All 287 active actor starts across the four built-in demo maps match at hard
+difficulty: class, fixed position, reserved tile, facing, area, ambush flag,
+health, speed, move distance, shape, initial timer and final spawn RNG index.
+The initial RNG indices are 9, 12, 28 and 15 respectively. This establishes
+initialization parity on these maps, without validating subsequent AI updates.
+
+The same reference checks 4,096 face updates, sharing each call's entry RNG
+index and sound-suppression flag while carrying independent face counters.
+This isolates the original `UpdateFace` behavior; actor/combat RNG consumption
+is still unverified. Native playback uses the port audio state for the
+chaingun pickup's suppression and resets the face counter on that pickup.
+Original sound priority and timing are not independently reproduced, and
+headless comparisons do not simulate audio playback.
+
+The next comparison stage needs independent actor state progression,
+visibility/targeting and combat. In particular, original `DoActor` runs actions
+on state exit and skips think callbacks during pause frames; the port's current
+animation/AI scheduler still needs comparison against that behavior. Use the
+saved runtime trace to locate divergences before death.

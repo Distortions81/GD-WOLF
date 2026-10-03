@@ -75,7 +75,7 @@ func captureDemoRuntime(g *game) map[string]any {
 	actors := make([]map[string]any, len(g.actors))
 	for i := range g.actors {
 		a := &g.actors[i]
-		actors[i] = map[string]any{"index": i, "kind": a.kind, "state": captureHarnessRuntimeState(a), "health": a.health, "alive": a.alive, "blocking": a.blocking, "shootable": a.shootable, "frame": a.frameIndex, "shape": a.shapenum, "frame_timer": a.frameTimer, "frame_action_done": a.frameActionDone, "sequence_loop": a.sequenceLoop}
+		actors[i] = map[string]any{"index": i, "kind": a.kind, "state": captureHarnessRuntimeState(a), "health": a.health, "alive": a.alive, "blocking": a.blocking, "shootable": a.shootable, "frame": a.frameIndex, "shape": a.shapenum, "frame_timer": a.frameTimer, "frame_action_done": a.frameActionDone, "sequence_loop": a.sequenceLoop, "spawn_animation_frozen": a.spawnAnimationFrozen}
 	}
 	doors := []map[string]any{}
 	for i, tile := range g.level.Tiles {
@@ -83,7 +83,7 @@ func captureDemoRuntime(g *game) map[string]any {
 			doors = append(doors, map[string]any{"x": i % g.levelWidth, "y": i / g.levelWidth, "lock": tile.Door.Lock, "state": g.doorState[i], "open": g.doorOpen[i], "timer": g.doorTimer[i]})
 		}
 	}
-	return map[string]any{"health": g.health, "ammo": g.ammo, "weapon": g.weapon, "attacking": g.attacking, "weapon_frame": g.weaponFrameIdx, "weapon_timer": g.weaponFrameTics, "rng_index": g.rng.index, "actors": actors, "doors": doors, "player_dying": g.playerDying, "victory": g.victoryActive}
+	return map[string]any{"health": g.health, "ammo": g.ammo, "weapon": g.weapon, "attacking": g.attacking, "weapon_frame": g.weaponFrameIdx, "weapon_timer": g.weaponFrameTics, "rng_index": g.rng.index, "face_count": g.demoPlayback.faceCount, "face_frame": g.demoPlayback.faceFrame, "actors": actors, "doors": doors, "player_dying": g.playerDying, "victory": g.victoryActive}
 }
 
 func captureDemoPlayer(g *game) wolfDemoPlayerState {

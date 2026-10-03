@@ -131,13 +131,20 @@ the input finishes or the port reaches death/victory.
 Compare recorded player movement with compiled original C:
 
 ```bash
-./scripts/wolf_demo_player_compare.sh --stop-after-commands 310
+./scripts/wolf_demo_player_compare.sh --stop-after-commands 371
 ```
 
-The first demo's first 310 commands (1,240 Wolf tics) match within this
+The first demo's first 371 commands (1,484 Wolf tics) match within this
 conditional player-movement comparison. The unrestricted run currently stops
-at the port's death before command 310; enemy/combat and terminal states are
+at the port's death before command 371; enemy/combat and terminal states are
 not independently compared yet. See [demo comparison coverage and artifacts](docs/wolf-demo-compare.md).
+
+Actor initialization on all four demo maps and conditional face-animation RNG
+updates also match compiled original C:
+
+```bash
+./scripts/wolf_demo_start_compare.sh
+```
 
 ## Browser Build
 
