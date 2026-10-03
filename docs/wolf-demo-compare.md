@@ -120,7 +120,8 @@ build/wolf-demo-player-compare/wolf-demo-player-reference \
 7. Demo shots now use cached previous-command projections with the original
    fixed-point geometry and reserved-tile damage distance. Demo visibility
    follows the original floor-ray traversal and nine-tile actor visibility
-   checks; the ray traversal has not yet been independently verified.
+   checks. The ray traversal now matches original 16-bit x86 execution under QEMU
+   for every command in the first demo.
 8. Opening doors had an artificial 0.01 head start and connected areas before
    their first movement. Demo playback now starts opening at zero and connects
    areas once the door moves.
@@ -142,9 +143,12 @@ The reference self-test matches all 360 movement angles plus strafing, reverse
 movement, speed clamps and fractional turns. The first 1,055 commands (4,220
 tics) now match conditional player movement, up from the previous 907-command
 checkpoint. The port dies before command 1,055 (zero-based), so the unrestricted
-1,152-command run remains incomplete. The broader runtime reference also
-matches through command 1,054 with independent health reaching zero; this is
-conditional on the shared visible-floor masks and use requests.
+1,152-command player-only run still stops at this unsupported boundary. The
+broader runtime comparison now passes with a matching original death after
+command 1,054. The bundled DOS executable independently confirms that endpoint
+at tic 4,220, with 0 health and 41 ammo, and matches health/ammo after all 1,055
+played commands. The original demo never consumes its remaining 97 commands;
+those commands are not part of the verified gameplay run.
 
 ## Actor initialization and face RNG comparison
 
@@ -209,19 +213,26 @@ DOS projection height assembly uses equivalent integer division, and tagged
 pointers/map words are adapted for host C. Unsupported actor families and
 victory behavior fail explicitly.
 
-The remaining shared inputs are visible-floor masks produced by the port's
-translation of `WL_DR_A.ASM`, and door/pushwall use requests selected by the
-port. The reference's original C then operates those doors/pushwalls itself.
-No independent original assembly raycaster or audio-priority simulation runs
-yet. The projection self-test matches original render tables and 2,160
-actor/pickup projection cases spanning every integer angle.
+The runtime now compiles original `T_Player`, `Cmd_Use` and `TakeDamage`, so
+use requests and the death flag evolve independently. Its remaining shared input
+is the visible-floor mask produced by the port's translation of `WL_DR_A.ASM`.
+The runtime script audits those masks by assembling the verified original
+raycaster instructions and executing them as 16-bit x86 under QEMU. Assembler
+syntax, test-owned segment placement and drawing callbacks are adapted; the
+original arithmetic and self-modifying quadrant branches execute unchanged.
+Every one of the first demo's 4,321,280 floor bits matches. This audit uses
+original-C tile bytes, door positions, pushwall position and view coordinates,
+plus original render tables. Audio-priority simulation is still omitted. The
+projection self-test matches original render tables and 2,160 actor/pickup
+projection cases spanning every integer angle.
 
 All 37 actors, weapons, player movement, door/wall occupancy, outgoing RNG,
 enemy damage, cached projections and post-pickup health/ammo currently match
-through command 1,054. Both runtimes reach health zero there. The script exits
-nonzero at the next command's unsupported port death boundary; it does not
-certify the whole demo. Investigating original floor visibility is the next
-stage.
+through command 1,054, including the original death flag. The script succeeds
+at that matching terminal state. A terminal state that differs from the original
+fails. This verifies the first demo's actual playback to its endpoint, rather
+than requiring the port to consume commands the original never plays. It does
+not establish parity of other demos, unsupported enemy families, audio or scoring.
 
 Default runtime artifacts in `build/wolf-demo-runtime-compare`:
 
@@ -230,8 +241,10 @@ Default runtime artifacts in `build/wolf-demo-runtime-compare`:
 | `build.log`, `compare.log` | Compiler and comparison output |
 | `reference-input.txt` | Raw map, commands, diagnostic snapshots and shared floor masks |
 | `reference.jsonl`, `port.jsonl` | Player, actor, weapon, RNG, doors and wall occupancy before rendering |
-| `reference-render.jsonl` | Original cached actor projections and post-pickup health/ammo |
-| `result.json` | Matched command/tic count and success, mismatch or unsupported-terminal status |
+| `reference-render.jsonl` | Original cached actor projections, post-pickup health/ammo and death flag |
+| `raycast-input.jsonl` | Original view coordinates, exact tile bytes, door/pushwall positions and port floor masks |
+| `raycast/`, `raycast.log` | Generated original x86 assembly/boot image, visibility bytes and audit result |
+| `result.json` | Matched count, unread commands, and success, matched-terminal, mismatch or unsupported-terminal status |
 
 Replay the original C runtime without Go or a display:
 
@@ -239,3 +252,41 @@ Replay the original C runtime without Go or a display:
 build/wolf-demo-runtime-compare/wolf-demo-runtime-reference \
   < build/wolf-demo-runtime-compare/reference-input.txt
 ```
+
+
+## Original raycaster and shipped DOS checks
+
+The runtime script runs the assembly visibility audit automatically. Repeat it
+from saved artifacts without Go or a display:
+
+```bash
+./scripts/wolf_demo_raycast_compare.sh
+./scripts/wolf_demo_raycast_compare.sh --runtime /tmp/wolf-demo-runtime --out /tmp/wolf-raycast
+```
+
+The audit needs Python 3, GNU `as`/`ld` and `qemu-system-i386`. It verifies the
+pinned `WL_DR_A.ASM` hash, boots a small real-mode test program, and emits original
+`spotvis` bytes for comparison. It compares floor traversal only; wall drawing,
+heights and textures are omitted. A deliberately changed mask bit was confirmed
+to fail at its exact command/tile.
+
+Check the bundled DOS executable independently on Linux:
+
+```bash
+./scripts/wolf_demo_dos_compare.sh
+./scripts/wolf_demo_dos_compare.sh --dosbox /path/to/dosbox --runtime /tmp/wolf-demo-runtime
+```
+
+This optional check takes about two minutes and requires DOSBox, Python 3,
+X11/XTest libraries and Xvfb on headless Linux. It verifies the bundled v1.4
+executable/map/demo-data hashes, copies the game into a fresh temporary directory
+with its default viewport, acknowledges the startup prompt and reads only its
+own DOSBox child's emulated `gametype`. No software is installed. Artifacts
+include `gamestate.jsonl`, `dosbox.log`, `dosbox.conf` and `result.json`.
+
+The first new `TimeCount` value after rendering identifies each completed
+command. All 1,055 health/ammo snapshots match the original-C runtime. The DOS
+counter stops at 4,220 with health 0 and ammo 41, confirming command 1,054 as the
+original terminal command. The demo then returns to the title screen. Playback
+of the unused tail, subsequent demos, DOS actor memory, audio behavior and
+scoring are not verified by this DOS check.

@@ -376,7 +376,7 @@ For an enemy to move from `[partial]` or `[next]` to `[done]`, it should have:
 
 Current note:
 - the shared enemy AI shell has Go regressions based on source behavior for notice, chase, attack entry, door waiting, area-connectivity, and death/drop behavior
-- independent compiled C coverage verifies isolated movement decisions, actor initialization on all four built-in demo maps, and 1,055 commands of the first demo runtime using shared floor-visibility masks and use requests; complete runtime parity remains unverified
+- independent compiled C coverage verifies isolated movement decisions, actor initialization on all four built-in demo maps, and all 1,055 played commands of the first demo through its matching original death; original x86 floor visibility and shipped-DOS health/ammo also match. Other demos and the complete enemy roster remain unverified
 
 This section is intentionally strict:
 - "looks close in playtesting" is not enough

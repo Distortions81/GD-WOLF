@@ -1,5 +1,5 @@
 /* Original demo runtime carries independent gameplay state. Floor visibility
-   and use requests are supplied by the port; rendering/audio are omitted. */
+   is supplied by the port and audited separately against original x86 assembly. */
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,6 +58,11 @@ enum { di_north, di_east, di_south, di_west };
 #define BACKMOVESCALE 100
 #define ANGLESCALE 20
 #define EXITTILE 99
+#define PUSHABLETILE 98
+#define ELEVATORTILE 21
+#define ALTELEVATORTILE 107
+#define ex_secretlevel 9
+#define ex_died 2
 #define MAPSPOT(x,y,p) (mapsegs[p][(y)*64+(x)])
 #include "original_demo_runtime_types.inc"
 typedef struct object objtype;
@@ -90,12 +95,14 @@ static doorobj_t doorobjlist[64], *lastdoorobj = doorobjlist;
 static int doornum, areabyplayer[64], doorposition[64], thrustspeed, player_damage;
 static unsigned char areaconnect[64][64];
 static unsigned pwallstate, pwallpos, pwallx, pwally;
-static int pwalldir, independent_world;
+static int pwalldir;
 static byte spotvis[64][64];
 typedef struct { int shapenum, tilex, tiley, flags, itemnumber; byte *visspot; } statobj_t;
 static statobj_t statobjlist[MAXSTATS], *laststatobj = statobjlist;
 static int facecount, gotgatgun, spearflag, spearangle, playstate;
 static long spearx, speary;
+static int godmode;
+static objtype *LastAttacker, *killerobj;
 #define MAXVISABLE 50
 static struct { int shapenum, viewx, viewheight; } vislist[MAXVISABLE], *visptr;
 static void TransformActor(objtype *ob);
@@ -134,10 +141,12 @@ static void GetNewActor(void) {
 }
 static void OpenDoor(int door);
 static void ConnectAreas(void);
-static void TakeDamage(int damage, objtype *ob) { (void)ob; player_damage += damage; gamestate.health -= damage; if (gamestate.health < 0) gamestate.health = 0; }
+static void TakeDamage(int points, objtype *attacker);
+static void StartDamageFlash(int points) { (void)points; }
 static void PlaySoundLocActor(int sound, objtype *ob) { (void)sound; (void)ob; }
 static void PlaySoundLocTile(int sound, int x, int y) { (void)sound; (void)x; (void)y; }
 static void SD_PlaySound(int sound) { (void)sound; }
+static void SD_WaitSoundDone(void) {}
 static void DrawWeapon(void) {}
 static void DrawAmmo(void) {}
 static void DrawHealth(void) {}
@@ -146,8 +155,8 @@ static void DrawKeys(void) {}
 static void DrawLives(void) {}
 static void StartBonusFlash(void) {}
 static void StatusDrawPic(int x, int y, int pic) { (void)x; (void)y; (void)pic; }
-static void UpdateFace(void) { if (independent_world) OriginalUpdateFace(); }
-static void ControlMovement(objtype *ob) { if (independent_world) OriginalControlMovement(ob); }
+static void UpdateFace(void) { OriginalUpdateFace(); }
+static void ControlMovement(objtype *ob) { OriginalControlMovement(ob); }
 static int SD_SoundPlaying(void) { return -1; } /* No active sound matches the stub IDs. */
 static void VictoryTile(void) { Quit("victory tile unsupported"); }
 static void VictorySpin(void) { Quit("victory spin unsupported"); }
@@ -192,9 +201,31 @@ static void print_state(void) {
     printf("],\"doors\":[");
     for (int i = 0; i < doornum; i++) printf("%s{\"action\":%d,\"position\":%d,\"timer\":%d}", i ? "," : "", doorobjlist[i].action, doorposition[i], doorobjlist[i].action == dr_open ? doorobjlist[i].ticcount : 0);
     printf("],\"walls\":[");
-    if (independent_world) for (int y = 0; y < 64; y++) for (int x = 0; x < 64; x++) printf("%s%d", x || y ? "," : "", tilemap[x][y] && !(tilemap[x][y] >= 128 && tilemap[x][y] < 192));
+    for (int y = 0; y < 64; y++) for (int x = 0; x < 64; x++) printf("%s%d", x || y ? "," : "", tilemap[x][y] && !(tilemap[x][y] >= 128 && tilemap[x][y] < 192));
     printf("],\"weapon\":{\"attacking\":%s,\"frame\":%d,\"timer\":%d,\"ammo\":%d,\"shots\":%d},\"player\":{\"x\":%ld,\"y\":%ld,\"angle\":%d,\"angle_frac\":%d}}\n", player->state == &s_attack ? "true" : "false", gamestate.attackframe, player->state == &s_attack ? gamestate.attackcount : 0, gamestate.ammo, reference_shots, player->x, player->y, player->angle, anglefrac);
     fflush(stdout);
+}
+/* Exact raycaster inputs, separate from the gameplay comparison stream. */
+static void record_raycast(void) {
+    static FILE *trace;
+    static int initialized;
+    if (!initialized) {
+        const char *path = getenv("GDWOLF_DEMO_RAYCAST_OUT");
+        if (path && *path) {
+            trace = fopen(path, "w");
+            if (!trace) Quit("cannot open raycaster trace");
+        }
+        initialized = 1;
+    }
+    if (!trace) return;
+    fprintf(trace, "{\"view_x\":%d,\"view_y\":%d,\"angle\":%d,\"pwall_pos\":%u,\"tiles\":[", viewx, viewy, player->angle, pwallpos);
+    for (int x = 0; x < 64; x++) for (int y = 0; y < 64; y++) fprintf(trace, "%s%d", x || y ? "," : "", tilemap[x][y]);
+    fprintf(trace, "],\"doors\":[");
+    for (int i = 0; i < 64; i++) fprintf(trace, "%s%d", i ? "," : "", doorposition[i]);
+    fprintf(trace, "],\"visible\":[");
+    for (int x = 0; x < 64; x++) for (int y = 0; y < 64; y++) fprintf(trace, "%s%d", x || y ? "," : "", spotvis[x][y]);
+    fprintf(trace, "]}\n");
+    fflush(trace);
 }
 int main(int argc, char **argv) {
     if (argc == 2 && !strcmp(argv[1], "--render-tables")) {
@@ -223,9 +254,7 @@ int main(int argc, char **argv) {
         }
         return ferror(stdin) || ferror(stdout) ? 2 : 0;
     }
-    independent_world = argc == 1;
-    int independent_doors = independent_world || (argc == 2 && !strcmp(argv[1], "--independent-doors"));
-    if (argc != 1 && !independent_doors) return 2;
+    if (argc != 1) return 2;
     if (scanf("%d %d %d", &mapwidth, &mapheight, &gamestate.difficulty) != 3 || mapwidth != 64 || mapheight != 64 || gamestate.difficulty != 3) return 2;
     for (int p = 0; p < 2; p++) for (int i = 0; i < 4096; i++) {
         unsigned value;
@@ -259,49 +288,27 @@ int main(int argc, char **argv) {
     while ((header = scanf("%ld %ld %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", &px, &py, &entry_rng, &madenoise, &fast, &input_best, &input_weapon, &shots, &use_door, &buttons, &input_ammo, &input_chosen, &push_x, &push_y, &push_dir, &raw_x, &raw_y)) != EOF) {
         if (header != 17 || raw_x < -128 || raw_x > 127 || raw_y < -128 || raw_y > 127 || push_dir < -1 || push_dir > 3 || use_door < -1 || use_door >= doornum || shots < 0 || shots > 1 || buttons < 0 || buttons > 255 || gamestate.ammo < 0 || gamestate.ammo > 99 || gamestate.weapon < 0 || gamestate.weapon > 3 || px < 65536 || px >= 63L*65536 || py < 65536 || py >= 63L*65536 || rng_index < 0 || rng_index > 255) return 2;
         controlx = raw_x*4; controly = raw_y*4;
-        if (!independent_world) {
-            rng_index = entry_rng; gamestate.bestweapon = input_best;
-            gamestate.weapon = input_weapon; gamestate.ammo = input_ammo; gamestate.chosenweapon = input_chosen;
-        }
         tics = 4;
-        if (independent_doors) {
-            MoveDoors();
-            if (independent_world) MovePWalls();
-            if (use_door >= 0) OperateDoor(use_door);
-            if (independent_world && push_dir >= 0) {
-                if (push_x < 1 || push_x > 62 || push_y < 1 || push_y > 62) return 2;
-                PushWall(push_x, push_y, push_dir);
-            }
-        }
-        if (!independent_world) { player->x = px; player->y = py; }
+        MoveDoors(); MovePWalls();
         player->tilex = player->x >> 16; player->tiley = player->y >> 16;
         player->areanumber = planes[0][player->tiley*64+player->tilex]-AREATILE;
         plux = player->x >> 8; pluy = player->y >> 8; thrustspeed = fast ? RUNSPEED : 0;
         for (int i = 0; i < 64; i++) {
             int connected;
             if (scanf("%d", &connected) != 1) return 2;
-            if (!independent_doors) areabyplayer[i] = connected;
+            /* Diagnostic input only; ConnectAreas carries original connectivity. */
         }
         int changed;
         if (scanf("%d", &changed) != 1 || changed < 0 || changed > 4096) return 2;
         for (int i = 0; i < changed; i++) {
             int index, wall, area;
             if (scanf("%d %d %d", &index, &wall, &area) != 3 || index < 0 || index >= 4096 || wall < 0 || wall >= 90 || area < -1 || area >= 64) return 2;
-            if (independent_world) continue;
-            int x = index % 64, y = index / 64;
-            if (tilemap[x][y] && (uintptr_t)actorat[x][y] < 256) actorat[x][y] = NULL;
-            tilemap[x][y] = wall;
-            if (wall) actorat[x][y] = (objtype *)(uintptr_t)wall;
-            if (area >= 0) planes[0][index] = AREATILE + area;
+            /* Diagnostic wall snapshot; MovePWalls carries original walls. */
         }
         for (int i = 0; i < doornum; i++) {
             int action, position;
             if (scanf("%d %d", &action, &position) != 2 || action < 0 || action > 3 || position < 0 || position > 65535) return 2;
-            if (independent_doors) continue;
-            doorobjlist[i].action = action; doorposition[i] = position;
-            int x = doorobjlist[i].tilex, y = doorobjlist[i].tiley;
-            if (action == dr_open && (uintptr_t)actorat[x][y] < 256) actorat[x][y] = NULL;
-            if (action != dr_open && !actorat[x][y]) actorat[x][y] = (objtype *)(uintptr_t)(i|128);
+            /* Diagnostic door snapshot; MoveDoors carries original state. */
         }
         /* Projections are evolved by original TransformActor/DrawScaleds.
            Consume the port snapshots for protocol diagnostics only. */
@@ -314,14 +321,9 @@ int main(int argc, char **argv) {
             buttonheld[i] = buttonstate[i];
             buttonstate[i] = (buttons >> i) & 1;
         }
-        reference_shots = 0;
+        reference_shots = 0; madenoise = 0;
         if (player->state == &s_attack) T_Attack(player);
-        else {
-            UpdateFace();
-            CheckWeaponChange();
-            if (buttonstate[bt_attack] && !buttonheld[bt_attack]) Cmd_Fire();
-            ControlMovement(player);
-        }
+        else T_Player(player);
         player->tilex = player->x >> 16; player->tiley = player->y >> 16;
         plux = player->x >> 8; pluy = player->y >> 8;
         tics = 4; player_damage = 0;
@@ -329,7 +331,7 @@ int main(int argc, char **argv) {
         print_state();
         int angle;
         if (scanf("%d", &angle) != 1) return feof(stdin) ? 0 : 2;
-        if (angle < 0 || angle >= 360) return 2;
+        if (angle != player->angle) Quit("render angle differs from original player angle");
         for (int y = 0; y < 64; y++) for (int x = 0; x < 64; x++) {
             int visible;
             if (scanf("%d", &visible) != 1 || visible < 0 || visible > 1) return 2;
@@ -339,8 +341,9 @@ int main(int argc, char **argv) {
         viewcos = sintable[angle+90]; viewsin = sintable[angle];
         viewx = player->x - FixedByFrac(0x5700, viewcos);
         viewy = player->y + FixedByFrac(0x5700, viewsin);
+        record_raycast();
         RefreshActorVisibility();
-        printf("{\"health\":%d,\"ammo\":%d,\"projections\":[", gamestate.health, gamestate.ammo); int printed = 0;
+        printf("{\"health\":%d,\"ammo\":%d,\"died\":%s,\"projections\":[", gamestate.health, gamestate.ammo, playstate == ex_died ? "true" : "false"); int printed = 0;
         for (int i = 0; i < object_count; i++) if (kind(&objects[i]) >= 0) {
             printf("%s{\"visible\":%s,\"view_x\":%d,\"trans_x\":%ld}", printed++ ? "," : "", objects[i].flags & FL_VISABLE ? "true" : "false", objects[i].viewx, objects[i].transx);
         }

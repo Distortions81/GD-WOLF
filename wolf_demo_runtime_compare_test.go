@@ -149,8 +149,9 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 	renderTrace := json.NewEncoder(open("reference-render.jsonl"))
 	result := json.NewEncoder(open("result.json"))
 	matched, status := 0, "mismatch"
+	terminal := ""
 	defer func() {
-		if err := result.Encode(map[string]any{"demo_commands": len(demo.Commands), "matched_commands": matched, "matched_tics": matched * wl6.DemoTics, "status": status}); err != nil {
+		if err := result.Encode(map[string]any{"demo_commands": len(demo.Commands), "matched_commands": matched, "matched_tics": matched * wl6.DemoTics, "remaining_commands": len(demo.Commands) - matched, "status": status, "terminal": terminal}); err != nil {
 			t.Error(err)
 		}
 	}()
@@ -271,8 +272,8 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 				t.Fatal(err)
 			}
 		}
-		// The reference does not simulate pushwalls. Send only changed wall
-		// tiles, leaving its independent actor/static reservations intact.
+		// Changed wall tiles are diagnostic input; the original reference
+		// evolves its own pushwalls and actor/static reservations.
 		changed := []int{}
 		for index, tile := range g.level.Tiles {
 			if tile.Solid != previousTiles[index].Solid || tile.RawWall != previousTiles[index].RawWall || tile.Area != previousTiles[index].Area {
@@ -346,8 +347,9 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 			t.Fatal("original renderer returned no projections")
 		}
 		var rendered struct {
-			Health      int `json:"health"`
-			Ammo        int `json:"ammo"`
+			Health      int  `json:"health"`
+			Ammo        int  `json:"ammo"`
+			Died        bool `json:"died"`
 			Projections []struct {
 				Visible bool `json:"visible"`
 				ViewX   int  `json:"view_x"`
@@ -370,13 +372,21 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 			}
 		}
 		g.collectPickups()
+		if rendered.Died != g.playerDying {
+			t.Fatalf("command %d death: original=%v port=%v", i, rendered.Died, g.playerDying)
+		}
 		if rendered.Health != g.health || rendered.Ammo != g.ammo {
 			t.Fatalf("command %d after pickups: original health/ammo=%d/%d port=%d/%d", i, rendered.Health, rendered.Ammo, g.health, g.ammo)
 		}
 		g.demoPlayback.buttons = g.demoPlayback.inputButtons
 		g.demoPlayback.command++
 		matched++
+		if rendered.Died {
+			status, terminal = "matched_terminal_state", "death"
+			t.Logf("matched original death after command %d, tic %d; original playback leaves %d recorded commands unread", i, matched*wl6.DemoTics, len(demo.Commands)-matched)
+			return
+		}
 	}
 	status = "success"
-	t.Log("matched every first-demo runtime update with original C, sharing visible-floor masks and use requests")
+	t.Log("matched every first-demo runtime update with original C, sharing visible-floor masks")
 }

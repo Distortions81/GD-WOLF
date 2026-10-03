@@ -7,8 +7,9 @@ OUT_DIR="$ROOT_DIR/build/wolf-demo-runtime-compare"
 usage() {
   cat <<'EOF'
 Compare first-demo movement, weapons, actors, RNG, doors, pushwalls and pickups
-with compiled original C. Visible-floor masks and use requests are shared inputs.
-Exits nonzero at the first mismatch or unsupported port death/victory.
+with compiled original C, then audit floor visibility with original x86 in QEMU.
+Matching original death is a supported endpoint. Mismatches and unsupported
+port terminal states exit nonzero.
 
 Usage: scripts/wolf_demo_runtime_compare.sh [--source <dir>] [--out <dir>]
   --source <dir>  Existing pinned id-Software/wolf3d checkout
@@ -16,7 +17,8 @@ Usage: scripts/wolf_demo_runtime_compare.sh [--source <dir>] [--out <dir>]
                  (default: build/wolf-demo-runtime-compare)
   -h, --help     Show this help
 
-Requirements: Go, Python 3, C99 compiler, Git for source download, and Xvfb
+Requirements: Go, Python 3, C99 compiler, GNU as/ld, qemu-system-i386,
+Git for source download, and Xvfb
 on headless Linux. See docs/wolf-demo-compare.md for coverage limits.
 EOF
 }
@@ -44,6 +46,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 tools/wolfsrc-reference/build_demo_runtime.py 
   --output "$OUT_DIR/wolf-demo-runtime-reference" --cc "${CC:-cc}" 2>&1 | tee "$OUT_DIR/build.log"
 export GDWOLF_DEMO_RUNTIME_REFERENCE="$OUT_DIR/wolf-demo-runtime-reference"
 export GDWOLF_DEMO_RUNTIME_OUT="$OUT_DIR"
+export GDWOLF_DEMO_RAYCAST_OUT="$OUT_DIR/raycast-input.jsonl"
 export GOMAXPROCS=1
 export GOMEMLIMIT="${GDWOLF_GO_MEM_LIMIT:-12GiB}"
 RUNNER=()
@@ -53,3 +56,5 @@ if [[ "$(uname -s)" == Linux && -z "${DISPLAY:-}" ]]; then
 fi
 "${RUNNER[@]}" go test -run '^TestWolfDemo(Runtime|Projection)Compare$' -count=1 -parallel=1 \
   -timeout=5m -v . 2>&1 | tee "$OUT_DIR/compare.log"
+"$ROOT_DIR/scripts/wolf_demo_raycast_compare.sh" --source "$SOURCE_DIR" \
+  --runtime "$OUT_DIR" --out "$OUT_DIR/raycast" 2>&1 | tee "$OUT_DIR/raycast.log"

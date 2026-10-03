@@ -38,12 +38,14 @@ cases. Actor classes in this comparison are normalized to humanoid or dog.
 
 This result verifies the tested movement decisions. It does not establish
 complete AI parity over time: sight and hearing, state timing, attacks, damage,
-and interactions between systems still need independent original-engine
-comparison. Go regressions cover some of these behaviors, but the broader AI
+and interactions across the full roster and map set still need independent
+original-engine comparison. Go regressions cover some of these behaviors, but the broader AI
 harness uses a Go reference adapter rather than the original engine. Recorded
 demo playback and a source runtime comparison are now available. The runtime
-reference carries first-demo gameplay independently through a tested prefix;
-original floor visibility and complete demo parity remain unverified.
+reference matches the first built-in demo through its original death endpoint.
+Original x86 raycasting matches every floor mask, and the shipped DOS executable
+confirms health/ammo after every command and the same endpoint. Other demos and
+the full enemy roster remain unverified.
 
 ## Project Additions Beyond Wolfenstein 3D
 
@@ -138,9 +140,10 @@ Compare recorded player movement with compiled original C:
 The first demo's first 1,055 commands (4,220 Wolf tics) match within this
 conditional player-movement comparison. The unrestricted run stops at port
 death before command 1,055. The broader original-C runtime comparison also
-matches through command 1,054, including player health reaching zero. Its
-floor-visibility masks and use requests are still shared with the port, so
-full demo parity remains unverified.
+passes through the matching original death after command 1,054. The bundled DOS
+executable also dies at tic 4,220, with 0 health and 41 ammo; it leaves the last
+97 recorded commands unread. Health/ammo match DOS after every played command,
+and original x86 raycasting matches all 4,321,280 floor-visibility bits.
 See [demo comparison coverage and artifacts](docs/wolf-demo-compare.md).
 
 Actor initialization on all four demo maps and conditional face-animation RNG
@@ -157,8 +160,15 @@ Compare actor state timing and the first-demo runtime with compiled original C:
 ./scripts/wolf_demo_runtime_compare.sh
 ```
 
-The state timing comparison passes; the runtime command exits nonzero at the
-unsupported death boundary before command 1,055.
+The state timing and first-demo runtime comparisons pass. The runtime script
+also executes the original 16-bit raycaster under QEMU. Matching original death
+is a supported playback endpoint; a differing terminal state fails.
+
+Optionally repeat the shipped DOS executable check (Linux, DOSBox, about two minutes):
+
+```bash
+./scripts/wolf_demo_dos_compare.sh
+```
 
 ## Browser Build
 

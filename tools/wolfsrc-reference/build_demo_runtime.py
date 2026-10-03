@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compile original demo runtime routines with shared floor visibility/use inputs."""
+"""Compile original demo runtime routines with floor visibility audited separately against original x86."""
 import argparse
 import hashlib
 import pathlib
@@ -45,7 +45,7 @@ def build(source, output, cc):
                        'OpenDoor', 'CloseDoor', 'OperateDoor', 'DoorOpen',
                        'DoorOpening', 'DoorClosing', 'MoveDoors', 'PushWall', 'MovePWalls')),
         ('WL_GAME.C', ('ScanInfoPlane',)),
-        ('WL_AGENT.C', ('UpdateFace', 'CheckWeaponChange', 'GiveAmmo', 'GiveWeapon', 'HealSelf', 'GiveKey', 'GiveExtraMan', 'GetBonus', 'TryMove', 'ClipMove', 'Thrust', 'ControlMovement', 'GunAttack', 'KnifeAttack', 'Cmd_Fire', 'T_Attack')),
+        ('WL_AGENT.C', ('TakeDamage', 'UpdateFace', 'CheckWeaponChange', 'GiveAmmo', 'GiveWeapon', 'HealSelf', 'GiveKey', 'GiveExtraMan', 'GetBonus', 'TryMove', 'ClipMove', 'Thrust', 'ControlMovement', 'GunAttack', 'KnifeAttack', 'Cmd_Use', 'Cmd_Fire', 'T_Attack', 'T_Player')),
         ('WL_PLAY.C', ('DoActor',))) for name in names_)
     tables = state[state.index('dirtype opposite[9]'):state.index('void\tSpawnNewObj')]
     movement = state[state.index('#define CHECKDIAG'):state.index('void MoveObj (objtype *ob, long move)\n{')]
@@ -67,6 +67,7 @@ def build(source, output, cc):
     routines = re.sub(r'void\s+UpdateFace\s*\(', 'void OriginalUpdateFace (', routines)
     for attack in ('GunAttack', 'KnifeAttack'):
         routines = re.sub(r'(void\s+' + attack + r'\s*\([^)]*\)\s*\{)', r'\1\n reference_shots++;', routines)
+    routines = re.sub(r'(void\s+TakeDamage\s*\([^)]*\)\s*\{)', r'\1\n player_damage += points;', routines)
     attackinfo = re.search(r'struct atkinf\s*\{.*?attackinfo\[4\]\[14\]\s*=\s*\{.*?\n};', texts['WL_AGENT.C'], re.S).group()
     render = '\n'.join(function(texts[file], name) for file, name in (
         ('WL_MAIN.C', 'BuildTables'), ('WL_MAIN.C', 'CalcProjection'),

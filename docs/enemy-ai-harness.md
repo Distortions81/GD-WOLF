@@ -175,7 +175,7 @@ The soak reuses the same nearby-placement and circle-strafe scenario generator a
 
 ## Why This Is Not A Direct Runtime Compare
 
-The [demo runtime harness](wolf-demo-compare.md) now compiles original C gameplay routines and carries independent state through a first-demo prefix. It still shares floor-visibility masks and use requests with the port; a complete independent original-engine replay remains unfinished.
+The [demo runtime harness](wolf-demo-compare.md) compiles original C gameplay routines and matches the first demo through its original death at tic 4,220. Use handling and the terminal flag are independent; original 16-bit x86 execution verifies all floor masks. The bundled DOS executable also matches health/ammo after every played command and the same death endpoint. Other demos and the complete enemy roster remain unverified.
 
 This Go-adapter harness uses:
 
