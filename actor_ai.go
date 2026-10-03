@@ -1298,9 +1298,6 @@ func (g *game) actorCardinalTilePassable(a *actorInstance, x, y int) (passable b
 	}
 	tile := g.level.Tile(x, y)
 	if tile.Door != nil {
-		if tile.Door.Lock != 0 {
-			return false, false
-		}
 		if g.isDoorOpen(x, y) {
 			return true, false
 		}
@@ -1359,12 +1356,14 @@ func (g *game) actorGoalTileClear(a *actorInstance, x, y int) bool {
 	return g.blockingActorAt(a, x, y) == nil && !g.blockingStaticAt(x, y)
 }
 
+// Actor-side OpenDoor ignores locks, matching WOLFSRC. Player key checks
+// belong to useDoorAhead, the counterpart of the original OperateDoor.
 func (g *game) openDoorAt(x, y int) {
 	if g.level == nil || x < 0 || y < 0 || x >= g.levelWidth || y >= g.levelHeight {
 		return
 	}
 	tile := g.level.Tile(x, y)
-	if tile.Door == nil || tile.Door.Lock != 0 {
+	if tile.Door == nil {
 		return
 	}
 	i := y*g.levelWidth + x

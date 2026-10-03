@@ -265,9 +265,6 @@ func wolfsrcCheckSideTile(g *game, a *actorInstance, x, y int) (ok bool, waitFor
 	}
 	tile := g.level.Tile(x, y)
 	if tile.Door != nil {
-		if tile.Door.Lock != 0 {
-			return false, false
-		}
 		if !g.isDoorOpen(x, y) {
 			return true, true
 		}

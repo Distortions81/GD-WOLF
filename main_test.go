@@ -1421,6 +1421,76 @@ func TestDogCannotOpenDoors(t *testing.T) {
 	}
 }
 
+func TestHumanoidActorsOpenLockedDoorsAndWait(t *testing.T) {
+	for lock := 1; lock <= 5; lock++ {
+		for _, kind := range []ActorKind{actorKindGuard, actorKindOfficer, actorKindSS, actorKindBoss, actorKindMutant} {
+			level := blankLevel(5, 3)
+			setLevelTile(level, 2, 1, wl6.Tile{Door: &wl6.Door{Lock: lock, Vertical: true}})
+			g := testGameWithLevel(level)
+			g.playerX, g.playerY = 4.5, 1.5
+			g.actors = []actorInstance{{kind: kind, tileX: 1, tileY: 1, x: 1.5, y: 1.5, alive: true, blocking: true}}
+			actor := &g.actors[0]
+			if !g.actorTryWalk(actor, 0) || !actor.hasGoal || actor.tileX != 2 || actor.tileY != 1 || actor.moveDistance >= 0 {
+				t.Fatalf("kind=%d lock=%d: expected reserved door goal and wait: %+v", kind, lock, actor)
+			}
+			i := 1*level.Width + 2
+			if g.doorState[i] != 1 {
+				t.Fatalf("kind=%d lock=%d: doorState=%d, want opening", kind, lock, g.doorState[i])
+			}
+			// Retrying a door goal must also reopen a locked door that is closing.
+			g.doorState[i] = 3
+			consumed, reached, blocked := g.moveActorTowardGoalStep(actor, 1)
+			if consumed != 0 || reached || !blocked || actor.x != 1.5 || g.doorState[i] != 1 {
+				t.Fatalf("kind=%d lock=%d: actor did not wait/reopen: consumed=%f reached=%t blocked=%t x=%f doorState=%d", kind, lock, consumed, reached, blocked, actor.x, g.doorState[i])
+			}
+			g.doorState[i], g.doorOpen[i] = 2, 1
+			_, reached, blocked = g.moveActorTowardGoalStep(actor, 1)
+			if !reached || blocked || actor.x != 2.5 || actor.hasGoal {
+				t.Fatalf("kind=%d lock=%d: actor did not traverse opened door: %+v", kind, lock, actor)
+			}
+		}
+	}
+}
+
+func TestPlayerLockedDoorsStillRequireMatchingKeys(t *testing.T) {
+	for lock := 1; lock <= 4; lock++ {
+		level := blankLevel(4, 3)
+		setLevelTile(level, 2, 1, wl6.Tile{Door: &wl6.Door{Lock: lock}})
+		g := testGameWithLevel(level)
+		g.playerX, g.playerY, g.playerA = 1.5, 1.5, 0
+		i := 1*level.Width + 2
+		for _, keys := range []byte{0, 1 << uint(lock%4)} {
+			g.keys = keys
+			g.useDoorAhead()
+			if g.doorState[i] != 0 {
+				t.Fatalf("lock=%d keys=%d: player opened locked door without matching key", lock, keys)
+			}
+		}
+		g.keys = 1 << uint(lock-1)
+		g.useDoorAhead()
+		if g.doorState[i] != 1 {
+			t.Fatalf("lock=%d: matching key did not open player door", lock)
+		}
+	}
+}
+
+func TestDogLockedDoorBehavior(t *testing.T) {
+	for lock := 1; lock <= 5; lock++ {
+		level := blankLevel(4, 3)
+		setLevelTile(level, 2, 1, wl6.Tile{Door: &wl6.Door{Lock: lock}})
+		g := testGameWithLevel(level)
+		dog := &actorInstance{kind: actorKindDog, tileX: 1, tileY: 1}
+		i := 1*level.Width + 2
+		if g.actorTryWalk(dog, 0) || g.doorState[i] != 0 {
+			t.Fatalf("lock=%d: dog opened a closed locked door", lock)
+		}
+		g.doorState[i], g.doorOpen[i] = 2, 1
+		if !g.actorTryWalk(dog, 0) || dog.moveDistance < 0 {
+			t.Fatalf("lock=%d: dog could not traverse an already open door", lock)
+		}
+	}
+}
+
 func TestDogCanTraverseOpenDoors(t *testing.T) {
 	level := blankLevel(4, 3)
 	setLevelTile(level, 2, 1, wl6.Tile{Door: &wl6.Door{}})

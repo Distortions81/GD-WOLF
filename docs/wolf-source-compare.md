@@ -174,12 +174,37 @@ Differences fell from 9,503 to 815, resolving 8,688 failing scenarios:
 | `SelectDodgeDir` | 479 | 223 |
 | `TryWalk` | 256 | 0 |
 
-All 815 remaining scenarios have an original destination at a locked door.
-The four first maps and all 18,432 local obstruction cases now match. Native
-and wasm builds pass, as do the ordinary Go suite and the new RNG regression.
-The C comparison still exits nonzero for the remaining door differences.
+All 815 scenarios left after this pass had an original destination at a locked
+door: 583 at the E1F5 door at (57, 10), and 232 at the E1F6 door at (29, 2).
+The first four maps and all 18,432 local obstruction cases matched. Native
+and wasm builds passed, as did the ordinary Go suite and the new RNG regression.
+The C comparison still exited nonzero for these door differences.
 
-Locked-door behavior remains a separate parity item: original `TryWalk` calls
-`OpenDoor` for humanoid actors regardless of the lock. Original player key
-checks happen in `OperateDoor`. The port currently rejects locked doors for
-actors in both its passability test and its actor door-opening helper.
+## Locked-door fix pass (2026-10-03)
+
+Original `TryWalk` calls `OpenDoor` for humanoid actors regardless of the lock;
+player key checks happen separately in `OperateDoor`. The port had rejected
+locked doors in both its actor passability test and its actor door-opening
+helper. Removing those actor-only restrictions resolved all 815 saved failures
+when replayed unchanged against the compiled C routines. The broader Go
+reference adapter was corrected too.
+
+Ordinary regressions cover all five lock types for guard, officer, SS, boss and
+mutant movement, including waiting, reopening a closing door and crossing once
+open. Player key checks still require the matching key. Dogs cannot open closed
+doors, but can cross doors that are already open. Native and wasm builds and the
+full Go suite pass.
+
+The full repeat audit matched all 894,444 original C decisions in about 277
+seconds, with zero differences across all ten shareware maps and the 18,432
+local obstruction cases. This closes every discrepancy from the initial
+movement audit within the comparison scope described above.
+
+A minimal fixture covers the four movement routines at a locked gold-key door,
+a blocked dog, and a humanoid opening an elevator door:
+
+```bash
+./scripts/wolf_source_compare.sh \
+  --input testdata/wolfsrc-compare/locked-door.jsonl \
+  --out /tmp/wolf-locked-door
+```

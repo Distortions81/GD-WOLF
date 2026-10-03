@@ -45,11 +45,11 @@ For this document, "material gameplay divergence" includes:
 ## Current Port Snapshot
 
 Implemented in gameplay:
-- `[partial]` Guard — humanoid locked-door gap remains after movement fixes
+- `[done]` Guard — shared movement and locked-door gaps fixed and rechecked
 - `[done]` Dog — shared fallback/direction gaps fixed and rechecked
-- `[partial]` Officer — humanoid locked-door gap remains after movement fixes
-- `[partial]` SS — humanoid locked-door gap remains after movement fixes
-- `[partial]` Hans Grosse — humanoid locked-door gap remains after movement fixes
+- `[done]` Officer — shared movement and locked-door gaps fixed and rechecked
+- `[done]` SS — shared movement and locked-door gaps fixed and rechecked
+- `[done]` Hans Grosse — shared movement and locked-door gaps fixed and rechecked
 - `[partial]` Mutant
 - `[done]` Dead guard corpse content
 
@@ -70,8 +70,11 @@ The 2026-10-03 [compiled original C audit](docs/wolf-source-compare.md) found
 shared movement discrepancies in chase/run fallback ordering, failed-move
 direction reset, locked-door decisions and `TryWalk(nodir)` rejection. The first
 fix pass corrected fallback ordering, direction reset and `nodir` rejection.
-Humanoid locked-door handling still differs; earlier per-enemy implementation
-checks below remain completed, but those enemy baselines remain partial.
+The second pass corrected humanoid locked-door handling, matched all 815
+saved failures, and passed all 894,444 original C movement comparisons. These
+shared gaps are now closed, restoring the shareware enemy baselines below. The compiled comparison
+covers isolated movement decisions; full original-engine runtime and demo
+comparison remain outside its scope.
 
 ### 1. Guard
 
@@ -84,13 +87,12 @@ Current status:
 - `[done]` Stand, patrol, chase, pain, shoot, and death flow exist in the port with source-backed shareware behavior coverage
 
 Remaining parity gaps:
-- humanoid locked-door handling from the compiled original C audit above
+- none known in the current shareware Episode 1 target scope after the movement and locked-door fixes
 
 Notes:
 - Guard remains the reference baseline for later humanoid enemy work
 - Do not consider it "finished forever"; use it as the standard to compare officer and SS behavior against
 - Keep revisiting guard when a source-level mismatch is found elsewhere; if the baseline is wrong, later parity claims are weak
-- Earlier `[done]` status here was too optimistic; guard is the current audit target, not a finished parity baseline
 
 ### 2. Dog
 
@@ -133,7 +135,7 @@ Reason to do this first:
 - useful as the first expansion of actor dispatch beyond guard and dog
 
 Remaining parity gaps:
-- humanoid locked-door handling from the compiled original C audit above
+- none known in the current shareware Episode 1 target scope after the movement and locked-door fixes
 
 ### 4. SS
 
@@ -151,7 +153,7 @@ Reason to do this second:
 - adds a more interesting attack cadence without requiring the projectile system yet
 
 Remaining parity gaps:
-- humanoid locked-door handling from the compiled original C audit above
+- none known in the current shareware Episode 1 target scope after the movement and locked-door fixes
 
 ### 5. Hans Grosse
 
@@ -168,7 +170,7 @@ Current status:
 - `[done]` Hans spawn/chase presentation now matches the source baseline more closely: `SpawnBoss()` always starts him facing south in ambush, and his stand/chase/shoot flow stays non-rotating like `s_bossstand` through `s_bossshoot8`
 
 Remaining parity gaps:
-- humanoid locked-door handling from the compiled original C audit above
+- none known in the current shareware Episode 1 target scope after the movement and locked-door fixes
 
 Reason not to do this first:
 - requires more bespoke state flow than officer/SS
@@ -193,12 +195,12 @@ Notes:
 
 This is the active implementation ladder for the shareware pass.
 
-1. `[next]` Match original humanoid locked-door behavior and recheck
-2. `[partial]` Guard baseline
+1. `[done]` Match original humanoid locked-door behavior and recheck
+2. `[done]` Guard baseline
 3. `[done]` Dog baseline
-4. `[partial]` Officer finish pass
-5. `[partial]` SS finish pass
-6. `[partial]` Hans Grosse
+4. `[done]` Officer finish pass
+5. `[done]` SS finish pass
+6. `[done]` Hans Grosse
 
 ## Later Backlog
 
