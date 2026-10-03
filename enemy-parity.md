@@ -45,11 +45,11 @@ For this document, "material gameplay divergence" includes:
 ## Current Port Snapshot
 
 Implemented in gameplay:
-- `[done]` Guard
-- `[done]` Dog
-- `[done]` Officer
-- `[done]` SS
-- `[done]` Hans Grosse
+- `[partial]` Guard — shared movement gaps reopened by compiled C comparison
+- `[partial]` Dog — shared movement gaps reopened by compiled C comparison
+- `[partial]` Officer — shared movement gaps reopened by compiled C comparison
+- `[partial]` SS — shared movement gaps reopened by compiled C comparison
+- `[partial]` Hans Grosse — shared movement gaps reopened by compiled C comparison
 - `[partial]` Mutant
 - `[done]` Dead guard corpse content
 
@@ -66,6 +66,12 @@ Missing from gameplay:
 
 This is the working order for the document and implementation plan.
 
+The 2026-10-03 [compiled original C audit](docs/wolf-source-compare.md) found
+shared movement discrepancies in chase/run fallback ordering, failed-move
+direction reset, locked-door decisions and `TryWalk(nodir)` rejection. Earlier
+per-enemy implementation checks below remain completed, but overall parity is
+partial until the relevant shared movement gaps are fixed and compared again.
+
 ### 1. Guard
 
 Shareware Episode 1 relevance:
@@ -77,7 +83,7 @@ Current status:
 - `[done]` Stand, patrol, chase, pain, shoot, and death flow exist in the port with source-backed shareware behavior coverage
 
 Remaining parity gaps:
-- none in the current shareware Episode 1 target scope
+- shared movement discrepancies from the compiled original C audit above
 
 Notes:
 - Guard remains the reference baseline for later humanoid enemy work
@@ -98,7 +104,7 @@ Current status:
 - `[done]` `T_DogChase`/`T_Bite` edge cases now have direct regression coverage for live gameplay spacing, tic-scaled jump entry, bite sound-on-miss, and bite resolution after jump starts
 
 Remaining parity gaps:
-- none in the current shareware Episode 1 target scope
+- shared movement discrepancies from the compiled original C audit above
 
 Notes:
 - Dog is currently the strongest "non-guard" parity baseline in the port
@@ -126,7 +132,7 @@ Reason to do this first:
 - useful as the first expansion of actor dispatch beyond guard and dog
 
 Remaining parity gaps:
-- none in the current shareware Episode 1 target scope
+- shared movement discrepancies from the compiled original C audit above
 
 ### 4. SS
 
@@ -144,7 +150,7 @@ Reason to do this second:
 - adds a more interesting attack cadence without requiring the projectile system yet
 
 Remaining parity gaps:
-- none in the current shareware Episode 1 target scope
+- shared movement discrepancies from the compiled original C audit above
 
 ### 5. Hans Grosse
 
@@ -161,7 +167,7 @@ Current status:
 - `[done]` Hans spawn/chase presentation now matches the source baseline more closely: `SpawnBoss()` always starts him facing south in ambush, and his stand/chase/shoot flow stays non-rotating like `s_bossstand` through `s_bossshoot8`
 
 Remaining parity gaps:
-- none in the current shareware Episode 1 target scope
+- shared movement discrepancies from the compiled original C audit above
 
 Reason not to do this first:
 - requires more bespoke state flow than officer/SS
@@ -186,11 +192,12 @@ Notes:
 
 This is the active implementation ladder for the shareware pass.
 
-1. `[done]` Guard baseline
-2. `[done]` Dog baseline
-3. `[done]` Officer finish pass
-4. `[done]` SS finish pass
-5. `[done]` Hans Grosse
+1. `[next]` Fix and recheck the compiled C shared movement findings
+2. `[partial]` Guard baseline
+3. `[partial]` Dog baseline
+4. `[partial]` Officer finish pass
+5. `[partial]` SS finish pass
+6. `[partial]` Hans Grosse
 
 ## Later Backlog
 

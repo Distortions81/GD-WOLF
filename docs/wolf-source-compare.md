@@ -1,0 +1,154 @@
+# Original-source comparison harness
+
+Run the original Wolfenstein 3D C movement routines and GD-WOLF with identical
+map occupancy, actor position, player position, direction, flags and RNG index.
+The workflow follows GD-DOOM's reference comparison: compile the reference,
+record both outputs, stop at the first desync, and replay the recorded input.
+
+```bash
+./scripts/wolf_source_compare.sh
+```
+
+The script downloads [id Software's original source](https://github.com/id-Software/wolf3d)
+at revision `05167784ef009d0d0daefe8d012b027f39dc8541` into the ignored
+`build/wolfsrc-source` directory. An existing checkout can be used offline:
+
+```bash
+./scripts/wolf_source_compare.sh --source /path/to/wolf3d --out /tmp/wolf-compare
+```
+
+Requirements: Go, Python 3, a C99 compiler (`CC` or `cc`), Git for the initial
+download, and `xvfb-run` on headless Linux. A supplied source directory must
+already exist. Output defaults to `build/wolf-source-compare`.
+
+## Reference implementation
+
+`tools/wolfsrc-reference/build.py` verifies SHA-256 hashes of `WL_STATE.C` and
+`ID_US_A.ASM`, then extracts and compiles:
+
+- `TryWalk`, including its original collision macros
+- `SelectChaseDir`
+- `SelectDodgeDir`
+- `SelectRunDir`
+- the original direction tables and 256-byte random table
+
+The function bodies come directly from the verified C source. The only edits
+inside those bodies widen two actor-pointer casts and their temporary variable
+from DOS `unsigned` to `uintptr_t`. This preserves tagged wall/door values and
+real host pointers without truncation. Generated reference code stays in the
+output directory; it is not part of game builds or tracked source.
+
+`bridge.c` supplies a minimal map and actor layout, records `OpenDoor` calls, and
+implements the increment/wrap/table lookup from the original RNG assembly.
+The Go comparison invokes the port's actual movement methods. Expected
+decisions are never calculated by the existing Go reference adapter.
+
+## Coverage and outputs
+
+Generated scenarios cover all ten embedded shareware maps, each live enemy,
+nearby player placements, chase/dodge/run decisions, and four RNG starting
+indices. The local obstruction scan covers 256 neighbor masks, all nine
+directions, all four routines, and humanoid/dog door behavior.
+
+The reference self-test separately checks RNG behavior at all 256 indices,
+door opening/wait behavior, dog blocking, and the original run fallback arc.
+
+Compared fields are movement success, direction, destination, door wait,
+opened door number, first-attack flag, and final RNG index. Failed movement
+direction and RNG consumption remain visible; neither is normalized away.
+
+Artifacts:
+
+| File | Contents |
+| --- | --- |
+| `build.log` | Reference compiler output |
+| `compare.log` | Go test results and first desync |
+| `inputs.jsonl.gz` | Every exact comparison input, compressed |
+| `reference.jsonl` | Original C outputs with scenario IDs |
+| `port.jsonl` | Port outputs with the same IDs |
+| `mismatch.jsonl` | Differing fields, full input and both outputs |
+| `mismatch-inputs.jsonl` | Failed inputs ready for direct replay |
+
+Run only the reference contract checks:
+
+```bash
+./scripts/wolf_source_compare.sh --self-test
+```
+
+Replay failed inputs into a different output directory:
+
+```bash
+./scripts/wolf_source_compare.sh \
+  --input build/wolf-source-compare/mismatch-inputs.jsonl \
+  --out /tmp/wolf-replay
+```
+
+The same `--input` option accepts `inputs.jsonl.gz` to replay the whole recorded
+comparison. To collect multiple desyncs, set a positive limit:
+
+```bash
+./scripts/wolf_source_compare.sh --max-mismatches 100
+```
+
+The command exits nonzero for any desync, invalid input, compiler error, or
+reference process error. With no configured reference binary, the external
+tests skip during ordinary `go test ./...`; the comparator's field-difference
+test still runs. The script always supplies a reference binary and rebuilds it.
+
+## Scope
+
+These are isolated movement decisions from map snapshots, not a full original
+DOS engine or per-tic demo replay. The adapter preserves walls, blocking
+scenery, blocking actors, closed doors and door locks. It models an already
+open door as clear occupancy. Areas are held constant, and actor classes are
+normalized to humanoid or dog for the supported movement routines.
+
+Rendering, sound playback, door animation, actor state timers, physical movement
+between tiles, combat and the player simulation are outside this C reference's
+coverage. The existing [AI harness](enemy-ai-harness.md) continues to provide
+broader scripted runtime and attack checks through its Go reference adapter.
+An original-engine demo comparison would additionally require a portable
+simulation build and matching demo input playback in GD-WOLF.
+The original source does support recorded gameplay: `RecordDemo`/`PlayDemo` in
+`WL_GAME.C` and demo control input handling in `WL_PLAY.C` provide the starting
+point for that extension, including the built-in title-screen demos.
+
+## First verified desync
+
+On 2026-10-03, the initial compare matched 15,716 decisions before finding:
+
+```text
+map=0/actor=7/pos=0/mode=2/seed=0
+dir: original=8 port=0; x: original=31 port=32; move: original=false port=true
+```
+
+`SelectRunDir` in the original source searches the enum interval from north to
+west (or in reverse): north, northwest, west. The port's fallback instead
+searches four cardinal directions and can move east in this blocked scenario.
+This finding is retained as a real harness failure; the harness does not
+silently ignore it or change gameplay to make the comparison pass.
+
+A minimal reproduction is tracked in `testdata/wolfsrc-compare/run-fallback.jsonl`:
+
+```bash
+./scripts/wolf_source_compare.sh \
+  --input testdata/wolfsrc-compare/run-fallback.jsonl \
+  --out /tmp/wolf-run-fallback
+```
+
+The full initial audit used `--max-mismatches 1000000` and completed 894,444
+comparisons in about 257 seconds. It recorded 9,503 differing scenarios:
+
+| Routine | Differing scenarios |
+| --- | ---: |
+| `SelectRunDir` | 6,454 |
+| `SelectChaseDir` | 2,314 |
+| `SelectDodgeDir` | 479 |
+| `TryWalk` | 256 |
+
+These counts include repeated seeds and placements, not 9,503 distinct bugs.
+The `TryWalk` failures all exercise `nodir`: the source rejects it while the
+port's direction masking turns it into an eastward step. Dodge differences
+include locked-door decisions. No RNG-index differences were observed in this
+audit. Source fallback arcs, failed-move direction reset and door handling
+need further gameplay parity work.

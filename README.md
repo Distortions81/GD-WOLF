@@ -21,7 +21,7 @@ The project currently includes:
 - native stereo positional sound, with simplified wasm audio
 - actor collision and timing work updated to use Wolf-style tics instead of assuming a fixed render/update rate
 
-Implementation is still incomplete. Enemy parity work is tracked in [docs/enemy-parity.md](/home/dist/github/GD-WOLF/docs/enemy-parity.md).
+Implementation is still incomplete. Enemy parity work is tracked in [enemy-parity.md](enemy-parity.md).
 
 ## Project Additions Beyond Wolfenstein 3D
 
@@ -78,6 +78,16 @@ Browser save import/export regression tests use Node.js 22 or later:
 ```bash
 node web/wasm/save-actions.test.cjs
 ```
+
+Compare movement decisions against compiled original Wolf3D C routines with:
+
+```bash
+./scripts/wolf_source_compare.sh
+```
+
+See [the original-source harness](docs/wolf-source-compare.md) for source setup,
+trace artifacts, replay, and its current coverage. The existing broader
+[AI harness](docs/enemy-ai-harness.md) uses a Go reference adapter.
 
 ## Browser Build
 

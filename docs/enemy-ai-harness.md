@@ -2,6 +2,10 @@
 
 This repo now has a source-backed enemy AI comparison harness modeled after the `GD-DOOM` reference-compare workflow.
 
+For a compiled reference using the original C function bodies, use the
+[original-source comparison harness](wolf-source-compare.md). The harness
+described below uses a Go reference adapter and covers additional runtime layers.
+
 ## What It Does
 
 The harness compares:
@@ -173,9 +177,11 @@ The soak reuses the same nearby-placement and circle-strafe scenario generator a
 
 Unlike `GD-DOOM`, this repo does not currently have a practical runnable reference binary harness for the original engine in the local environment.
 
-So the current harness uses:
+This Go-adapter harness uses:
 
-- the vendored `WOLFSRC` code as the authority
+- the original `WOLFSRC` code as the authority
 - an independent Go reference adapter for the specific AI routines under test
 
-That keeps the workflow repeatable and useful now, while still leaving room for a fuller trace-based compare later if a runnable reference path becomes practical.
+The compiled C movement harness now provides an independent reference for
+`TryWalk` and direction selection. A full original-engine runtime comparison
+remains outside both harnesses' scope.
