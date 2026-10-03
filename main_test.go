@@ -1300,39 +1300,67 @@ func TestActorChooseDirectChaseGoalMatchesSourceFallbackArc(t *testing.T) {
 	if !actor.hasGoal {
 		t.Fatal("expected direct chase fallback goal")
 	}
-	if actor.dir != 2 || actor.goalX != 2 || actor.goalY != 1 {
-		t.Fatalf("fallback dir=%d goal=(%d,%d), want north to (2,1)", actor.dir, actor.goalX, actor.goalY)
+	if actor.dir != 3 || actor.goalX != 1 || actor.goalY != 1 {
+		t.Fatalf("fallback dir=%d goal=(%d,%d), want northwest to (1,1)", actor.dir, actor.goalX, actor.goalY)
 	}
 }
 
-func TestActorChooseRunGoalMatchesSourceFallbackArc(t *testing.T) {
+func TestActorChooseRunGoalStaysWithinSourceFallbackArc(t *testing.T) {
 	level := blankLevel(5, 5)
 	setLevelTile(level, 2, 1, wl6.Tile{Solid: true})
 	setLevelTile(level, 1, 2, wl6.Tile{Solid: true})
-	setLevelTile(level, 3, 2, wl6.Tile{Area: 0})
+	setLevelTile(level, 2, 3, wl6.Tile{Solid: true})
 	g := testGameWithLevel(level)
 	g.playerX = 2.5
-	g.playerY = 2.5
-	g.rng = testRNGForPredicates(rngValueAtLeast(129))
-	actor := &actorInstance{
-		x:         2.5,
-		y:         3.5,
-		tileX:     2,
-		tileY:     3,
-		alive:     true,
-		blocking:  true,
-		shootable: true,
-		dir:       2,
-		facingDir: 2,
-		area:      0,
+	g.playerY = 1.5
+	for _, predicate := range []func(byte) bool{rngValueRange(0, 128), rngValueAtLeast(129)} {
+		g.rng = testRNGForPredicates(predicate)
+		actor := &actorInstance{x: 2.5, y: 2.5, tileX: 2, tileY: 2, dir: 2, facingDir: 2}
+		// Only east is clear. The original run fallback never searches east.
+		g.actorChooseRunGoal(actor)
+		if actor.hasGoal || actor.dir != 8 || actor.tileX != 2 || actor.tileY != 2 {
+			t.Fatalf("run fallback moved outside its source arc: %+v", actor)
+		}
 	}
+}
 
-	g.actorChooseRunGoal(actor)
-	if !actor.hasGoal {
-		t.Fatal("expected run fallback goal")
+func TestActorTryWalkRejectsNoDirection(t *testing.T) {
+	g := testGameWithLevel(blankLevel(5, 5))
+	for _, dir := range []int{8, -1, 9} {
+		actor := actorInstance{tileX: 2, tileY: 2, x: 2.5, y: 2.5, dir: dir, facingDir: 2}
+		before := actor
+		if g.actorTryWalk(&actor, dir) || actor != before {
+			t.Fatalf("dir=%d unexpectedly changed actor: %+v", dir, actor)
+		}
 	}
-	if actor.dir != 6 || actor.goalX != 2 || actor.goalY != 4 {
-		t.Fatalf("run fallback dir=%d goal=(%d,%d), want south to (2,4)", actor.dir, actor.goalX, actor.goalY)
+}
+
+func TestBlockedActorDirectionSelectionResetsToNoDirection(t *testing.T) {
+	level := blankLevel(5, 5)
+	for dir := 0; dir < 8; dir++ {
+		dx, dy := dirStep(dir)
+		setLevelTile(level, 2+dx, 2+dy, wl6.Tile{Solid: true})
+	}
+	for _, mode := range []string{"chase", "dodge", "run"} {
+		t.Run(mode, func(t *testing.T) {
+			g := testGameWithLevel(level)
+			g.playerX, g.playerY = 3.5, 3.5
+			actor := &actorInstance{tileX: 2, tileY: 2, x: 2.5, y: 2.5, dir: 0, facingDir: 0, firstAttack: true}
+			switch mode {
+			case "chase":
+				g.actorChooseDirectChaseGoal(actor)
+			case "dodge":
+				g.actorChooseDodgeGoal(actor)
+			case "run":
+				g.actorChooseRunGoal(actor)
+			}
+			if actor.dir != 8 || actor.hasGoal || actor.tileX != 2 || actor.tileY != 2 {
+				t.Fatalf("blocked %s actor retained a movement direction: %+v", mode, actor)
+			}
+			if mode == "dodge" && actor.firstAttack {
+				t.Fatal("blocked dodge must still consume the first-attack flag")
+			}
+		})
 	}
 }
 

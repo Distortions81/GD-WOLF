@@ -292,6 +292,9 @@ func wolfsrcCheckSideTile(g *game, a *actorInstance, x, y int) (ok bool, waitFor
 }
 
 func wolfsrcTryWalkDecision(g *game, a *actorInstance, dir int) (enemyAIHarnessDecision, bool) {
+	if dir < 0 || dir >= 8 {
+		return enemyAIHarnessDecision{}, false
+	}
 	dx, dy := dirStep(dir)
 	destX := a.tileX + dx
 	destY := a.tileY + dy
@@ -392,14 +395,6 @@ func wolfsrcReferenceDecision(g *game, a *actorInstance, mode wolfsrcAIDecisionM
 			firstDir, secondDir = secondDir, firstDir
 		}
 		tryDirs = append(tryDirs, firstDir, secondDir)
-		if g.rng == nil {
-			g.rng = defaultRNG()
-		}
-		if g.rng.Intn(256) > 128 {
-			tryDirs = append(tryDirs, 2, 0, 6, 4)
-		} else {
-			tryDirs = append(tryDirs, 4, 6, 0, 2)
-		}
 	default:
 		firstDir, secondDir := 8, 8
 		if deltaX > 0 {
@@ -419,29 +414,37 @@ func wolfsrcReferenceDecision(g *game, a *actorInstance, mode wolfsrcAIDecisionM
 		if ref.dir != 8 {
 			tryDirs = append(tryDirs, ref.dir)
 		}
-		if g.rng == nil {
-			g.rng = defaultRNG()
-		}
-		if g.rng.Intn(256) > 128 {
-			tryDirs = append(tryDirs, 2, 0, 6, 4)
-		} else {
-			tryDirs = append(tryDirs, 4, 6, 0, 2)
-		}
 	}
 
-	seen := map[int]bool{}
-	for _, dir := range tryDirs {
-		if dir == 8 || seen[dir] {
-			continue
+	tryDirection := func(dir int) (enemyAIHarnessDecision, bool) {
+		if dir == 8 || (mode != wolfsrcDecisionRun && dir == turnaround) {
+			return enemyAIHarnessDecision{}, false
 		}
-		if mode != wolfsrcDecisionRun && dir == turnaround {
-			continue
-		}
-		seen[dir] = true
 		if decision, ok := wolfsrcTryWalkDecision(g, &ref, dir); ok {
 			decision.Mode = mode
 			decision.TurnaroundOK = turnaroundOK
+			return decision, true
+		}
+		return enemyAIHarnessDecision{}, false
+	}
+	for _, dir := range tryDirs {
+		if decision, ok := tryDirection(dir); ok {
 			return decision
+		}
+	}
+	// Chase/run only draw a random byte after the preferred directions fail.
+	if mode != wolfsrcDecisionDodge {
+		if g.rng == nil {
+			g.rng = defaultRNG()
+		}
+		order := [3]int{4, 3, 2}
+		if g.rng.Intn(256) > 128 {
+			order = [3]int{2, 3, 4}
+		}
+		for _, dir := range order {
+			if decision, ok := tryDirection(dir); ok {
+				return decision
+			}
 		}
 	}
 
@@ -454,6 +457,27 @@ func wolfsrcReferenceDecision(g *game, a *actorInstance, mode wolfsrcAIDecisionM
 	}
 
 	return enemyAIHarnessDecision{Mode: mode, TurnaroundOK: turnaroundOK}
+}
+
+func TestEnemyAIReferenceDecisionDrawsRNGAtSourceDecisionPoint(t *testing.T) {
+	for _, mode := range []wolfsrcAIDecisionMode{wolfsrcDecisionChase, wolfsrcDecisionRun, wolfsrcDecisionDodge} {
+		t.Run(string(mode), func(t *testing.T) {
+			g := testGameWithLevel(blankLevel(5, 5))
+			g.playerX, g.playerY = 3.5, 3.5
+			g.rng = newWolfRNG(0)
+			actor := &actorInstance{tileX: 2, tileY: 2, dir: 8}
+			if decision := wolfsrcReferenceDecision(g, actor, mode); !decision.HasMove {
+				t.Fatal("unobstructed source decision did not move")
+			}
+			want := byte(0)
+			if mode == wolfsrcDecisionDodge {
+				want = 1
+			}
+			if got := g.rng.Index(); got != want {
+				t.Fatalf("RNG index=%d want=%d; chase/run only draw for fallback, dodge always draws", got, want)
+			}
+		})
+	}
 }
 
 func capturePortFirstSighting(g *game, a *actorInstance) enemyAIHarnessFirstSighting {
@@ -951,11 +975,13 @@ func wolfsrcAdvanceChaseRuntime(g *game, a *actorInstance, tics int) {
 				consumeFirstAttack = a.firstAttack
 			}
 			decision := wolfsrcReferenceDecision(g, a, mode)
-			if !decision.HasMove {
-				return
-			}
 			if consumeFirstAttack {
 				a.firstAttack = false
+			}
+			if !decision.HasMove {
+				a.dir = 8
+				a.clearTileGoal()
+				return
 			}
 			wolfsrcReserveGoal(g, a, decision)
 		}

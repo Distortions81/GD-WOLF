@@ -123,10 +123,10 @@ dir: original=8 port=0; x: original=31 port=32; move: original=false port=true
 ```
 
 `SelectRunDir` in the original source searches the enum interval from north to
-west (or in reverse): north, northwest, west. The port's fallback instead
-searches four cardinal directions and can move east in this blocked scenario.
-This finding is retained as a real harness failure; the harness does not
-silently ignore it or change gameplay to make the comparison pass.
+west (or in reverse): north, northwest, west. The initial port fallback searched
+four cardinal directions and could move east in this blocked scenario.
+The first movement fix pass now uses the original search arc, so this saved
+input passes and remains available as a regression case.
 
 A minimal reproduction is tracked in `testdata/wolfsrc-compare/run-fallback.jsonl`:
 
@@ -150,5 +150,36 @@ These counts include repeated seeds and placements, not 9,503 distinct bugs.
 The `TryWalk` failures all exercise `nodir`: the source rejects it while the
 port's direction masking turns it into an eastward step. Dodge differences
 include locked-door decisions. No RNG-index differences were observed in this
-audit. Source fallback arcs, failed-move direction reset and door handling
-need further gameplay parity work.
+audit. These are the baseline counts before the movement fixes below.
+
+## First movement fix pass (2026-10-03)
+
+The port now matches the original north/northwest/west fallback scan in both
+chase and run decisions, sets `dir = nodir` when chase/dodge/run selection cannot
+move, and rejects `nodir` instead of masking it into an eastward step. Ordinary
+Go regressions cover the blocked movement cases, and the initial saved
+run-fallback input now matches the compiled C reference.
+
+The broader Go reference adapter was corrected to use the same fallback arc,
+consume random bytes only at the original decision point, and propagate the
+blocked direction and first-attack flag into runtime traces.
+
+The full repeat audit compared the same 894,444 decisions in about 266 seconds.
+Differences fell from 9,503 to 815, resolving 8,688 failing scenarios:
+
+| Routine | Initial differences | After movement fixes |
+| --- | ---: | ---: |
+| `SelectRunDir` | 6,454 | 408 |
+| `SelectChaseDir` | 2,314 | 184 |
+| `SelectDodgeDir` | 479 | 223 |
+| `TryWalk` | 256 | 0 |
+
+All 815 remaining scenarios have an original destination at a locked door.
+The four first maps and all 18,432 local obstruction cases now match. Native
+and wasm builds pass, as do the ordinary Go suite and the new RNG regression.
+The C comparison still exits nonzero for the remaining door differences.
+
+Locked-door behavior remains a separate parity item: original `TryWalk` calls
+`OpenDoor` for humanoid actors regardless of the lock. Original player key
+checks happen in `OperateDoor`. The port currently rejects locked doors for
+actors in both its passability test and its actor door-opening helper.

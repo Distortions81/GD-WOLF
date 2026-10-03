@@ -1107,6 +1107,7 @@ func (g *game) actorChooseDodgeGoal(a *actorInstance) {
 	if turnaround != 8 && g.actorSetGoal(a, turnaround) {
 		return
 	}
+	a.dir = 8
 	a.clearTileGoal()
 }
 
@@ -1146,13 +1147,13 @@ func (g *game) actorChooseDirectChaseGoal(a *actorInstance) {
 		return
 	}
 
-	// WOLFSRC SelectChaseDir only scans the cardinal directions here.
-	searchOrder := []int{2, 0, 6, 4}
+	// WOLFSRC scans the enum interval north..west, including northwest.
+	searchOrder := [3]int{2, 3, 4}
 	if g.rng == nil {
 		g.rng = defaultRNG()
 	}
 	if g.rng.Intn(256) <= 128 {
-		searchOrder = []int{4, 6, 0, 2}
+		searchOrder = [3]int{4, 3, 2}
 	}
 	for _, dir := range searchOrder {
 		if dir == turnaround {
@@ -1165,6 +1166,7 @@ func (g *game) actorChooseDirectChaseGoal(a *actorInstance) {
 	if turnaround != 8 && g.actorSetGoal(a, turnaround) {
 		return
 	}
+	a.dir = 8
 	a.clearTileGoal()
 }
 
@@ -1198,18 +1200,19 @@ func (g *game) actorChooseRunGoal(a *actorInstance) {
 		}
 	}
 
-	searchOrder := []int{4, 6, 0, 2}
+	searchOrder := [3]int{4, 3, 2}
 	if g.rng == nil {
 		g.rng = defaultRNG()
 	}
 	if g.rng.Intn(256) > 128 {
-		searchOrder = []int{2, 0, 6, 4}
+		searchOrder = [3]int{2, 3, 4}
 	}
 	for _, dir := range searchOrder {
 		if g.actorSetGoal(a, dir) {
 			return
 		}
 	}
+	a.dir = 8
 	a.clearTileGoal()
 }
 
@@ -1221,7 +1224,7 @@ func patrolDirFromInfo(info uint16) (int, bool) {
 }
 
 func dirStep(dir int) (int, int) {
-	switch dir & 7 {
+	switch dir {
 	case 0:
 		return 1, 0
 	case 1:
