@@ -57,7 +57,7 @@ are not independently verified by the player reference.
 
 ```bash
 ./scripts/wolf_demo_player_compare.sh
-./scripts/wolf_demo_player_compare.sh --stop-after-commands 371
+./scripts/wolf_demo_player_compare.sh --stop-after-commands 907
 ./scripts/wolf_demo_player_compare.sh --demo-index 1 --out /tmp/wolf-demo-2
 ./scripts/wolf_demo_player_compare.sh --self-test
 ```
@@ -111,13 +111,24 @@ build/wolf-demo-player-compare/wolf-demo-player-reference \
    draws. Playback now advances the face before use, weapons and movement,
    as in original `T_Player`/`T_Attack`.
 
+6. Actor updates used the interactive animation scheduler: actions ran on
+   entry, and AI ran during pause frames. Demo playback now follows original
+   `DoActor`, carries elapsed time across state transitions, and uses the
+   original actor speed per Wolf tic. It also reserves the next tile on exact
+   arrivals, retains reaction counters when damage alerts an actor, accepts
+   zero-damage hits, and delays death-scream RNG until the state action.
+7. Demo shots now use cached previous-command projections with the original
+   fixed-point geometry and reserved-tile damage distance. Visibility is still
+   approximate and has not been compared to the original renderer.
+8. Opening doors had an artificial 0.01 head start and connected areas before
+   their first movement. Demo playback now starts opening at zero and connects
+   areas once the door moves.
+
 The reference self-test matches all 360 movement angles plus strafing, reverse
-movement, speed clamps and fractional turns. After restoring spawn and face
-RNG consumption, the first 371 demo commands (1,484 tics) match conditional
-player movement, up from 310 commands. The port then dies before
-command 371 (zero-based), so the unrestricted 1,152-command demo run remains
-incomplete. This is not a verified original-versus-port death desync: the
-current reference does not simulate enemy damage.
+movement, speed clamps and fractional turns. The first 907 commands (3,628
+tics) now match conditional player movement, up from 371. The port dies before
+command 907 (zero-based), so the unrestricted 1,152-command run remains
+incomplete. The player reference does not independently simulate enemy damage.
 
 ## Actor initialization and face RNG comparison
 
@@ -154,8 +165,34 @@ chaingun pickup's suppression and resets the face counter on that pickup.
 Original sound priority and timing are not independently reproduced, and
 headless comparisons do not simulate audio playback.
 
-The next comparison stage needs independent actor state progression,
-visibility/targeting and combat. In particular, original `DoActor` runs actions
-on state exit and skips think callbacks during pause frames; the port's current
-animation/AI scheduler still needs comparison against that behavior. Use the
-saved runtime trace to locate divergences before death.
+## Actor state timing and first-demo AI
+
+```bash
+./scripts/wolf_actor_states_compare.sh
+./scripts/wolf_demo_ai_compare.sh
+```
+
+Both scripts accept `--source` and `--out`, verify original source hashes and
+save `build.log` and `compare.log`. The timing harness compiles original
+`DoActor` and 111 state definitions for guards, officers, SS, mutants, dogs and
+Hans. Think and action callbacks record invocations without simulating combat.
+All 26 supported state sequences match shape, timer, think eligibility and
+cumulative attack callbacks for 96 updates with varying tic counts, starting
+from full, zero and one remaining tic. Death sequences are not covered by
+this isolated test.
+
+The AI harness compiles original spawning, state transitions, sight/hearing,
+path/chase movement, damage/death, shooting and biting routines. It initializes
+from raw map planes and carries independent actor state, positions and tile
+reservations. Each command shares port player position, entry RNG, noise,
+running/weapon state, area connectivity, doors, visibility and exact
+player-inflicted damage. Enemy damage and outgoing RNG are compared along
+with all actor fields. OpenDoor requests are stubbed; door/pushwall simulation,
+renderer visibility, player targeting, pickups and scoring are not independent.
+Unsupported actor families fail explicitly.
+
+Currently all 37 actors and enemy damage match through command 881 under
+these inputs. Command 882 first differs in actor 15's next tile and one RNG
+byte. The AI script exits nonzero at that mismatch; it does not certify the
+whole demo. Dynamic wall changes are not yet fed to this reference, so its
+world coverage must be checked before treating the mismatch as a port AI bug.

@@ -7132,7 +7132,9 @@ func (g *game) updateDoors(tics int) {
 			if g.doorBlockedByPlayer(x, y, door) || g.doorBlockedByActors(x, y, door) || playerOverlapsTile(g.playerX, g.playerY, x, y) {
 				g.doorState[i] = 1
 				g.doorTimer[i] = 0
-				g.doorOpen[i] = max(g.doorOpen[i], 0.01)
+				if g.demoPlayback == nil {
+					g.doorOpen[i] = max(g.doorOpen[i], 0.01)
+				}
 				continue
 			}
 			g.doorOpen[i] -= doorOpenRatePerTic * float64(tics)
@@ -7186,7 +7188,9 @@ func (g *game) useDoorAhead() {
 		g.doorTimer[i] = 0
 	default:
 		g.doorState[i] = 1
-		g.doorOpen[i] = max(g.doorOpen[i], 0.01)
+		if g.demoPlayback == nil {
+			g.doorOpen[i] = max(g.doorOpen[i], 0.01)
+		}
 		g.doorTimer[i] = 0
 		g.playWorldSound(soundDoorOpen, float64(x)+0.5, float64(y)+0.5)
 	}
@@ -7799,6 +7803,10 @@ func (g *game) spawnDroppedPickup(x, y float64, pickup pickupType) {
 }
 
 func (g *game) shootAhead() {
+	if g.demoPlayback != nil {
+		g.shootDemoAhead()
+		return
+	}
 	g.madeNoise = true
 	if len(g.staticSprites) == 0 && len(g.actors) == 0 {
 		return
@@ -8586,7 +8594,7 @@ func (g *game) rebuildPlayerAreas() {
 					continue
 				}
 				i := y*g.levelWidth + x
-				if g.doorState[i] == 0 {
+				if g.doorState[i] == 0 || (g.demoPlayback != nil && g.doorOpen[i] == 0) {
 					continue
 				}
 				a, b, ok := g.doorAreas(x, y, tile.Door.Vertical)

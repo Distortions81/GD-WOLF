@@ -489,6 +489,12 @@ func (g *game) updateGuardPatrol(a *actorInstance, tics int) {
 		if !reachedGoal {
 			return
 		}
+		if g.demoPlayback != nil {
+			g.selectDemoPathGoal(a)
+			if a.dir == 8 {
+				return
+			}
+		}
 	}
 }
 
@@ -512,6 +518,12 @@ func (g *game) updateGuardChase(a *actorInstance, tics int) {
 		remaining -= consumed
 		if !reachedGoal {
 			return
+		}
+		if g.demoPlayback != nil {
+			g.actorChooseChaseGoal(a, dodge)
+			if !a.hasGoal {
+				return
+			}
 		}
 	}
 }
@@ -564,6 +576,12 @@ func (g *game) updateDogPatrol(a *actorInstance, tics int) {
 		if !reachedGoal {
 			return
 		}
+		if g.demoPlayback != nil {
+			g.selectDemoPathGoal(a)
+			if a.dir == 8 {
+				return
+			}
+		}
 	}
 }
 
@@ -587,6 +605,12 @@ func (g *game) updateDogChase(a *actorInstance, tics int) {
 		remaining -= consumed
 		if !reachedGoal {
 			return
+		}
+		if g.demoPlayback != nil {
+			g.actorChooseChaseGoal(a, true)
+			if !a.hasGoal {
+				return
+			}
 		}
 	}
 }
@@ -793,7 +817,9 @@ func (g *game) guardFirstSighting(a *actorInstance) {
 	}
 	a.alerted = true
 	a.firstAttack = true
-	a.reactionTimer = 0
+	if g.demoPlayback == nil {
+		a.reactionTimer = 0
+	}
 	if a.kind != actorKindMutant {
 		g.playWorldSound(enemyAlertSound(a.kind), a.x, a.y)
 	}
@@ -811,7 +837,9 @@ func (g *game) dogFirstSighting(a *actorInstance) {
 	}
 	a.alerted = true
 	a.firstAttack = true
-	a.reactionTimer = 0
+	if g.demoPlayback == nil {
+		a.reactionTimer = 0
+	}
 	g.playWorldSound(enemyAlertSound(a.kind), a.x, a.y)
 	a.aiState = actorStateChase
 	a.rotate = true
@@ -1373,7 +1401,9 @@ func (g *game) openDoorAt(x, y int) {
 	}
 	if g.doorState[i] == 0 || g.doorState[i] == 3 {
 		g.doorState[i] = 1
-		g.doorOpen[i] = max(g.doorOpen[i], 0.01)
+		if g.demoPlayback == nil {
+			g.doorOpen[i] = max(g.doorOpen[i], 0.01)
+		}
 		g.playWorldSound(soundDoorOpen, float64(x)+0.5, float64(y)+0.5)
 	}
 	g.doorTimer[i] = 0
@@ -1568,6 +1598,8 @@ func (g *game) actorSequenceActionFrame(a *actorInstance, action AnimAction) {
 		g.guardTryShoot(a)
 	case animActionBiteActor:
 		g.dogTryBite(a)
+	case animActionDeathScream:
+		g.playWorldSound(g.enemyDeathSound(a), a.x, a.y)
 	}
 }
 
@@ -1580,7 +1612,7 @@ func (g *game) actorSequenceDone(a *actorInstance) bool {
 }
 
 func (g *game) damageActor(a *actorInstance, damage int) bool {
-	if !a.alive || !a.shootable || damage <= 0 {
+	if !a.alive || !a.shootable || damage < 0 || (damage == 0 && g.demoPlayback == nil) {
 		return false
 	}
 	if !a.alerted {
@@ -1594,7 +1626,13 @@ func (g *game) damageActor(a *actorInstance, damage int) bool {
 		a.shootable = false
 		a.rotate = false
 		a.aiState = actorStateDead
-		g.playWorldSound(g.enemyDeathSound(a), a.x, a.y)
+		if g.demoPlayback == nil {
+			g.playWorldSound(g.enemyDeathSound(a), a.x, a.y)
+		} else {
+			// KillActor reserves the physical death tile, not the former goal.
+			a.tileX, a.tileY = int(a.x), int(a.y)
+			a.clearTileGoal()
+		}
 		g.startActorSequence(a, a.deathSequence(), false)
 		g.score += a.scoreValue
 		if a.dropPickup != pickupNone {

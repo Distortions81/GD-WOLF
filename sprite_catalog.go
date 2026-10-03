@@ -15,6 +15,7 @@ const (
 	animActionLoopIfPressed
 	animActionLoopFireIfPressed
 	animActionEnd
+	animActionDeathScream
 )
 
 type AnimFrame struct {

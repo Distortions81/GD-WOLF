@@ -131,13 +131,15 @@ the input finishes or the port reaches death/victory.
 Compare recorded player movement with compiled original C:
 
 ```bash
-./scripts/wolf_demo_player_compare.sh --stop-after-commands 371
+./scripts/wolf_demo_player_compare.sh --stop-after-commands 907
 ```
 
-The first demo's first 371 commands (1,484 Wolf tics) match within this
-conditional player-movement comparison. The unrestricted run currently stops
-at the port's death before command 371; enemy/combat and terminal states are
-not independently compared yet. See [demo comparison coverage and artifacts](docs/wolf-demo-compare.md).
+The first demo's first 907 commands (3,628 Wolf tics) match within this
+conditional player-movement comparison. The unrestricted run stops at port
+death before command 907. The actor runtime comparison currently matches
+through command 881, then differs at command 882. These references share
+external world/combat inputs; full demo parity remains unverified.
+See [demo comparison coverage and artifacts](docs/wolf-demo-compare.md).
 
 Actor initialization on all four demo maps and conditional face-animation RNG
 updates also match compiled original C:
@@ -145,6 +147,16 @@ updates also match compiled original C:
 ```bash
 ./scripts/wolf_demo_start_compare.sh
 ```
+
+Compare actor state timing and first-demo AI with compiled original C:
+
+```bash
+./scripts/wolf_actor_states_compare.sh
+./scripts/wolf_demo_ai_compare.sh
+```
+
+The state timing comparison passes; the demo AI command currently exits
+nonzero at the known command 882 mismatch.
 
 ## Browser Build
 

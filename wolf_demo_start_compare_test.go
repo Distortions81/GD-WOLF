@@ -69,7 +69,7 @@ func captureDemoStart(g *game) wolfDemoStartState {
 		s.Actors = append(s.Actors, wolfDemoActorStart{class,
 			int64(math.Round(a.x * 65536)), int64(math.Round(a.y * 65536)),
 			a.tileX, a.tileY, a.dir, a.area, a.ambush, a.health,
-			int64(math.Round(a.patrolSpeed * 65536 * 60 / 70)),
+			int64(math.Round(a.patrolSpeed * 65536)),
 			int64(math.Round(a.moveDistance * 65536)), a.shapenum, ticCount})
 	}
 	return s

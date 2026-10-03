@@ -166,3 +166,46 @@ func TestModernDoorsOptionAndDemoOverride(t *testing.T) {
 		t.Fatal("modern door preference was not restored after demo")
 	}
 }
+
+func TestDemoDoorConnectsAreasOnFirstMovement(t *testing.T) {
+	level := blankLevel(5, 3)
+	setLevelTile(level, 1, 1, wl6.Tile{Area: 0})
+	setLevelTile(level, 2, 1, wl6.Tile{Door: &wl6.Door{Vertical: true}, Area: -1})
+	setLevelTile(level, 3, 1, wl6.Tile{Area: 1})
+	g := testGameWithLevel(level)
+	g.playerX, g.playerY = 1.5, 1.5
+	g.playerAreas = make([]bool, 2)
+	g.demoPlayback = &wolfDemoPlayback{}
+	g.openDoorAt(2, 1)
+	g.rebuildPlayerAreas()
+	if g.doorOpen[7] != 0 || g.playerAreas[1] {
+		t.Fatal("door opened or connected its areas before the first movement")
+	}
+	g.updateDoors(4)
+	g.rebuildPlayerAreas()
+	if g.doorOpen[7] <= 0 || !g.playerAreas[1] {
+		t.Fatal("moving door did not connect its areas")
+	}
+}
+
+func TestDemoActorShootActionRunsOnExit(t *testing.T) {
+	g := &game{}
+	a := actorInstance{kind: actorKindGuard, aiState: actorStateShoot, chaseSeq: seqActorGuardChase}
+	g.startActorSequence(&a, seqActorGuardShoot, false)
+	shots := 0
+	action := func(action AnimAction) {
+		if action == animActionFireActor {
+			shots++
+		}
+	}
+	// Original s_grdshoot1 (20) enters s_grdshoot2 (20) without firing.
+	if g.advanceDemoActorSequence(&a, 20, action) || shots != 0 {
+		t.Fatal("entering the shoot action frame fired early")
+	}
+	if g.advanceDemoActorSequence(&a, 19, action) || shots != 0 {
+		t.Fatal("shoot action fired before state exit")
+	}
+	if g.advanceDemoActorSequence(&a, 1, action) || shots != 1 {
+		t.Fatal("shoot action did not fire exactly once on state exit")
+	}
+}

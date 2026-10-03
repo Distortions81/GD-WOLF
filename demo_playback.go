@@ -14,14 +14,16 @@ const (
 )
 
 type wolfDemoPlayback struct {
-	demo      *wl6.Demo
-	command   int
-	ticAccum  int
-	buttons   byte
-	angle     int // Original counterclockwise integer degrees.
-	angleFrac int
-	faceCount int
-	faceFrame int
+	demo        *wl6.Demo
+	command     int
+	ticAccum    int
+	buttons     byte
+	angle       int // Original counterclockwise integer degrees.
+	angleFrac   int
+	faceCount   int
+	faceFrame   int
+	projections []demoActorProjection
+	hits        []demoActorHit
 }
 
 // WOLFSRC BuildTables accumulates a float (32-bit) angle and stores sine
@@ -68,6 +70,10 @@ func (g *game) startDemo(demo *wl6.Demo) error {
 func (g *game) initializeDemoActorTimers() {
 	for i := range g.actors {
 		a := &g.actors[i]
+		// Interactive actor speeds historically used a 60 Hz conversion.
+		// Recorded commands pass Wolf tics directly, as original speed*tics.
+		a.patrolSpeed = math.Round(a.patrolSpeed*65536*60/70) / 65536
+		a.chaseSpeed = math.Round(a.chaseSpeed*65536*60/70) / 65536
 		seq, ok := LookupAnimSequence(a.sequenceID)
 		if !ok || len(seq.Frames) == 0 || seq.Frames[0].Tics <= 0 {
 			continue
@@ -128,6 +134,7 @@ func (g *game) stepDemoCommand(command wl6.DemoCommand) {
 
 func (g *game) prepareDemoCommand(command wl6.DemoCommand) bool {
 	d := g.demoPlayback
+	d.hits = nil
 	g.madeNoise = false
 	g.updateDoors(wl6.DemoTics)
 	g.updatePushWall(wl6.DemoTics)
@@ -159,8 +166,9 @@ func (g *game) finishDemoCommand(command wl6.DemoCommand, wasAttacking bool) {
 	if wasAttacking {
 		g.updateWeaponAttackWithInput(wl6.DemoTics, command.Buttons&demoButtonAttack != 0)
 	}
-	g.updateActors(wl6.DemoTics)
+	g.updateDemoActors(wl6.DemoTics)
 	g.collectPickups()
+	g.refreshDemoActorProjections()
 	g.demoPlayback.buttons = command.Buttons
 }
 
