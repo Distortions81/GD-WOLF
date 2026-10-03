@@ -79,6 +79,11 @@ outside its scope. Completed implementation items below do not establish
 complete enemy AI parity. Sight/hearing, state timing, combat and interactions
 between systems still need independent original-engine comparison.
 
+The [demo player comparison](docs/wolf-demo-compare.md) now replays recorded
+inputs through the actual port and records actor, door, RNG and combat state.
+Its C reference only compares conditional player movement; enemy/combat parity
+remains unverified.
+
 ### 1. Guard
 
 Shareware Episode 1 relevance:

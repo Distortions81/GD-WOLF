@@ -19,6 +19,7 @@ func TestPersistentConfigRoundTrip(t *testing.T) {
 		RenderModePrompted: true,
 		HDTexturesEnabled:  false,
 		VsyncEnabled:       false,
+		ModernDoors:        false,
 		Keybinds: map[string]persistentKeybind{
 			"forward": {
 				Primary:   ebiten.KeyW,
@@ -71,5 +72,26 @@ func TestPersistentConfigRoundTrip(t *testing.T) {
 		if parsed != binding {
 			t.Fatalf("keybind %q = %+v, want %+v", id, parsed, binding)
 		}
+	}
+	if got.ModernDoors != cfg.ModernDoors {
+		t.Fatalf("modern doors = %t, want %t", got.ModernDoors, cfg.ModernDoors)
+	}
+}
+
+func TestPersistentConfigModernDoorDefaultAndApplication(t *testing.T) {
+	cfg, err := parsePersistentConfig([]byte("[audio]\nsfx_volume = 0.5\n"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !cfg.ModernDoors {
+		t.Fatal("config without a door setting should retain modern doors")
+	}
+	g := &game{}
+	g.applyPersistentConfig(cfg)
+	if !g.modernDoors || !g.currentPersistentConfig().ModernDoors {
+		t.Fatal("modern door setting was not applied")
+	}
+	if _, err := parsePersistentConfig([]byte("[gameplay]\nmodern_doors = broken\n")); err == nil {
+		t.Fatal("invalid door boolean accepted")
 	}
 }

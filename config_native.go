@@ -25,6 +25,7 @@ type persistentConfig struct {
 	RenderModePrompted bool
 	HDTexturesEnabled  bool
 	VsyncEnabled       bool
+	ModernDoors        bool
 	Keybinds           map[string]persistentKeybind
 }
 
@@ -70,6 +71,7 @@ func (g *game) currentPersistentConfig() persistentConfig {
 		RenderModePrompted: g.renderModePrompted,
 		HDTexturesEnabled:  g.hdTexturesEnabled,
 		VsyncEnabled:       g.vsyncEnabled,
+		ModernDoors:        g.modernDoors,
 		Keybinds:           make(map[string]persistentKeybind, len(g.keybinds)),
 	}
 	for _, binding := range g.keybinds {
@@ -94,6 +96,7 @@ func (g *game) applyPersistentConfig(cfg persistentConfig) {
 	g.renderModePrompted = cfg.RenderModePrompted
 	g.hdTexturesEnabled = cfg.HDTexturesEnabled
 	g.vsyncEnabled = cfg.VsyncEnabled
+	g.modernDoors = cfg.ModernDoors
 	ebiten.SetVsyncEnabled(g.vsyncEnabled)
 	for i := range g.keybinds {
 		if binding, ok := cfg.Keybinds[g.keybinds[i].id]; ok {
@@ -116,6 +119,7 @@ func marshalPersistentConfig(cfg persistentConfig) ([]byte, error) {
 	fmt.Fprintf(&buf, "render_mode_prompted = %t\n", cfg.RenderModePrompted)
 	fmt.Fprintf(&buf, "hd_textures = %t\n", cfg.HDTexturesEnabled)
 	fmt.Fprintf(&buf, "vsync = %t\n\n", cfg.VsyncEnabled)
+	fmt.Fprintf(&buf, "[gameplay]\nmodern_doors = %t\n\n", cfg.ModernDoors)
 	fmt.Fprintf(&buf, "[keybinds]\n\n")
 
 	ids := make([]string, 0, len(cfg.Keybinds))
@@ -143,6 +147,7 @@ func parsePersistentConfig(data []byte) (persistentConfig, error) {
 		RenderModePrompted: false,
 		HDTexturesEnabled:  true,
 		VsyncEnabled:       true,
+		ModernDoors:        true,
 		Keybinds:           map[string]persistentKeybind{},
 	}
 
@@ -173,6 +178,14 @@ func parsePersistentConfig(data []byte) (persistentConfig, error) {
 		value = strings.TrimSpace(value)
 
 		switch section {
+		case "gameplay":
+			if key == "modern_doors" {
+				b, err := strconv.ParseBool(value)
+				if err != nil {
+					return cfg, err
+				}
+				cfg.ModernDoors = b
+			}
 		case "audio":
 			f, err := strconv.ParseFloat(value, 64)
 			if err != nil {

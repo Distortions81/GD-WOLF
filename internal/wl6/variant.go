@@ -32,6 +32,7 @@ type VariantSpec struct {
 	NumberZeroChunk    int
 	Face1APicChunk     int
 	Face8APicChunk     int
+	DemoStartChunk     int
 }
 
 var (
@@ -67,6 +68,7 @@ var (
 		NumberZeroChunk:    99,
 		Face1APicChunk:     109,
 		Face8APicChunk:     130,
+		DemoStartChunk:     139,
 	}
 	variantWL1 = VariantSpec{
 		Name:               "shareware WL1",
@@ -100,6 +102,7 @@ var (
 		NumberZeroChunk:    111,
 		Face1APicChunk:     121,
 		Face8APicChunk:     142,
+		DemoStartChunk:     151,
 	}
 	supportedVariants = []VariantSpec{variantWL6, variantWL1}
 )

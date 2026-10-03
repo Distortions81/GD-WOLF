@@ -107,8 +107,10 @@ Rendering, sound playback, door animation, actor state timers, physical movement
 between tiles, combat and the player simulation are outside this C reference's
 coverage. The existing [AI harness](enemy-ai-harness.md) continues to provide
 broader scripted runtime and attack checks through its Go reference adapter.
-An original-engine demo comparison would additionally require a portable
-simulation build and matching demo input playback in GD-WOLF.
+The [demo player comparison](wolf-demo-compare.md) now provides recorded input
+playback and conditional player movement checks. A full original-engine demo
+comparison still requires an independent simulation build for the remaining
+runtime systems.
 The original source does support recorded gameplay: `RecordDemo`/`PlayDemo` in
 `WL_GAME.C` and demo control input handling in `WL_PLAY.C` provide the starting
 point for that extension, including the built-in title-screen demos.

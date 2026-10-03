@@ -60,6 +60,11 @@ func startWolfSource(t *testing.T) *wolfSourceProcess {
 	if path == "" {
 		t.Skip("run scripts/wolf_source_compare.sh to build the original C reference")
 	}
+	return startWolfSourceBinary(t, path)
+}
+
+func startWolfSourceBinary(t *testing.T, path string) *wolfSourceProcess {
+	t.Helper()
 	cmd := exec.Command(path)
 	cmd.Stderr = os.Stderr
 	stdin, err := cmd.StdinPipe()

@@ -40,8 +40,9 @@ This result verifies the tested movement decisions. It does not establish
 complete AI parity over time: sight and hearing, state timing, attacks, damage,
 and interactions between systems still need independent original-engine
 comparison. Go regressions cover some of these behaviors, but the broader AI
-harness uses a Go reference adapter rather than the original engine. GD-WOLF
-does not yet support original gameplay demo playback or per-tic engine comparison.
+harness uses a Go reference adapter rather than the original engine. Recorded
+demo playback and a conditional player-movement comparison are now available;
+a full original-engine comparison of enemy and combat state is still missing.
 
 ## Project Additions Beyond Wolfenstein 3D
 
@@ -58,15 +59,19 @@ Some behaviors still intentionally diverge from Wolfenstein 3D for feel or clari
 
 ### Doors
 
-- Door collision uses a thinner center slab than the original tile-solid behavior.
-- The player does not slide along that door slab when pushing diagonally into it.
+`Options > Modern Doors` enables a thinner center collision slab and prevents
+sliding along it when pushing diagonally into a door. It defaults to On for
+interactive play. Turn it Off for the original solid door tile and sliding rules.
 
-These are deliberate quality-of-life changes to make doors feel less cumbersome and less visually confusing.
+The native setting is stored as `modern_doors` under `[gameplay]` in
+`config.toml`. Demo playback always uses the original door rules, regardless
+of this preference, and preserves the saved setting.
 
 ## Known Differences From Full Wolfenstein 3D Parity
 
 - The project does not yet implement the full original enemy roster and behaviors.
 - Complete enemy AI parity is unverified; the compiled original-source harness currently covers isolated movement decisions.
+- The demo player harness shares the port's world snapshots with its C reference. It does not independently simulate enemies, combat, doors or pickups.
 - Some systems are Wolfenstein 3D-inspired rather than byte-faithful, especially presentation details around fades, flashes, and frontend behavior.
 
 ## Data
@@ -110,6 +115,29 @@ See [the original-source harness](docs/wolf-source-compare.md) for source setup,
 trace artifacts, replay, and its coverage limits. This command checks isolated
 movement decisions, not a full gameplay demo. The existing broader
 [AI harness](docs/enemy-ai-harness.md) uses a Go reference adapter.
+
+## Demo Playback and Comparison
+
+Play the first built-in demo from the bundled shareware data:
+
+```bash
+go run . -data internal/wl6/shareware -demo-index 0
+```
+
+Indices 0–3 select the four built-in demos. To play a recorded demo file using
+the selected game data, use `-demo-file /path/to/demo.wl1`. Playback ends when
+the input finishes or the port reaches death/victory.
+
+Compare recorded player movement with compiled original C:
+
+```bash
+./scripts/wolf_demo_player_compare.sh --stop-after-commands 310
+```
+
+The first demo's first 310 commands (1,240 Wolf tics) match within this
+conditional player-movement comparison. The unrestricted run currently stops
+at the port's death before command 310; enemy/combat and terminal states are
+not independently compared yet. See [demo comparison coverage and artifacts](docs/wolf-demo-compare.md).
 
 ## Browser Build
 

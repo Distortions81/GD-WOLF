@@ -33,6 +33,7 @@ func buildEnemyAIFuzzBaseline(files *wl6.Files, mapIndex int) (*game, error) {
 		selectedLevel: mapIndex,
 		pendingMap:    mapIndex,
 		rng:           newWolfRNG(0),
+		modernDoors:   true,
 	}
 	g.ensureFrame(320, 200)
 	if err := g.setMap(mapIndex); err != nil {

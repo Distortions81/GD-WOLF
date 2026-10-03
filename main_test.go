@@ -80,6 +80,7 @@ func testGameWithLevel(level *wl6.Level) *game {
 		viewHeight:   200,
 		zbuffer:      make([]float64, 320),
 		rng:          testRNG(1),
+		modernDoors:  true,
 	}
 	g.cachedWallIDs = make([]uint16, level.Width*level.Height)
 	g.cachedDoorFlags = make([]byte, level.Width*level.Height)
@@ -395,11 +396,12 @@ func TestOptionsMenuItemsUseGraphicsSubmenu(t *testing.T) {
 		renderMode:        renderModeUltra,
 		hdTexturesEnabled: true,
 		vsyncEnabled:      true,
+		modernDoors:       true,
 	}
 
 	items := g.optionsMenuItems()
-	if len(items) != 4 {
-		t.Fatalf("options item count = %d, want 4", len(items))
+	if len(items) != 5 {
+		t.Fatalf("options item count = %d, want 5", len(items))
 	}
 	if items[0] != "Graphics >" {
 		t.Fatalf("options item 0 = %q, want Graphics >", items[0])
@@ -409,6 +411,9 @@ func TestOptionsMenuItemsUseGraphicsSubmenu(t *testing.T) {
 	}
 	if items[2] != "Controls >" {
 		t.Fatalf("options item 2 = %q, want Controls >", items[2])
+	}
+	if items[3] != "Modern Doors  On" || items[4] != "Back" {
+		t.Fatalf("door option/back rows = %v", items[3:])
 	}
 
 	audioItems := g.audioMenuItems()
@@ -1010,6 +1015,17 @@ func TestTryMoveSlidesAlongWall(t *testing.T) {
 	}
 	if g.playerY <= 1.5 {
 		t.Fatalf("playerY = %.3f, want slide along open Y axis", g.playerY)
+	}
+}
+
+func TestTryMoveClearsWallCornerWithFullDiagonalStep(t *testing.T) {
+	level := blankLevel(5, 5)
+	setLevelTile(level, 3, 1, wl6.Tile{Solid: true})
+	g := testGameWithLevel(level)
+	g.playerX, g.playerY = 2.5, 2.2
+	g.tryMove(0.3, 0.3)
+	if g.playerX != 2.8 || g.playerY != 2.5 {
+		t.Fatalf("diagonal move clearing corner rejected: (%f,%f)", g.playerX, g.playerY)
 	}
 }
 

@@ -11,6 +11,7 @@ import (
 	"math"
 	"math/bits"
 	"math/rand"
+	"os"
 	"runtime"
 	"sort"
 	"strconv"
@@ -188,6 +189,8 @@ type game struct {
 	lastFPSUpdate       time.Time
 	staticSprites       []staticSprite
 	actors              []actorInstance
+	demoPlayback        *wolfDemoPlayback
+	modernDoors         bool
 	doorOpen            []float64
 	doorState           []byte
 	doorTimer           []int
@@ -943,6 +946,8 @@ func main() {
 	dataDir := flag.String("data", "", "path to Wolfenstein 3D data directory")
 	startMap := flag.Int("map", 0, "initial map index")
 	threads := flag.Int("threads", 0, "number of render worker threads (0 = NumCPU)")
+	demoIndex := flag.Int("demo-index", -1, "play built-in Wolf3D demo 0-3")
+	demoFile := flag.String("demo-file", "", "play a recorded Wolf3D demo file")
 	flag.Parse()
 	startMapSet := false
 	flag.Visit(func(f *flag.Flag) {
@@ -1087,6 +1092,7 @@ func main() {
 		turnSpeed:         defaultTurnSpeed,
 		mapMoveSpeed:      defaultMapMoveSpeed,
 		vsyncEnabled:      true,
+		modernDoors:       true,
 		renderMode:        renderModeUltra,
 		hdTexturesEnabled: true,
 		rng:               defaultRNG(),
@@ -1134,6 +1140,27 @@ func main() {
 		g.pendingMap = g.selectedLevel
 		g.ensureFrame(g.viewWidth, g.viewHeight)
 		g.uiState = uiStatePlaying
+	}
+	if *demoIndex != -1 || *demoFile != "" {
+		if startMapSet || (*demoIndex != -1 && *demoFile != "") {
+			log.Fatal("choose one of -map, -demo-index, or -demo-file")
+		}
+		var demo *wl6.Demo
+		if *demoFile != "" {
+			var data []byte
+			data, err = os.ReadFile(*demoFile)
+			if err == nil {
+				demo, err = wl6.ParseDemo(data)
+			}
+		} else {
+			demo, err = files.LoadDemo(*demoIndex)
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		if err := g.startDemo(demo); err != nil {
+			log.Fatal(err)
+		}
 	}
 	g.syncMusicTrack()
 
@@ -1214,11 +1241,22 @@ func (g *game) Update() error {
 	}
 
 	gameplayTics := g.consumeWolfTics(&g.gameplayTickAccum)
+	if g.demoPlayback != nil && (g.playerDying || g.victoryActive) {
+		return ebiten.Termination
+	}
 	if g.playerDying {
 		return g.updatePlayerDeath(gameplayTics)
 	}
 	if g.victoryActive {
 		return g.updateVictorySequence(gameplayTics)
+	}
+	if g.demoPlayback != nil {
+		if g.demoPlayback.command >= len(g.demoPlayback.demo.Commands) {
+			return ebiten.Termination
+		}
+		g.updateDemoPlayback(gameplayTics)
+		g.rebuildHUDText()
+		return nil
 	}
 	autosavesDue := g.consumePeriodicAutosaveTriggers(gameplayTics)
 
@@ -2105,6 +2143,15 @@ func (g *game) updateFrontend() error {
 					g.menuIndex = 0
 				})
 			case 3:
+				if g.demoPlayback != nil {
+					g.playSound(soundNoWay)
+					return nil
+				}
+				g.modernDoors = !g.modernDoors
+				if err := g.savePersistentConfig(); err != nil {
+					return err
+				}
+			case 4:
 				g.playSound(soundMenuBack)
 				next := g.menuReturn
 				return g.fadeToUIState(next, func() {
@@ -2756,10 +2803,15 @@ func difficultyMenuItems() []string {
 }
 
 func (g *game) optionsMenuItems() []string {
+	doorLabel := onOffLabel(g.modernDoors)
+	if g.demoPlayback != nil {
+		doorLabel = "Off (Demo)"
+	}
 	return []string{
 		submenuLabel("Graphics"),
 		submenuLabel("Audio"),
 		submenuLabel("Controls"),
+		fmt.Sprintf("Modern Doors  %s", doorLabel),
 		"Back",
 	}
 }
@@ -5424,6 +5476,7 @@ func (g *game) resetLoadout() {
 }
 
 func (g *game) startNewGame() {
+	g.demoPlayback = nil
 	g.resetLoadout()
 	g.health = 100
 	g.lives = 3
@@ -5934,6 +5987,10 @@ func (g *game) updateWeaponAttack(tics int) {
 		ebiten.IsKeyPressed(ebiten.KeyControl) ||
 		ebiten.IsKeyPressed(ebiten.KeyControlLeft) ||
 		ebiten.IsKeyPressed(ebiten.KeyControlRight)
+	g.updateWeaponAttackWithInput(tics, attackPressed)
+}
+
+func (g *game) updateWeaponAttackWithInput(tics int, attackPressed bool) {
 
 	if !g.attacking {
 		if !attackPressed {
@@ -6802,11 +6859,13 @@ func (g *game) tryMove(dx, dy float64) {
 
 	nextX := g.playerX + dx
 	nextY := g.playerY + dy
-	if g.collidesDoor(nextX, g.playerY) || g.collidesDoor(g.playerX, nextY) || g.collidesDoor(nextX, nextY) {
-		if !g.collides(nextX, nextY) {
-			g.playerX = nextX
-			g.playerY = nextY
-		}
+	// WOLFSRC ClipMove tries the complete move before sliding on either axis.
+	// Testing X first can reject a diagonal step that clears a wall corner.
+	if !g.collides(nextX, nextY) {
+		g.playerX, g.playerY = nextX, nextY
+		return
+	}
+	if g.modernDoorCollisionEnabled() && (g.collidesDoor(nextX, g.playerY) || g.collidesDoor(g.playerX, nextY) || g.collidesDoor(nextX, nextY)) {
 		return
 	}
 
@@ -6937,6 +6996,9 @@ func (g *game) doorCollisionAt(tileX, tileY int, left, right, top, bottom float6
 	if tile.Door == nil {
 		return false
 	}
+	if !g.modernDoorCollisionEnabled() {
+		return !g.isDoorOpen(tileX, tileY) && right >= float64(tileX) && left < float64(tileX+1) && bottom >= float64(tileY) && top < float64(tileY+1)
+	}
 	thickness := doorCollisionThickness * (1 - clampUnit(g.doorOpenness(tileX, tileY)))
 	if thickness <= 0 {
 		return false
@@ -6954,6 +7016,10 @@ func (g *game) doorCollisionAt(tileX, tileY int, left, right, top, bottom float6
 	doorBottom := float64(tileY) + 0.5 + halfThickness
 	return right > float64(tileX) && left < float64(tileX+1) &&
 		bottom > doorTop && top < doorBottom
+}
+
+func (g *game) modernDoorCollisionEnabled() bool {
+	return g.modernDoors && g.demoPlayback == nil
 }
 
 func (g *game) isBlockingTile(x, y int) bool {
