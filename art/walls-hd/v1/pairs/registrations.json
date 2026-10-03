@@ -1,0 +1,70 @@
+[
+  {
+    "source": "pairs/gray-ab.png",
+    "sourceSize": [
+      1774,
+      887
+    ],
+    "tiles": [
+      1,
+      2
+    ],
+    "canvas": 1024,
+    "sourceRegions": [
+      {
+        "Min": {
+          "X": 0,
+          "Y": 0
+        },
+        "Max": {
+          "X": 887,
+          "Y": 887
+        }
+      },
+      {
+        "Min": {
+          "X": 887,
+          "Y": 0
+        },
+        "Max": {
+          "X": 1774,
+          "Y": 887
+        }
+      }
+    ]
+  },
+  {
+    "source": "pairs/blue-ab.png",
+    "sourceSize": [
+      1774,
+      887
+    ],
+    "tiles": [
+      8,
+      9
+    ],
+    "canvas": 1024,
+    "sourceRegions": [
+      {
+        "Min": {
+          "X": 0,
+          "Y": 0
+        },
+        "Max": {
+          "X": 887,
+          "Y": 887
+        }
+      },
+      {
+        "Min": {
+          "X": 887,
+          "Y": 0
+        },
+        "Max": {
+          "X": 1774,
+          "Y": 887
+        }
+      }
+    ]
+  }
+]

@@ -1,27 +1,46 @@
-# HD wall textures — first batch
+# First-level HD wall pack
 
-Four selected textures at **1254 × 1254**, fully opaque:
+The saved pack covers all **13 wall designs** in the embedded WL1 first level, the activated elevator wall, both elevator switch states, ordinary doors and frames, and elevator doors. Composed textures are 1024 × 1024 or 1254 × 1254 and fully opaque; decoration PNGs have transparent backgrounds.
 
 | Tile | Design |
 | --- | --- |
-| 01 | Gray stone, original broad block arrangement with continuous curved outlines |
-| 02 | Approved rough gray stone surface and strong chiseled bevels, with large stepped outline notches replaced by natural fracture edges |
-| 03 | Plain red cloth banner on corrected gray stone, requested replacement |
-| 12 | Warm brown vertical wood paneling |
+| 01–02 | Two gray stone arrangements with rough faces and natural fractured contours |
+| 03 | Plain red cloth banner on the corrected gray stone |
+| 04 | Silhouette portrait in a dark frame on gray stone |
+| 05 | Barred window on blue stone |
+| 06 | Stone arch with a golden eagle and plain red plaque |
+| 07 | Barred window and skeleton on blue stone |
+| 08–09 | Matched blue stone A/B pair |
+| 10 | Framed silver eagle artwork on wood, with a plain red pedestal |
+| 11 | Silhouette portrait in a gold frame on wood |
+| 12 | Warm vertical wood paneling |
+| 21–22 | Elevator rail wall, with separate inactive/active switch faces |
 
-Tile02 now follows the user's reference in `references/stone-user-style.png`: rough pitted faces, cracks and strong chiseled bevels are preserved, while large coarse staircase notches are reshaped into natural irregular fracture contours. The rounded-block revision is retained in `previous/tile-02-rounded-blocks.png`. The base stone wall (tile01) and banner background (tile03) still need to be brought into this newly approved direction. No low-resolution image was enlarged to make a final texture.
+Gray stone variants follow the approved rough stone reference in `references/stone-user-style.png`: pitted faces, cracks and strong chiseled bevels with natural irregular fracture edges replacing coarse pixel-grid notches. Tiles01/02 and tiles08/09 are each split from one continuous two-tile-wide image, keeping the face material, grain, bevels and lighting consistent across A/B. They repeat A–B–A–B, with a continuous center join and a narrow mortar joint at the B→A wrap. Blue windows share one iron-bar overlay, with a separate skeleton layer for tile07. `blue-layout-correction.json` records an earlier single-tile layout study superseded by the matched pair.
 
-Final textures are in `walls/horizontal/` and are copied into `hd-assets/walls/horizontal/` for native ULTRA with HD textures enabled. The existing loader creates the second wall orientation at `wl6.WallShadeScale` (0.66 brightness). Existing blue HD walls are preserved. This batch does not complete all first-level wall designs.
-
-Open `preview.html` to compare originals, previous drafts, corrected textures, horizontal repeats and shaded orientations. The HD previews use smooth browser sampling; only the original 64px references use nearest-neighbor sampling. Repetition is shown for inspection; these are individual wall textures, not a guarantee of identical pixels at every boundary.
-
-`prompts.json` records the selected built-in image-generation prompts. `remake_stone.go` reproduces earlier 1024px contour guides. `remake_wood.go` reproduces a directly drawn wood alternative; the generated wood is selected for its more natural grain. Earlier wall drafts are in `previous/`.
-
-Run the direct drawing tools from the repository root:
+`pairs/gray-ab.png` and `pairs/blue-ab.png` are the selected 1774 × 887 source images. Each 887px square half is smoothly registered onto a 1024px runtime canvas; this small enlargement does not add source detail. `pairs/prompts.json` records the exact built-in image tool requests and their saved inputs. `pairs/registrations.json` records the split regions. Rebuild the four runtime tiles with:
 
 ```sh
-GOCACHE=/tmp/gdwolf-site-build-cache go run art/walls-hd/v1/remake_stone.go
-GOCACHE=/tmp/gdwolf-site-build-cache go run art/walls-hd/v1/remake_wood.go
+GOCACHE=/tmp/gdwolf-site-build-cache go run ./art/walls-hd/v1/split_wall_pairs.go
 ```
 
-Validation: the approved tile02 revision is 1254 × 1254 with every pixel opaque and is installed in the native override directory. The prior batch passed the real native wall override loader checks and existing conversion, shading and override tests. The repeat preview was visually inspected for that batch. `git diff --check` passed.
+Portraits use anonymous silhouettes at the user's request. The banner, eagle plaque and pedestal have plain red surfaces. Historical portrait generations were rejected by the image tool; the selected silhouette variants replace them.
+
+Plain materials are saved in `walls/horizontal/`; transparent decorations are separate images in `walls/decorations/`. `walls/compositions.json` maps decorated tiles to a shared base and ordered layers. Both portraits use the exact same silhouette PNG, and both barred windows use the same iron bars. Tile22 reuses tile21's rail wall. Placement rectangles use normalized x, y, width and height; a layer can also supply an RGBA color for a recessed opening.
+
+The native loader composes these variants once when loading the HD pack, then the raycaster samples a cached texture just as it does for plain walls. Compositions take precedence over older baked PNGs with the same tile number. Shared inputs are decoded once and left unchanged; resized transparent layers use premultiplied filtering. The second orientation is generated at `wl6.WallShadeScale` (0.66 brightness). Elevator switch faces are distinct artwork in `walls/vertical/tile-21.png` and `tile-22.png`. The door renderer selects raw page numbers: `walls/pages/page-098.png` is the teal door, `page-100.png` its frame, and `page-102.png` the elevator door. Their shaded counterparts 099, 101 and 103 are generated by the loader. Horizontal tile50/51 files alone do not replace these door pages.
+
+Install the selected revisions from the repository root, replacing stale copies with the same filenames:
+
+```sh
+mkdir -p hd-assets/walls
+cp -r art/walls-hd/v1/walls/. hd-assets/walls/
+```
+
+Native ULTRA mode uses these files when HD textures are enabled. The browser build does not package filesystem overrides. The saved `art/` pack is tracked; local `hd-assets/` is ignored.
+
+Open `preview.html` to compare every selected wall, control and door against its decoded original. Gray and blue stone previews alternate A–B–A–B so both joins can be inspected, including at the shaded wall orientation. The saved `pairs/*-abab-preview.png` strips show the same four-tile repeat. HD previews use smooth browser sampling; only the original references use nearest-neighbor sampling.
+
+`prompts.json` records selected built-in image-generation prompts, decoration extraction prompts, and reused artwork. Earlier baked decorated walls remain in `previous/` as source references, and are not runtime inputs. `remake_stone.go` and `remake_wood.go` reproduce earlier direct drawing alternatives; running those tools does not select their output for this pack.
+
+`TestFirstLevelHDWallCoverage` derives wall IDs from the embedded map, includes the activated elevator state, and verifies both orientations and all six door pages through the actual HD loader. `TestHDWallCompositionsReuseDecorationsAndReplaceStaleVariants` verifies shared layers, placement, shading, and priority over stale baked files. `TestHDHangingFixturesHaveNoBakedFloorPatch` guards against restoring opaque lamp floor patches.

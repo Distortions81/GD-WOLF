@@ -1,0 +1,15 @@
+{
+  "mode": "built-in image_gen",
+  "prompts": [
+    {
+      "asset": "ChandelierFixtureAlphaRepair",
+      "path": "edits/shape-006.png",
+      "prompt": "Use case: background-extraction / precise-object-edit. Edit target: the attached square game sprite. Preserve the exact small golden hanging chandelier: same golden metal, number and shape of upward glowing bulbs, silhouette and proportions, smooth HD game-illustration look. Keep its exact logical placement centered horizontally at the VERY TOP of the square canvas, occupying approximately x=30%..70% and y=0%..30%, as in the reference. This composition is essential for the game engine. Remove the ENTIRE gray oval/strip along the bottom edge: the engine will draw floor light itself. Also remove the rectangular yellow/gray background around the chandelier. The finished sprite contains ONLY the chandelier and its actual bulbs/metal with clean antialiased alpha cutout edges. All the rest of the square canvas, especially the entire bottom 70%, must be completely alpha-zero transparent. No glow haze or light spill outside the fixture, no floor, no ground shadow, no light pool, no background rectangle. Keep ample empty canvas below; do NOT center or enlarge the chandelier to fill the image. True transparent background. Preserve original recognizable colorful look, render smooth high-resolution edges without pixel-block artifacts, black outlines, text or added parts."
+    },
+    {
+      "asset": "HangingLampFixtureAlphaRepair",
+      "path": "edits/shape-016.png",
+      "prompt": "Use case: background-extraction / precise-object-edit. Edit target: attached square game sprite with a green hanging dome lamp at the top and an ivory floor oval at the bottom. Preserve the exact approved green metal dome, black hanging chain, polished trim, materials, shape, orientation and size. Keep the lamp in exactly the SAME top-center position and proportion of the square canvas (fixture x=39%..62%, y=0%..17% approximately). Remove the entire cream-colored floor light pool at the bottom: the engine will draw its floor lighting itself. Remove the triangular bright light cone underneath the lamp too; retain the bright illuminated actual underside of the fixture but no light spilling onto empty background. Output only a clean transparent cutout of the physical hanging lamp and chain. All empty space, especially the lower 80% of the canvas, must be alpha-zero transparent. No floor plane, gray patch, ellipse, shadows, external haze, matte rectangle, black outlines, checkerboard or text. Keep exact approved smooth illustrated HD look and colors. Do NOT move the fixture down or enlarge it to fill the canvas."
+    }
+  ]
+}

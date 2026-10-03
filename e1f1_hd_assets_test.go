@@ -148,8 +148,8 @@ func TestFirstLevelHDSpriteCoverage(t *testing.T) {
 			t.Errorf("%s: %v", path, err)
 			continue
 		}
-		if img.Bounds().Dx() <= 64 || img.Bounds().Dy() <= 64 {
-			t.Errorf("%s is not higher resolution: %v", path, img.Bounds())
+		if img.Bounds().Dx() < 512 || img.Bounds().Dy() < 512 {
+			t.Errorf("%s is an older undersized replacement: %v", path, img.Bounds())
 		}
 		visible, clear := 0, 0
 		for y := img.Bounds().Min.Y; y < img.Bounds().Max.Y; y++ {

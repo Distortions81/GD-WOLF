@@ -43,7 +43,7 @@ direction.addEventListener('change',restart);
 document.querySelector('#restart').addEventListener('click',restart);
 document.querySelector('#pause').addEventListener('click',()=>{const now=performance.now();if(paused){started+=now-pausedAt;}else{pausedAt=now;}paused=!paused;document.querySelector('#pause').textContent=paused?'Play':'Pause';});
 function load(path){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Unable to load '+path));img.src=path;});}
-Promise.all([0,1].flatMap(kind=>Array.from({length:49},(_,i)=>{const shape=50+i;return load((kind?'sprites/':'references/sprites/')+'shape-'+String(shape).padStart(3,'0')+'.png').then(img=>images[kind].set(shape,img));}))).then(()=>{ready=true;status.textContent='49 of 49 frames loaded. Select a direction to compare the complete walk cycle.';}).catch(err=>{status.textContent=err.message;});
+Promise.all([0,1].flatMap(kind=>Array.from({length:49},(_,i)=>{const shape=50+i;return load((kind?'../../e1f1-hd/sprites/':'references/sprites/')+'shape-'+String(shape).padStart(3,'0')+'.png').then(img=>images[kind].set(shape,img));}))).then(()=>{ready=true;status.textContent='49 of 49 frames loaded. Select a direction to compare the complete walk cycle.';}).catch(err=>{status.textContent=err.message;});
 function render(now){
  if(ready){
   const seq=definitions[animation.value],duration=seq.reduce((sum,item)=>sum+item[1],0);
@@ -52,7 +52,7 @@ function render(now){
   if(shape>=50&&shape<=89&&!direction.disabled)shape+=Number(direction.value);
   if(shape!==currentShape){
    currentShape=shape;
-   for(let kind=0;kind<2;kind++){const ctx=canvases[kind].getContext('2d');ctx.clearRect(0,0,448,448);ctx.imageSmoothingEnabled=false;ctx.drawImage(images[kind].get(shape),0,0,448,448);}
+   for(let kind=0;kind<2;kind++){const ctx=canvases[kind].getContext('2d');ctx.clearRect(0,0,448,448);ctx.imageSmoothingEnabled=kind===1;ctx.drawImage(images[kind].get(shape),0,0,448,448);}
    const img=images[1].get(shape);caption.textContent=img.naturalWidth+' × '+img.naturalHeight+' · shape-'+String(shape).padStart(3,'0')+'.png';
   }
  }

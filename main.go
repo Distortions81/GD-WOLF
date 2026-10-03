@@ -176,7 +176,6 @@ type game struct {
 	rayDirXColumns      []float64
 	rayDirYColumns      []float64
 	wallColumns         []wallColumn
-	columnCoverage      []columnCoverage
 	prevWallTops        []int
 	prevWallBottoms     []int
 	zbuffer             []float64
@@ -454,20 +453,16 @@ type spriteVis struct {
 	shapenum  int
 	rotate    bool
 	facingDir int
-	tileDist  int
-	dist2     float64
+	depth     float64
 }
 
-type spriteVisByDist []spriteVis
+type spriteVisByDepth []spriteVis
 
-func (s spriteVisByDist) Len() int { return len(s) }
-func (s spriteVisByDist) Less(i, j int) bool {
-	if s[i].tileDist != s[j].tileDist {
-		return s[i].tileDist > s[j].tileDist
-	}
-	return s[i].dist2 > s[j].dist2
+func (s spriteVisByDepth) Len() int { return len(s) }
+func (s spriteVisByDepth) Less(i, j int) bool {
+	return s[i].depth > s[j].depth
 }
-func (s spriteVisByDist) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+func (s spriteVisByDepth) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 type raycastJob struct {
 	startX          int
@@ -490,18 +485,6 @@ type raycastJob struct {
 	prevWallTops    []int
 	prevWallBottoms []int
 	wg              *sync.WaitGroup
-}
-
-const maxColumnSpanCount = 8
-
-type columnSpan struct {
-	start int
-	end   int
-}
-
-type columnCoverage struct {
-	count int
-	spans [maxColumnSpanCount]columnSpan
 }
 
 type wallColumn struct {
@@ -4353,7 +4336,7 @@ func (g *game) buildSpriteImage(sprite *wl6.Sprite) (*ebiten.Image, bool) {
 			for _, post := range column.Posts {
 				for y, colorIndex := range post.Indexed {
 					i := ((post.StartY+y)*sprite.Width + x) * 4
-					rgba := g.walls.Palette[colorIndex]
+					rgba := premultipliedRGBA(g.walls.Palette[colorIndex])
 					pix[i] = byte(rgba >> 24)
 					pix[i+1] = byte(rgba >> 16)
 					pix[i+2] = byte(rgba >> 8)
@@ -4364,7 +4347,7 @@ func (g *game) buildSpriteImage(sprite *wl6.Sprite) (*ebiten.Image, bool) {
 	} else {
 		for y := 0; y < sprite.Height; y++ {
 			for x := 0; x < sprite.Width; x++ {
-				rgba := sprite.Pixels[y*sprite.Width+x]
+				rgba := premultipliedRGBA(sprite.Pixels[y*sprite.Width+x])
 				i := (y*sprite.Width + x) * 4
 				pix[i] = byte(rgba >> 24)
 				pix[i+1] = byte(rgba >> 16)
@@ -4376,6 +4359,18 @@ func (g *game) buildSpriteImage(sprite *wl6.Sprite) (*ebiten.Image, bool) {
 	img := ebiten.NewImage(sprite.Width, sprite.Height)
 	img.WritePixels(pix)
 	return img, true
+}
+
+// Ebiten's pixel uploads require premultiplied colors; decoded HD sprites keep
+// straight-alpha colors for software compositing.
+func premultipliedRGBA(rgba uint32) uint32 {
+	a := rgba & 255
+	if a == 255 {
+		return rgba
+	}
+	return ((rgba>>24)*a+127)/255<<24 |
+		(((rgba>>16)&255)*a+127)/255<<16 |
+		(((rgba>>8)&255)*a+127)/255<<8 | a
 }
 
 func (g *game) rebuildSpriteImageCache() {
@@ -4513,7 +4508,7 @@ func (g *game) wallTextureImage(texture *wl6.WallTexture) (*ebiten.Image, bool) 
 	pix := make([]byte, width*height*4)
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
-			rgba := texture.Pixel(x, y)
+			rgba := premultipliedRGBA(texture.Pixel(x, y))
 			i := (y*width + x) * 4
 			pix[i] = byte(rgba >> 24)
 			pix[i+1] = byte(rgba >> 16)
@@ -4563,22 +4558,7 @@ func (g *game) drawRaycastScaled(screen *ebiten.Image) {
 		return
 	}
 
-	copy(g.gameplayFrame, g.gameplayBackground)
-	forwardX := math.Cos(g.playerA)
-	forwardY := math.Sin(g.playerA)
-	bufferWidth := g.layout.bufferWidth
-	planeScale := math.Tan(fov / 2)
-	planeX := -forwardY * planeScale
-	planeY := forwardX * planeScale
-	projPlaneDist := float64(bufferWidth) / (2 * planeScale)
-	g.prepareRaycastDirections(0, bufferWidth, forwardX, forwardY, planeX, planeY)
-	g.renderRaycastColumns(true, 0, bufferWidth, forwardX, forwardY, planeX, planeY, projPlaneDist)
-	for i := 0; i < bufferWidth && i < len(g.columnCoverage); i++ {
-		g.columnCoverage[i].clear()
-	}
-	g.drawWeaponOverlayScaled()
-	g.drawSpritesScaled(forwardX, forwardY, planeX, planeY, projPlaneDist)
-	g.drawWallColumnsScaled()
+	g.renderGameplayFrame()
 
 	if g.backgroundImage != nil {
 		screen.DrawImage(g.backgroundImage, nil)
@@ -4590,6 +4570,25 @@ func (g *game) drawRaycastScaled(screen *ebiten.Image) {
 	if g.paused {
 		g.drawPausedOverlay(screen)
 	}
+}
+
+func (g *game) renderGameplayFrame() {
+	copy(g.gameplayFrame, g.gameplayBackground)
+	forwardX := math.Cos(g.playerA)
+	forwardY := math.Sin(g.playerA)
+	bufferWidth := g.layout.bufferWidth
+	planeScale := math.Tan(fov / 2)
+	planeX := -forwardY * planeScale
+	planeY := forwardX * planeScale
+	projPlaneDist := float64(bufferWidth) / (2 * planeScale)
+	g.prepareRaycastDirections(0, bufferWidth, forwardX, forwardY, planeX, planeY)
+	g.renderRaycastColumns(true, 0, bufferWidth, forwardX, forwardY, planeX, planeY, projPlaneDist)
+	g.drawLightFixtureFloorGlows(forwardX, forwardY, projPlaneDist)
+	// Draw the opaque world first, then sprites from far to near and the weapon
+	// last, so translucent edges blend with the actual scene behind them.
+	g.drawWallColumnsScaled()
+	g.drawSpritesScaled(forwardX, forwardY, planeX, planeY, projPlaneDist)
+	g.drawWeaponOverlayScaled()
 }
 
 func (g *game) presentGameplayBuffer(screen *ebiten.Image) {
@@ -4925,18 +4924,11 @@ func (g *game) drawWeaponOverlayScaled() {
 				continue
 			}
 			texPos := uint32(yStart-geom.spriteTop) * texStep
-			var visibleSpans [maxColumnSpanCount]columnSpan
-			spanCount := g.columnCoverage[x].subtract(yStart, yEnd, &visibleSpans)
-			for spanIdx := 0; spanIdx < spanCount; spanIdx++ {
-				span := visibleSpans[spanIdx]
-				i := span.start*bufferWidth + x
-				spanTexPos := texPos + uint32(span.start-yStart)*texStep
-				if drawIndexed {
-					drawIndexedSpritePostInto(dst, stride, i, spanTexPos, texStep, span.start, span.end, post, &g.walls.RenderLUT, 0)
-				} else {
-					drawRGBASpritePostInto(dst, stride, i, spanTexPos, texStep, span.start, span.end, post)
-				}
-				g.columnCoverage[x].reserve(span.start, span.end)
+			i := yStart*bufferWidth + x
+			if drawIndexed {
+				drawIndexedSpritePostInto(dst, stride, i, texPos, texStep, yStart, yEnd, post, &g.walls.RenderLUT, 0)
+			} else {
+				drawRGBASpritePostInto(dst, stride, i, texPos, texStep, yStart, yEnd, post)
 			}
 		}
 	}
@@ -6410,7 +6402,7 @@ func writeRGBAOverBuffer(dst []byte, i int, rgba uint32) {
 	}
 }
 
-func (g *game) visibleSprites() []spriteVis {
+func (g *game) visibleSprites(forwardX, forwardY float64) []spriteVis {
 	g.spriteVisBuf = g.spriteVisBuf[:0]
 	if cap(g.spriteVisBuf) < len(g.staticSprites)+len(g.actors)+1 {
 		g.spriteVisBuf = make([]spriteVis, 0, len(g.staticSprites)+len(g.actors)+1)
@@ -6428,8 +6420,7 @@ func (g *game) visibleSprites() []spriteVis {
 			shapenum:  spr.shapenum,
 			rotate:    spr.rotate,
 			facingDir: spr.facingDir,
-			tileDist:  g.playerAttackTileDistance(spr.x, spr.y),
-			dist2:     dx*dx + dy*dy,
+			depth:     dx*forwardX + dy*forwardY,
 		})
 	}
 	if g.victoryActive && g.victoryBJ.alive {
@@ -6440,8 +6431,7 @@ func (g *game) visibleSprites() []spriteVis {
 			x:        dx,
 			y:        dy,
 			shapenum: g.victoryBJ.shapenum,
-			tileDist: g.playerAttackTileDistance(g.victoryBJ.x, g.victoryBJ.y),
-			dist2:    dx*dx + dy*dy,
+			depth:    dx*forwardX + dy*forwardY,
 		})
 	}
 	for _, actor := range g.actors {
@@ -6456,14 +6446,13 @@ func (g *game) visibleSprites() []spriteVis {
 			shapenum:  actor.shapenum,
 			rotate:    actor.rotate,
 			facingDir: actor.facingDir,
-			tileDist:  g.playerAttackTileDistance(actor.x, actor.y),
-			dist2:     dx*dx + dy*dy,
+			depth:     dx*forwardX + dy*forwardY,
 		})
 	}
 	if len(g.spriteVisBuf) < 2 {
 		return g.spriteVisBuf
 	}
-	sort.Sort(spriteVisByDist(g.spriteVisBuf))
+	sort.Sort(spriteVisByDepth(g.spriteVisBuf))
 	return g.spriteVisBuf
 }
 
@@ -6473,7 +6462,7 @@ func (g *game) drawSprites(forwardX, forwardY, planeX, planeY, projPlaneDist flo
 	}
 
 	invDet := 1.0 / (planeX*forwardY - forwardX*planeY)
-	visible := g.visibleSprites()
+	visible := g.visibleSprites(forwardX, forwardY)
 	if len(visible) == 0 {
 		return
 	}
@@ -6568,7 +6557,7 @@ func (g *game) drawSpritesScaled(forwardX, forwardY, planeX, planeY, projPlaneDi
 	}
 
 	invDet := 1.0 / (planeX*forwardY - forwardX*planeY)
-	visible := g.visibleSprites()
+	visible := g.visibleSprites(forwardX, forwardY)
 	if len(visible) == 0 {
 		return
 	}
@@ -6576,8 +6565,7 @@ func (g *game) drawSpritesScaled(forwardX, forwardY, planeX, planeY, projPlaneDi
 	bufferWidth := g.layout.bufferWidth
 	bufferHeight := g.layout.bufferHeight
 	viewHeight := float64(bufferHeight)
-	for visIdx := len(visible) - 1; visIdx >= 0; visIdx-- {
-		spr := visible[visIdx]
+	for _, spr := range visible {
 		transformX := invDet * (forwardY*spr.x - forwardX*spr.y)
 		transformY := invDet * (-planeY*spr.x + planeX*spr.y)
 		if transformY <= 0.01 || transformY >= maxSpriteDrawDepth {
@@ -6638,22 +6626,16 @@ func (g *game) drawSpritesScaled(forwardX, forwardY, planeX, planeY, projPlaneDi
 				}
 				yStart := maxInt(drawTop, postDrawTop)
 				yEnd := minInt(drawBottom, postDrawBottom)
+				yStart, yEnd = clampPostDrawRange(spriteTop, texStep, yStart, yEnd, post)
 				if yEnd <= yStart {
 					continue
 				}
 				texPos := uint32(yStart-spriteTop) * texStep
-				var visibleSpans [maxColumnSpanCount]columnSpan
-				spanCount := g.columnCoverage[x].subtract(yStart, yEnd, &visibleSpans)
-				for spanIdx := 0; spanIdx < spanCount; spanIdx++ {
-					span := visibleSpans[spanIdx]
-					i := span.start*bufferWidth + x
-					spanTexPos := texPos + uint32(span.start-yStart)*texStep
-					if drawIndexed {
-						drawIndexedSpritePostInto(dst, stride, i, spanTexPos, texStep, span.start, span.end, post, &g.walls.RenderLUT, 0)
-					} else {
-						drawRGBASpritePostInto(dst, stride, i, spanTexPos, texStep, span.start, span.end, post)
-					}
-					g.columnCoverage[x].reserve(span.start, span.end)
+				i := yStart*bufferWidth + x
+				if drawIndexed {
+					drawIndexedSpritePostInto(dst, stride, i, texPos, texStep, yStart, yEnd, post, &g.walls.RenderLUT, 0)
+				} else {
+					drawRGBASpritePostInto(dst, stride, i, texPos, texStep, yStart, yEnd, post)
 				}
 			}
 		}
@@ -6661,7 +6643,7 @@ func (g *game) drawSpritesScaled(forwardX, forwardY, planeX, planeY, projPlaneDi
 }
 
 func (g *game) drawWallColumnsScaled() {
-	if len(g.wallColumns) < g.layout.bufferWidth || len(g.columnCoverage) < g.layout.bufferWidth {
+	if len(g.wallColumns) < g.layout.bufferWidth {
 		return
 	}
 	for x := 0; x < g.layout.bufferWidth; x++ {
@@ -6673,102 +6655,20 @@ func (g *game) drawWallColumnsScaled() {
 		if texture == nil || texture.Empty() {
 			continue
 		}
-		var visibleSpans [maxColumnSpanCount]columnSpan
-		spanCount := g.columnCoverage[x].subtract(col.drawTop, col.drawBottom, &visibleSpans)
-		for spanIdx := 0; spanIdx < spanCount; spanIdx++ {
-			span := visibleSpans[spanIdx]
-			if len(texture.Indices) > 0 {
-				lutDim := 0
-				if texture.UseDimPalette {
-					lutDim = 1
-				}
-				drawIndexedTexturedColumnIntoGameplay(g.gameplayFrame32, g.layout.bufferWidth, x, span.start, span.end, col.origTop, col.origBottom, texture, col.texU, &g.walls.RenderLUT[lutDim])
-			} else {
-				drawRGBATexturedColumnIntoGameplay(g.gameplayFrame32, g.layout.bufferWidth, x, span.start, span.end, col.origTop, col.origBottom, texture, col.texU)
+		if len(texture.Indices) > 0 {
+			lutDim := 0
+			if texture.UseDimPalette {
+				lutDim = 1
 			}
+			drawIndexedTexturedColumnIntoGameplay(g.gameplayFrame32, g.layout.bufferWidth, x, col.drawTop, col.drawBottom, col.origTop, col.origBottom, texture, col.texU, &g.walls.RenderLUT[lutDim])
+		} else {
+			drawRGBATexturedColumnIntoGameplay(g.gameplayFrame32, g.layout.bufferWidth, x, col.drawTop, col.drawBottom, col.origTop, col.origBottom, texture, col.texU)
 		}
 	}
 }
 
 func shouldDrawActorSprite(actor actorInstance) bool {
 	return actor.alive || actor.aiState == actorStateDead
-}
-
-func (c *columnCoverage) clear() {
-	c.count = 0
-}
-
-func (c *columnCoverage) reserve(start, end int) {
-	if end <= start {
-		return
-	}
-	newStart := start
-	newEnd := end
-	insertAt := c.count
-	for i := 0; i < c.count; i++ {
-		span := c.spans[i]
-		if newEnd < span.start {
-			insertAt = i
-			break
-		}
-		if newStart > span.end {
-			continue
-		}
-		if span.start < newStart {
-			newStart = span.start
-		}
-		if span.end > newEnd {
-			newEnd = span.end
-		}
-		if insertAt > i {
-			insertAt = i
-		}
-		copy(c.spans[i:c.count-1], c.spans[i+1:c.count])
-		c.count--
-		i--
-	}
-	if c.count >= len(c.spans) {
-		c.spans[c.count-1] = columnSpan{start: newStart, end: newEnd}
-		return
-	}
-	copy(c.spans[insertAt+1:c.count+1], c.spans[insertAt:c.count])
-	c.spans[insertAt] = columnSpan{start: newStart, end: newEnd}
-	c.count++
-}
-
-func (c *columnCoverage) subtract(start, end int, out *[maxColumnSpanCount]columnSpan) int {
-	if end <= start {
-		return 0
-	}
-	cur := start
-	outCount := 0
-	for i := 0; i < c.count; i++ {
-		span := c.spans[i]
-		if span.end <= cur {
-			continue
-		}
-		if span.start >= end {
-			break
-		}
-		if cur < span.start {
-			out[outCount] = columnSpan{start: cur, end: minInt(end, span.start)}
-			outCount++
-			if outCount >= len(out) {
-				return outCount
-			}
-		}
-		if span.end > cur {
-			cur = span.end
-		}
-		if cur >= end {
-			return outCount
-		}
-	}
-	if cur < end && outCount < len(out) {
-		out[outCount] = columnSpan{start: cur, end: end}
-		outCount++
-	}
-	return outCount
 }
 
 func (g *game) spriteRotateOffset(spriteDX, spriteDY float64, facingDir int) int {
@@ -8124,9 +8024,6 @@ func (g *game) ensureUltraRenderBuffers() {
 	if len(g.wallColumns) != width {
 		g.wallColumns = make([]wallColumn, width)
 	}
-	if len(g.columnCoverage) != width {
-		g.columnCoverage = make([]columnCoverage, width)
-	}
 	if len(g.cameraColumns) != width {
 		g.cameraColumns = make([]float64, width)
 	}
@@ -8174,9 +8071,6 @@ func (g *game) ensureScaledRenderBuffers() {
 	}
 	if len(g.wallColumns) != width {
 		g.wallColumns = make([]wallColumn, width)
-	}
-	if len(g.columnCoverage) != width {
-		g.columnCoverage = make([]columnCoverage, width)
 	}
 	if len(g.cameraColumns) != width {
 		g.cameraColumns = make([]float64, width)
@@ -8256,11 +8150,12 @@ func (g *game) rebuildBackground() {
 		g.backgroundImage = ebiten.NewImage(g.viewWidth, g.viewHeight)
 	}
 	g.backgroundImage.WritePixels(g.background)
+	g.rebuildGameplayBackground()
 	g.rebuildPauseShade()
 }
 
 func (g *game) rebuildGameplayBackground() {
-	if g.renderMode == renderModeUltra || len(g.gameplayBackground) == 0 || g.layout.bufferWidth <= 0 || g.layout.bufferHeight <= 0 {
+	if len(g.gameplayBackground) != g.layout.bufferWidth*g.layout.bufferHeight*4 || g.layout.bufferWidth <= 0 || g.layout.bufferHeight <= 0 {
 		return
 	}
 	half := g.layout.bufferHeight / 2

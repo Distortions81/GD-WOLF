@@ -10,6 +10,20 @@ import (
 	"gd-wolf/internal/wl6"
 )
 
+func TestExportedWallPagesIncludeDistinctElevatorSwitches(t *testing.T) {
+	for _, tc := range []struct {
+		page int
+		want bool
+	}{
+		{0, true}, {1, false}, {40, true}, {41, true}, {42, true}, {43, true},
+		{98, true}, {99, false}, {100, true}, {101, false}, {102, true}, {103, false},
+	} {
+		if got := isExportedWallPage(tc.page); got != tc.want {
+			t.Fatalf("page %d exported = %v, want %v", tc.page, got, tc.want)
+		}
+	}
+}
+
 func TestExportIndexedSprite(t *testing.T) {
 	files, _, err := wl6.OpenDefault()
 	if err != nil {

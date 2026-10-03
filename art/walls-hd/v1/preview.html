@@ -1,40 +1,89 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HD walls · first batch</title><style>
-*{box-sizing:border-box}body{margin:0;background:#11151b;color:#eff0f3;font:15px/1.5 system-ui,sans-serif}
+<title>First-level HD wall pack</title><style>
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:#11151b;color:#eff0f3;font:15px/1.5 system-ui,sans-serif}
 main{max-width:1180px;margin:0 auto;padding:28px}h1{margin:0 0 4px;font-size:27px}p{margin:0 0 18px;color:#bfc6d2}
 .controls{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:22px 0}
 select{font:inherit;background:#252d39;color:inherit;border:1px solid #536078;border-radius:6px;padding:8px}
 label{display:flex;gap:8px;align-items:center}.pair{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-figure{margin:0}figcaption{margin-bottom:8px;color:#c7d0df}figure img{display:block;width:100%;height:auto}
+figure{margin:0}figcaption{margin-bottom:8px;color:#c7d0df}figure img,figure canvas{display:block;width:100%;height:auto}
 .original{image-rendering:pixelated}.surface{border:1px solid #36404e;background:#191f28}
-.strip{display:flex;overflow:hidden;width:100%;margin:10px 0 24px}.strip img{width:33.333333%;height:auto;display:block}
-.side img{filter:brightness(.66)}h2{font-size:18px;margin:24px 0 6px}
+.strip{display:flex;overflow:hidden;width:100%;margin:10px 0 24px}.strip canvas{width:33.333333%;height:auto;display:block}.strip[data-paired="true"] canvas{width:25%}
+.side canvas{filter:brightness(.66)}h2{font-size:18px;margin:24px 0 6px}
 button{font:inherit;padding:7px 12px;color:#e9effb;background:#29384f;border:1px solid #587093;border-radius:6px;cursor:pointer}
-a{color:#a8c8ff}details{margin:25px 0}.zoom{overflow:auto}.zoom img{width:1254px;max-width:none;display:block}
+a{color:#a8c8ff}details{margin:25px 0}.zoom{overflow:auto}.zoom canvas{width:1254px;max-width:none;display:block}
 @media(max-width:700px){main{padding:18px}.pair{grid-template-columns:1fr}.strip{min-height:160px}}
-</style></head><body><main><h1>HD wall textures</h1><p>Tile02 has the approved rough stone finish with natural fracture edges. The base stone and banner background still need to match it.</p>
-<div class="controls"><label for="wall">Wall <select id="wall"><option value="01">01 · gray stone</option><option value="02">02 · alternate gray stone</option><option value="03">03 · plain red banner</option><option value="12">12 · wood panels</option></select></label><button id="draft">Show previous stone draft</button></div>
-<div class="pair"><figure><figcaption>Original · 64 × 64</figcaption><img class="original surface" id="original" alt="Original wall texture"></figure><figure><figcaption id="current-caption">HD · 1254 × 1254</figcaption><img class="surface" id="current" alt="Current HD wall texture"></figure></div>
-<h2>Repeated across three wall sections</h2><p>Shows neighboring joins at normal brightness.</p><div class="strip surface" id="repeat"></div>
+</style></head><body><main><h1>HD wall textures</h1><p>All first-level walls, doors and elevator controls. Gray stone uses the approved rough finish; the two framed portraits use silhouettes.</p>
+<div class="controls"><label for="wall">Surface <select id="wall"></select></label><button id="draft">Show previous stone draft</button></div>
+<div class="pair"><figure><figcaption>Original · 64 × 64</figcaption><img class="original surface" id="original" alt="Original wall texture"></figure><figure><figcaption id="current-caption">HD · 1254 × 1254</figcaption><canvas class="surface" id="current" aria-label="Current HD wall texture"></canvas></figure></div>
+<h2 id="repeat-title">Repeated wall sections</h2><p id="repeat-description">Shows neighboring joins at normal brightness.</p><div class="strip surface" id="repeat"></div>
 <h2>Shaded wall orientation</h2><p>The game applies 66% brightness to the second orientation.</p><div class="strip side surface" id="shaded"></div>
-<details><summary>View the texture at its native resolution</summary><div class="zoom"><img id="native" alt="HD wall at native resolution"></div></details>
-<p><a href="README.md">Batch notes</a> · <a href="prompts.json">Prompts and source information</a></p>
+<details><summary>View the texture at its native resolution</summary><div class="zoom"><canvas id="native" aria-label="HD wall at native resolution"></canvas></div></details>
+<p><a href="README.md">Pack notes</a> · <a href="prompts.json">Prompts and source information</a></p>
 </main><script>
 const wall=document.getElementById('wall'), draft=document.getElementById('draft');
-let previous=false;
-function update(){
- const id=wall.value;
- if(id==='12') previous=false;
- const src=previous?'previous/tile-'+id+'-stepped-contours.png':'walls/horizontal/tile-'+id+'.png';
- document.getElementById('original').src='references/horizontal/tile-'+id+'-original.png';
- for(const key of ['current','native']) document.getElementById(key).src=src;
- document.getElementById('current-caption').textContent=previous?'Previous draft · stepped edges':'HD · 1254 × 1254';
- for(const key of ['repeat','shaded']){
-  const box=document.getElementById(key);box.replaceChildren();
-  for(let i=0;i<3;i++){const img=new Image();img.src=src;img.alt='Wall section '+(i+1);box.appendChild(img);}
+const entries=[
+ ['01','Gray stone'],['02','Alternate gray stone'],['03','Plain red banner'],
+ ['04','Silhouette on stone'],['05','Blue barred window'],['06','Golden eagle arch'],
+ ['07','Skeleton window'],['08','Blue stone'],['09','Alternate blue stone'],
+ ['10','Framed silver eagle'],['11','Silhouette on wood'],['12','Wood panels'],
+ ['21','Elevator rail'],['22','Activated elevator rail'],
+].map(([id,name])=>({label:id+' · '+name,src:'walls/horizontal/tile-'+id+'.png',
+ original:'references/horizontal/tile-'+id+(id==='22'?'-enlarged.png':'-original.png'),
+ previous:['01','02','03'].includes(id)?'previous/tile-'+id+'-stepped-contours.png':null,
+ shaded:true}));
+entries.push(
+ {label:'21 · Elevator switch',src:'walls/vertical/tile-21.png',original:'references/pages/page-041.png'},
+ {label:'22 · Activated switch',src:'walls/vertical/tile-22.png',original:'references/pages/page-043.png'},
+ {label:'098 · Teal door',src:'walls/pages/page-098.png',original:'references/pages/page-098.png',shaded:true},
+ {label:'100 · Door frame',src:'walls/pages/page-100.png',original:'references/pages/page-100.png',shaded:true},
+ {label:'102 · Elevator door',src:'walls/pages/page-102.png',original:'references/pages/page-102.png',shaded:true}
+);
+entries.forEach((entry,i)=>{const option=document.createElement('option');option.value=i;option.textContent=entry.label;wall.appendChild(option)});
+let previous=false, revision=0;
+const images=new Map();
+function loadImage(src){
+ if(!images.has(src)) images.set(src,new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Cannot load '+src));img.src=src}));
+ return images.get(src);
+}
+const manifest=fetch('walls/compositions.json').then(r=>{if(!r.ok)throw new Error('Cannot load wall layouts');return r.json()});
+async function renderSurface(entry,usePrevious=false){
+ const layouts=await manifest;
+ const id=entry.src.match(/walls\/horizontal\/tile-(\d+)\.png$/)?.[1];
+ const spec=!usePrevious&&id?layouts.horizontal[Number(id)]:null;
+ const src=usePrevious?entry.previous:spec?'walls/'+spec.base:entry.src;
+ const base=await loadImage(src),canvas=document.createElement('canvas');canvas.width=base.naturalWidth;canvas.height=base.naturalHeight;
+ const ctx=canvas.getContext('2d');ctx.drawImage(base,0,0);
+ if(spec) for(const layer of spec.layers||[]){
+  const r=layer.rect||[0,0,1,1],rect=[Math.round(r[0]*canvas.width),Math.round(r[1]*canvas.height),Math.round((r[0]+r[2])*canvas.width),Math.round((r[1]+r[3])*canvas.height)];
+  if(layer.color){const c=layer.color;ctx.fillStyle='rgba('+c[0]+','+c[1]+','+c[2]+','+c[3]/255+')';ctx.fillRect(rect[0],rect[1],rect[2]-rect[0],rect[3]-rect[1])}
+  else ctx.drawImage(await loadImage('walls/'+layer.image),rect[0],rect[1],rect[2]-rect[0],rect[3]-rect[1]);
  }
- draft.hidden=id==='12';draft.textContent=previous?'Show corrected stone':'Show previous stone draft';
+ return canvas;
+}
+async function update(){
+ const currentRevision=++revision,entry=entries[Number(wall.value)];
+ if(!entry.previous) previous=false;
+ document.getElementById('original').src=entry.original;
+ document.getElementById('original').previousElementSibling.textContent='Original · decoded reference';
+ draft.hidden=!entry.previous;draft.textContent=previous?'Show selected texture':'Show previous stone draft';
+ try{
+  const usePrevious=previous,surface=await renderSurface(entry,usePrevious);
+  const pairedIDs={'01':['01','02'],'02':['02','01'],'08':['08','09'],'09':['09','08']};
+  const id=entry.src.match(/walls\/horizontal\/tile-(\d+)\.png$/)?.[1];
+  const pair=pairedIDs[id],neighbor=pair?entries.find(e=>e.src==='walls/horizontal/tile-'+pair[1]+'.png'):null;
+  const alternate=neighbor?await renderSurface(neighbor,usePrevious&&!!neighbor.previous):null;
+  if(currentRevision!==revision)return;
+  for(const key of ['current','native']){const canvas=document.getElementById(key);canvas.width=surface.width;canvas.height=surface.height;canvas.getContext('2d').drawImage(surface,0,0)}
+  document.getElementById('current-caption').textContent=(usePrevious?'Previous draft':'HD')+' · '+surface.width+' × '+surface.height;
+  document.getElementById('repeat-title').textContent=pair?'Alternating A · B · A · B wall sections':'Repeated across three wall sections';
+  document.getElementById('repeat-description').textContent=pair?'Tiles '+pair.join(' / ')+' alternate. Inspect both A→B and B→A joins.':'Shows neighboring joins at normal brightness.';
+  for(const key of ['repeat','shaded']){
+   const box=document.getElementById(key);box.replaceChildren();box.dataset.paired=!!pair;
+   for(let i=0;i<(pair?4:3);i++){const tile=alternate&&i%2?alternate:surface,canvas=document.createElement('canvas');canvas.width=tile.width;canvas.height=tile.height;canvas.getContext('2d').drawImage(tile,0,0);box.appendChild(canvas)}
+  }
+  const shaded=document.getElementById('shaded');shaded.hidden=!entry.shaded;shaded.previousElementSibling.hidden=!entry.shaded;shaded.previousElementSibling.previousElementSibling.hidden=!entry.shaded;
+ }catch(err){document.getElementById('current-caption').textContent=err.message}
 }
 wall.addEventListener('change',()=>{previous=false;update()});
 draft.addEventListener('click',()=>{previous=!previous;update()});update();

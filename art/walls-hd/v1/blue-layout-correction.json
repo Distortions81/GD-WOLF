@@ -1,0 +1,10 @@
+{
+  "asset": "walls/horizontal/tile-09.png",
+  "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-eef33c43-3dc0-4bbc-82c3-da9b8df641d7.png",
+  "transparent_background": false,
+  "referenced_image_paths": [
+    "/home/dist/github/GD-WOLF/art/walls-hd/v1/references/horizontal/tile-09-enlarged.png"
+  ],
+  "prompt": "Reconstruct this exact game wall in high-resolution rough COBALT BLUE quarried stone. Treat this as an EXACT LAYOUT TRACE, never rearrange stones. SQUARE texture. Each gray-black mortar seam stays at the precise reference coordinate. Main TOP-LEFT stone is a tall vertical rectangle, bounds x=1.5% to34%, y=0% to62.5%; height nearly TWICE width. It extends from the upper edge all the way past the middle to y62.5%, one unbroken stone, no horizontal seam through it. Bottom-left separate vertical block x1.5\u201323.5%, y65.5\u2013100%. Near x26.5\u201336%, TWO narrow vertical stones: y45\u201372% and y75\u2013100%. Center upper stone x37\u201367%, y8\u201333%; tall narrow one x70.5\u201383%, y8\u201333%. Center middle rectangle x39\u201372%, y36\u201359%; center lower rectangle x39\u201374%,y61\u201380%. Right-middle tall stone x76.5\u201390%, y36\u201373%. Bottom-center broad rectangle x39\u201375%,y83\u2013100%, bottom-right x78\u201399%,y77\u2013100%. Top-right stone x84.5\u201399%,y0\u201323%. Partial stones continue at outer edges exactly as source. Preserve source dark grey mortar width and deep vivid cobalt-blue palette. Tiny pitted granular detail, fine natural cracks, subtle chiseled bevel highlights, clean smooth continuous contours with natural tiny chips, NO step-pixel outlines. Preserve orthographic texture appearance. No objects, symbols, text, frame, perspective. Layout accuracy takes precedence. Do not copy any alternate blue wall pattern.",
+  "status": "Superseded by paired tiles08/09; retained as an earlier layout study."
+}

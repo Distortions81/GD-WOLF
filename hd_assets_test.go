@@ -285,6 +285,35 @@ func TestApplyHDWallOverridesKeepsDimmedVerticalForStockFallback(t *testing.T) {
 	}
 }
 
+func TestApplyHDWallOverridesLoadsDistinctElevatorSwitch(t *testing.T) {
+	root := t.TempDir()
+	path := filepath.Join(root, "walls", "vertical")
+	if err := os.MkdirAll(path, 0755); err != nil {
+		t.Fatal(err)
+	}
+	f, err := os.Create(filepath.Join(path, "tile-21.png"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := png.Encode(f, solidRGBA(200, 100, 60, 255)); err != nil {
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
+	walls := &wl6.WallSet{}
+	walls.Horizontal[21] = buildWallTextureFromImage(40, solidRGBA(10, 20, 30, 255))
+	walls.Vertical[21] = buildWallTextureFromImage(41, solidRGBA(40, 50, 60, 255))
+	g := &game{hdAssetRoot: root, hdTexturesEnabled: true, renderMode: renderModeUltra, walls: walls}
+	g.applyHDWallOverrides()
+	if got := g.walls.Vertical[21].Pixel(0, 0); got != 0xc8643cff {
+		t.Fatalf("elevator switch = %#08x, want HD control panel", got)
+	}
+	if got := g.walls.Horizontal[21].Pixel(0, 0); got != 0x0a141eff {
+		t.Fatalf("elevator rail wall = %#08x, was replaced by switch artwork", got)
+	}
+}
+
 func solidRGBA(r, g, b, a uint8) *image.RGBA {
 	img := image.NewRGBA(image.Rect(0, 0, 1, 1))
 	img.SetRGBA(0, 0, color.RGBA{R: r, G: g, B: b, A: a})

@@ -1,0 +1,62 @@
+{
+  "mode": "built-in image_gen",
+  "purpose": "A/B pairs designed together and repeated A-B-A-B",
+  "pairs": [
+    {
+      "name": "gray",
+      "stages": [
+        {
+          "asset": "pairs/gray-ab-layout.png",
+          "request": {
+            "referenced_image_paths": [
+              "references/gray-ab-original.png",
+              "previous/tile-02-before-ab-match.png"
+            ],
+            "transparent_background": false,
+            "prompt": "Create ONE continuous TWO-TILE-WIDE high resolution gray stone wall texture, landscape aspect EXACTLY2:1 (prefer2508x1254 or larger). It represents a game wall A then B; later split precisely at50% width into two square tiles and repeat A-B-A-B. FIRST image is authoritative combined128x64 original layout, left half tile01/right half tile02. Preserve broad stone placements and all mortar-joint locations across the FULL WIDE IMAGE. SECOND is approved material MASTER only: same light-gray naturally pitted chiseled rock, small pores/granular texture, restrained fine cracks, bright top/left bevels and dark bottom/right bevels, charcoal rough mortar. Both halves must have IDENTICAL face gray, grain scale, bevel width/depth, crack character and contrast, under one uniform illumination. No difference of stone type or rendering style between halves. Make natural irregular chipped continuous stone contours instead of the original large square-pixel stair steps; specifically diagonal broken corners become organic fractured edges, not grid blocks or square blocks. Do not introduce crosshatching, embossed scratches or a woven-looking surface. Treat the whole width as ONE unbroken wall, no frame or dividing seam at the center. Avoid artificial bevel/shadow borders at the50% cut, and make left/right outer edges suitable for repeating the entire two-tile unit. Layout remains distinct A/B, not duplicated halves. Orthographic front view texture, opaque full canvas, no perspective, text, props or captions. Smooth high-resolution physical stone detail; preserve approved classic gray palette and second reference overall finish."
+          },
+          "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-7abd71d9-481f-4006-a5aa-820090e2fd0f.png"
+        },
+        {
+          "asset": "pairs/gray-ab.png",
+          "request": {
+            "referenced_image_paths": [
+              "pairs/gray-ab-layout.png"
+            ],
+            "transparent_background": false,
+            "prompt": "Use case: precise-object-edit. Asset type: two-tile-wide gray stone game wall, repeated horizontally A-B-A-B.\nEdit target: this exact 2:1 wide texture. Correct ONLY the leftmost and rightmost outer edges so the entire wide texture repeats seamlessly. The current outer boundaries cut through several stones at mismatched heights. Give BOTH outer edges a narrow, matching charcoal rough mortar strip approximately 1% of total width (together at the wrap equal to one ordinary mortar joint), with neighboring stones terminating naturally just inside that strip. Shape newly exposed stone ends as fine natural chipped fractures and the SAME existing chiseled bevels; no grid stair steps. This makes a normal vertical mortar joint when right edge is placed against left edge, with no hard cut stones. Preserve ALL interior stones, positions, shapes, cracks, grain, face color, lighting, contrast and exact image dimensions/aspect. Keep the center A-to-B region absolutely unchanged, unbroken continuous material. Preserve the approved rough light-gray pitted mineral, bright top-left bevels, dark mortar and original high-resolution detail. Do not change layout, add a frame, thicken mortar elsewhere, redraw material or add text. Opaque exact 2:1 landscape texture only."
+          },
+          "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-94a37bb2-6bfa-41a6-a511-4ff7404811e4.png"
+        }
+      ]
+    },
+    {
+      "name": "blue",
+      "stages": [
+        {
+          "asset": "pairs/blue-ab-layout.png",
+          "request": {
+            "referenced_image_paths": [
+              "references/blue-ab-original.png",
+              "previous/tile-08-before-ab-match.png"
+            ],
+            "transparent_background": false,
+            "prompt": "Create ONE continuous TWO-TILE-WIDE high-resolution BLUE stone wall texture, landscape aspect EXACTLY2:1 (prefer2508x1254 or larger). It is game tileA followed byB, to split at50% into square tiles and repeat A-B-A-B. FIRST is authoritative combined ORIGINAL layout, left tile08/right tile09. Preserve original broad block silhouettes/mortar locations across both halves: tall vertical rectangular stones, narrow vertical strips and staggered horizontal blocks; do not replace large original vertical stones with wide horizontal ones or duplicate one half. Reconstruct contours as smooth continuous naturally chipped cut-stone boundaries without inherited pixel-stair geometry. SECOND approved MATERIAL MASTER only: dark saturated cobalt-blue finely granular/pitted rock, small subtle cracks, restrained shallow bevels and rough charcoal gray mortar. Both halves have EXACTLY THE SAME dark-blue face brightness, blue hue/saturation, grain scale, fine crack character, bevel depth/width, mortar tone and contrast under uniform lighting. No bright electric-blue silver streaks, exaggerated coarse flaky shale, or large crunchy angular cracks. Entire width is ONE unbroken material wall, no divider or frame at50%, no artificial bevel/shadow line at split. Left/right outer edges suitable for repeating the two-tile unit. Output one wide2:1 orthographic opaque texture only, no perspective, extra panels, writing, symbols or props. Preserve classic game palette, smooth HD finish consistent with SECOND, and exact distinct layouts from FIRST."
+          },
+          "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-3dfbc0be-8879-4cff-a9fe-2b5422ac4781.png"
+        },
+        {
+          "asset": "pairs/blue-ab.png",
+          "request": {
+            "referenced_image_paths": [
+              "pairs/blue-ab-layout.png"
+            ],
+            "transparent_background": false,
+            "prompt": "Use case: precise-object-edit. Asset type: two-tile-wide blue stone game wall, repeated horizontally A-B-A-B.\nEdit target: this exact 2:1 wide texture. Correct ONLY the leftmost and rightmost outer edges so the entire wide texture repeats seamlessly. The current outer boundaries cut through several stones at mismatched heights. Give BOTH outer edges a narrow, matching charcoal rough mortar strip approximately 1% of total width (together at the wrap equal to one ordinary mortar joint), with neighboring stones terminating naturally just inside that strip. Shape newly exposed stone ends as fine natural chipped fractures and the SAME existing chiseled bevels; no grid stair steps. This makes a normal vertical mortar joint when right edge is placed against left edge, with no hard cut stones. Preserve ALL interior stones, positions, shapes, cracks, grain, face color, lighting, contrast and exact image dimensions/aspect. Keep the center A-to-B region absolutely unchanged, unbroken continuous material. Preserve the approved dark saturated cobalt-blue pitted mineral and restrained bevels, dark mortar and original high-resolution detail. Do not change layout, add a frame, thicken mortar elsewhere, redraw material or add text. Opaque exact 2:1 landscape texture only."
+          },
+          "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-e63abc44-01f0-4b9a-912d-81785b950c79.png"
+        }
+      ]
+    }
+  ]
+}

@@ -8,10 +8,11 @@ import (
 	"flag"
 	"fmt"
 	"image"
-	"image/color"
 	"image/png"
 	"os"
 	"path/filepath"
+
+	"gd-wolf/internal/assetimage"
 )
 
 type frameMetadata struct {
@@ -38,20 +39,13 @@ func main() {
 			shape := 416 + weapon*5 + phase
 			filename := fmt.Sprintf("shape-%03d.png", shape)
 			region := image.Rect(cuts[phase], 0, cuts[phase+1], atlas.Bounds().Dy())
-			content := occupiedBounds(atlas, region)
+			content := occupiedBounds(atlas, region).Inset(-2).Intersect(region)
 			original := readPNG(filepath.Join(*root, "references", "sprites", filename))
 			originalBounds := occupiedBounds(original, original.Bounds())
 			target := image.Rect(originalBounds.Min.X*8, originalBounds.Min.Y*8, originalBounds.Max.X*8, originalBounds.Max.Y*8)
 			output := image.NewNRGBA(image.Rect(0, 0, canvas, canvas))
-			// Register the generated figure to the original logical canvas without
-			// introducing new colors or changing its alpha through interpolation.
-			for y := target.Min.Y; y < target.Max.Y; y++ {
-				for x := target.Min.X; x < target.Max.X; x++ {
-					sx := content.Min.X + (2*(x-target.Min.X)+1)*content.Dx()/(2*target.Dx())
-					sy := content.Min.Y + (2*(y-target.Min.Y)+1)*content.Dy()/(2*target.Dy())
-					output.SetNRGBA(x, y, color.NRGBAModel.Convert(atlas.At(sx, sy)).(color.NRGBA))
-				}
-			}
+			// Keep smooth alpha edges while restoring the original screen placement.
+			assetimage.ResampleCutout(output, target, atlas, content)
 			validateFrame(output)
 			writePNG(filepath.Join(*root, "sprites", filename), output)
 			frames = append(frames, frameMetadata{shape, name, phases[phase], name + ".png", region, content, target})

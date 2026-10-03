@@ -1,27 +1,15 @@
 # First-level HD art coverage
 
-Checked against the embedded WL1 first map, current runtime asset lookup and local HD override files on 2026-09-30.
+Checked against the embedded WL1 first map and runtime asset lookups on 2026-09-30.
 
-All **136 gameplay sprite shapes** are covered: guard and dog animations, scenery and pickups, player weapons, and the map player marker. Their inventory is in `art/e1f1-hd/requirements.json`.
+All **136 gameplay sprite shapes** are covered: guard and dog animations, scenery and pickups, player weapons, and the map player marker. The accuracy audit replaced older actor/scenery/marker artwork, removed baked floor mattes, restored clipped contours, and registered every sprite on a 512px canvas (hanging fixtures remain 1024px). Selected sources and exact prompts are under `art/e1f1-hd/revision-2/`. Their inventory is in `art/e1f1-hd/requirements.json`. The chandelier, green hanging lamp and standing lamp now contain only the fixture; their soft illumination is projected onto the actual floor by the renderer.
 
-The map uses **13 wall designs**. Eight have HD override files, and five still need artwork:
+All **13 wall designs** used by the map have HD replacements, plus the activated elevator wall (tile22). Gray tiles01/02 and blue tiles08/09 are matched A/B pairs built as continuous two-tile-wide artwork and checked in A–B–A–B repeats. Decorated variants reuse these corrected materials. The portrait variants use silhouettes, and the eagle decorations use plain red surfaces.
 
-| Tile | Missing design |
-| --- | --- |
-| 04 | Framed portrait on gray stone |
-| 06 | Stone arch and golden eagle decoration |
-| 10 | Framed emblem artwork on wood |
-| 11 | Framed portrait on wood |
-| 21 | Elevator interior wall/rail, plus its separate switch face |
+Both elevator switch states have separate HD vertical faces. The map's 20 ordinary doors and two elevator doors use HD page overrides 098, 100 and 102; the loader generates shaded pages099, 101 and 103. These are the `AllPages` entries selected by the door renderer.
 
-The elevator's activated switch variant also needs coverage. The approved rough stone direction is installed for tile02. Tile01 and tile03's background still use the earlier smooth-block finish and need matching revisions.
+Wall variants are composed once in the engine from shared base textures and transparent decorations. Both portraits share one silhouette; blue windows share iron bars. Saved materials, decorations, layouts, controls and doors are in `art/walls-hd/v1/walls/`; sprites are in `art/e1f1-hd/sprites/`. Copy the selected pack to the ignored local `hd-assets/` directory using the respective README instructions. The native HD loader coverage tests exercise the saved packs directly, so stale local copies cannot hide missing tracked artwork.
 
-Tile09 currently uses the identical PNG as tile08, despite the originals having different block arrangements. It needs its own layout.
+The in-game HUD still uses the original artwork: status-bar background, health faces, number/blank glyphs, weapon icons and key icons. Its renderer composes into a 320px-wide buffer, so an HD UI pass needs both new pictures and a composition change. Shared menu artwork and bitmap text also remain original.
 
-The map contains 20 ordinary doors (raw tiles90/91) and two elevator doors (tile100). The runtime selects ordinary door pages98/99, frame pages100/101, and elevator pages102/103. There are no HD page overrides for these. Existing artwork at horizontal tiles50/51 does not replace the `AllPages` entries selected by the door renderer; reuse suitable door artwork after mapping it correctly.
-
-The in-game HUD has no HD replacements: status-bar background, health faces, number/blank glyphs, weapon icons and key icons. The current renderer also composes the HUD into its original 320px-wide buffer, so simply dropping larger picture PNGs into place will require an accompanying composition change.
-
-Shared menu artwork and bitmap text can be covered in a separate UI pass. Floors and ceilings are rendered from palette colors/gradients, so there are no missing floor/ceiling texture files.
-
-Recommended order: match the base stone and banner to approved tile02, finish missing wall decorations and the elevator, restore tile09's separate layout, connect doors and frames, then redraw and scale the HUD.
+Floors and ceilings use palette colors and gradients, with no missing texture files. The native ULTRA renderer now keeps their background opaque when compositing translucent sprites. The browser build does not currently package filesystem HD overrides.

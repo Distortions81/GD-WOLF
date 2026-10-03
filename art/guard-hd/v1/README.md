@@ -34,3 +34,5 @@ The raw atlases provide roughly 198-pixel movement cells and 314-pixel action ce
 To try these in a native build, copy the PNGs from `sprites/` into the repo's ignored `hd-assets/sprites/` directory, enable HD textures, and select `ULTRA` render mode. The browser build does not currently package filesystem HD overrides.
 
 These are experimental generated assets. Atlas layout and pose consistency were reviewed, and every extracted frame was checked for image content and transparent background. Colored edge fringes remain in the generated artwork, and the bottom walking row has some truncated boot detail. These need art cleanup before release; the frames are kept separate from the active `hd-assets` overrides. The preview retains these details for review.
+
+The current preview reads the corrected 512 × 512 runtime frames from `art/e1f1-hd/sprites/`. The original version-1 sheets, frames and registration metadata here are archived experiments. Repeatable extraction of the selected guard restoration is now part of `art/e1f1-hd/register_sprite_frames.go`; its sources and prompts are under `art/e1f1-hd/revision-2/`.

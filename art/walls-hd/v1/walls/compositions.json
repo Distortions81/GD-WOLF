@@ -1,0 +1,160 @@
+{
+  "horizontal": {
+    "3": {
+      "base": "horizontal/tile-01.png",
+      "layers": [
+        {
+          "image": "decorations/red-banner.png",
+          "rect": [
+            0.04,
+            0.05,
+            0.92,
+            0.9
+          ]
+        }
+      ]
+    },
+    "4": {
+      "base": "horizontal/tile-01.png",
+      "layers": [
+        {
+          "image": "decorations/dark-portrait-frame.png",
+          "rect": [
+            0.1,
+            0.065,
+            0.8,
+            0.9
+          ]
+        },
+        {
+          "image": "decorations/portrait-silhouette.png",
+          "rect": [
+            0.24,
+            0.18,
+            0.55,
+            0.72
+          ]
+        }
+      ]
+    },
+    "5": {
+      "base": "horizontal/tile-08.png",
+      "layers": [
+        {
+          "color": [
+            8,
+            9,
+            10,
+            255
+          ],
+          "rect": [
+            0.235,
+            0.17,
+            0.53,
+            0.76
+          ]
+        },
+        {
+          "image": "decorations/iron-bars.png",
+          "rect": [
+            0.045,
+            0.085,
+            0.9,
+            0.9
+          ]
+        }
+      ]
+    },
+    "6": {
+      "base": "horizontal/tile-01.png",
+      "layers": [
+        {
+          "image": "decorations/eagle-arch.png",
+          "rect": [
+            0.02,
+            0.015,
+            0.96,
+            0.97
+          ]
+        }
+      ]
+    },
+    "7": {
+      "base": "horizontal/tile-08.png",
+      "layers": [
+        {
+          "color": [
+            8,
+            9,
+            10,
+            255
+          ],
+          "rect": [
+            0.235,
+            0.17,
+            0.53,
+            0.76
+          ]
+        },
+        {
+          "image": "decorations/window-skeleton.png",
+          "rect": [
+            0.18,
+            0.34,
+            0.65,
+            0.6
+          ]
+        },
+        {
+          "image": "decorations/iron-bars.png",
+          "rect": [
+            0.045,
+            0.085,
+            0.9,
+            0.9
+          ]
+        }
+      ]
+    },
+    "10": {
+      "base": "horizontal/tile-12.png",
+      "layers": [
+        {
+          "image": "decorations/eagle-picture.png",
+          "rect": [
+            0.02,
+            0.01,
+            0.96,
+            0.98
+          ]
+        }
+      ]
+    },
+    "11": {
+      "base": "horizontal/tile-12.png",
+      "layers": [
+        {
+          "image": "decorations/gold-portrait-frame.png",
+          "rect": [
+            0.1,
+            0.05,
+            0.8,
+            0.9
+          ]
+        },
+        {
+          "image": "decorations/portrait-silhouette.png",
+          "rect": [
+            0.245,
+            0.18,
+            0.55,
+            0.64
+          ]
+        }
+      ]
+    },
+    "22": {
+      "base": "horizontal/tile-21.png"
+    }
+  }
+}

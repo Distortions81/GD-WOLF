@@ -1,0 +1,172 @@
+{
+  "mode": "built-in image_gen",
+  "selected": [
+    {
+      "key": "rev2_dog_actions",
+      "asset": "dog-actions.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-d55153d9-2a76-4827-b407-e64c9611b176.png",
+      "transparent_background": true,
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/revision-2/references/dog-actions.png",
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/atlases/dog-actions.png"
+      ],
+      "prompt": "Faithfully rebuild FIRST reference as high resolution transparent German shepherd game-sprite sheet exactly4 columns by2 rows. EXACT first-reference order: row1 original131 front injury flinch with a few rounded red droplets,132 injured dog recoiling sideways airborne,133 falling laterally sideways,134 dead dog lying long horizontally with small red blood. Row2 original135 frontal attack ready on hind paws,136 forward bite starting head turned slightly viewer left,137 bite fully extended mouth opening toward viewer, final cell EMPTY. Preserve original camera view, body orientation and precise gait/pose silhouettes. Four-legged adult lean German shepherd, warm brown coat charcoal black saddle/muzzle/chest, long tail pointed ears. Attack poses can rise on hind legs, but use anatomically correct canine torso/forelegs and original forward lunging proportions, not an upright human-shaped dog or walking puppy. Second image painted style guidance only; do not retain its pose drift, gray floor ovals or aura. Detailed smooth classic painted game sprite appearance, no black contour outlines, block pixels, neon fringe. All body/blood within own cell and generous transparent gutters. Draw only dogs and original rounded blood droplets; NO gray strips, no floor plane, contact shadow, glow, captions, grid or additional poses."
+    },
+    {
+      "key": "rev2_player_marker",
+      "asset": "player-marker.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-108fbf47-fb42-4618-9678-e02995e2b64f.png",
+      "transparent_background": true,
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/references/player-marker-original.png",
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/atlases/player-marker.png"
+      ],
+      "prompt": "Precisely improve the SECOND reference player map-marker sprite using FIRST original as pose authority. Preserve approved smooth painted look, orange/blond hair, peach face, gray uniform/boots, original red blood specks only. Original small pistol must point steeply diagonally UP-LEFT on viewer-left chest, both forearms crossed close to torso; same raised left knee on viewer-right. Two arms, two hands, two legs, one small pistol. Remove all red/yellow edge residue and luminous fringes from hair, clothing and boot contours; antialiased natural edges onto true transparency. Smooth detailed clothing/skin/metal, no inherited blocky geometry, no black drawn outline. Single whole figure centered square canvas with generous fully transparent margins; no background, floor, shadow, glow, labels or extra gear."
+    },
+    {
+      "key": "rev2_scenery_1",
+      "asset": "scenery-1.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-d2a49284-e578-4fe3-90d4-dbb4611e21a7.png",
+      "transparent_background": true,
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/references/scenery-1-original.png",
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/atlases/scenery-1.png"
+      ],
+      "prompt": "Rebuild this scenery atlas as faithful high-resolution GAME SPRITE CUTOUTS. FIRST original reference controls exact object shape, palette and arrangement. SECOND approved HD sheet controls material illustration style, but its external colored glows and gray floor patches are DEFECTS to remove. Exactly3 columns by2 rows: row1 flat cobalt blue puddle, bright green steel barrel, small wooden round pedestal table with TWO wooden chairs behind and red candle on tabletop. Row2 slender gold standing floor lamp with green shallow dome shade, gold hanging chandelier (physical fixture ONLY), small gray metal dog-food bowl with brown kibble. Keep original table horizontal slim tabletop/two chairs/feet layout. No attached/detached floor light beneath either lamp. Physical bulb may be bright, surrounding air transparent. Each object isolated inside its own cell with generous transparent gutters, and complete base/top. Only physical objects, NO environment lighting aura, glow outside object, colored fringe, gray ground oval, cast shadow, floor patch or background of any kind. All spaces between objects and outside exact physical contours truly TRANSPARENT, including underneath each object. Preserve actual shading within physical objects and highlights on surfaces. Refine any broad grid-shaped corners into smooth physically plausible contours; high-resolution wood grain, metal and fabric detail, no pixel-art stair steps or black cartoon outlines. No added props, text, labels, grid or border. Keep exact original order, all listed objects present, empty cell stays entirely transparent."
+    },
+    {
+      "key": "rev2_scenery_2",
+      "asset": "scenery-2.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-ee3f0705-4bc2-45b4-afbe-43ebb519598a.png",
+      "transparent_background": true,
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/references/scenery-2-original.png",
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/atlases/scenery-2.png"
+      ],
+      "prompt": "Rebuild this scenery atlas as faithful high-resolution GAME SPRITE CUTOUTS. FIRST original reference controls exact object shape, palette and arrangement. SECOND approved HD sheet controls material illustration style, but its external colored glows and gray floor patches are DEFECTS to remove. Exactly3 columns by2 rows: row1 leafy green small tree in squat round yellow pot with gray trunk, small lying pale human skeleton/bones matching ORIGINAL pose and proportions (not a new full giant skeleton), dry brown narrow plant in cobalt blue pot. Row2 blue tall ceramic vase, thin horizontal orange wooden tabletop on single gray cylindrical pedestal with round foot, EMPTY final cell. Smooth rounded natural foliage and vase contours, no angular pixel steps on tabletop corners. Each object isolated inside its own cell with generous transparent gutters, and complete base/top. Only physical objects, NO environment lighting aura, glow outside object, colored fringe, gray ground oval, cast shadow, floor patch or background of any kind. All spaces between objects and outside exact physical contours truly TRANSPARENT, including underneath each object. Preserve actual shading within physical objects and highlights on surfaces. Refine any broad grid-shaped corners into smooth physically plausible contours; high-resolution wood grain, metal and fabric detail, no pixel-art stair steps or black cartoon outlines. No added props, text, labels, grid or border. Keep exact original order, all listed objects present, empty cell stays entirely transparent."
+    },
+    {
+      "key": "rev2_scenery_3",
+      "asset": "scenery-3.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-29d1e4b5-0d01-4559-8736-1b7f935df3b4.png",
+      "transparent_background": true,
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/references/scenery-3-original.png",
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/atlases/scenery-3.png"
+      ],
+      "prompt": "Rebuild this scenery atlas as faithful high-resolution GAME SPRITE CUTOUTS. FIRST original reference controls exact object shape, palette and arrangement. SECOND approved HD sheet controls material illustration style, but its external colored glows and gray floor patches are DEFECTS to remove. Exactly3 columns by2 rows: row1 narrow tall turquoise armor suit with silver helmet/red shield on viewer-left and turquoise halberd on viewer-right, low loose pale bone pile with skulls, small open wood bucket with flared rim. Row2 turquoise food plate with one brown meat leg and vegetables, flat white/silver medkit box with blue lower band and red cross, upright small cyan ammunition clip with visible orange cartridges. Original armor slim proportions; do not widen it or add helmet ornament. Keep original compact pickups. Each object isolated inside its own cell with generous transparent gutters, and complete base/top. Only physical objects, NO environment lighting aura, glow outside object, colored fringe, gray ground oval, cast shadow, floor patch or background of any kind. All spaces between objects and outside exact physical contours truly TRANSPARENT, including underneath each object. Preserve actual shading within physical objects and highlights on surfaces. Refine any broad grid-shaped corners into smooth physically plausible contours; high-resolution wood grain, metal and fabric detail, no pixel-art stair steps or black cartoon outlines. No added props, text, labels, grid or border. Keep exact original order, all listed objects present, empty cell stays entirely transparent."
+    },
+    {
+      "key": "rev2_scenery_4",
+      "asset": "scenery-4.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-afc3aec4-48fe-4e35-927d-7dbd8e0deb13.png",
+      "transparent_background": true,
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/references/scenery-4-original.png",
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/atlases/scenery-4.png"
+      ],
+      "prompt": "Rebuild this scenery atlas as faithful high-resolution GAME SPRITE CUTOUTS. FIRST original reference controls exact object shape, palette and arrangement. SECOND approved HD sheet controls material illustration style, but its external colored glows and gray floor patches are DEFECTS to remove. Exactly3 columns by2 rows: row1 dropped silver machine gun pointing LEFT with cyan grip/lower receiver and dark trigger guard, slender gold cross with four purple jewels and red center, gold chalice with red jewels. Row2 low red/gold treasure chest with coins and green/blue jewels, blue circular extra-life medallion with orange-haired male face, open round wood barrel with dark metal hoops. Preserve medallion's actual blue circular disk; only remove halo beyond disk. Chest remains low horizontal original silhouette, not tall fantasy treasure box. Each object isolated inside its own cell with generous transparent gutters, and complete base/top. Only physical objects, NO environment lighting aura, glow outside object, colored fringe, gray ground oval, cast shadow, floor patch or background of any kind. All spaces between objects and outside exact physical contours truly TRANSPARENT, including underneath each object. Preserve actual shading within physical objects and highlights on surfaces. Refine any broad grid-shaped corners into smooth physically plausible contours; high-resolution wood grain, metal and fabric detail, no pixel-art stair steps or black cartoon outlines. No added props, text, labels, grid or border. Keep exact original order, all listed objects present, empty cell stays entirely transparent."
+    },
+    {
+      "key": "rev2_scenery_5",
+      "asset": "scenery-5.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-f11fc24e-d576-4b4a-9a59-5977542c5996.png",
+      "transparent_background": true,
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/references/scenery-5-original.png",
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/atlases/scenery-5.png"
+      ],
+      "prompt": "Rebuild this scenery atlas as faithful high-resolution GAME SPRITE CUTOUTS. FIRST original reference controls exact object shape, palette and arrangement. SECOND approved HD sheet controls material illustration style, but its external colored glows and gray floor patches are DEFECTS to remove. Exactly3 columns by1 row: left low open circular GRAY STONE well with blue water, middle matching empty dark well, right slim tall gold standing flagpole and base with draped PLAIN RED CLOTH. Remove ALL symbols, white circles, insignia and emblems from flag completely, plain red folds ONLY. Match original wells low squat cylinder and brick courses rather than barrel/roofed well; smooth real stone chips, no pixel contours. Each object isolated inside its own cell with generous transparent gutters, and complete base/top. Only physical objects, NO environment lighting aura, glow outside object, colored fringe, gray ground oval, cast shadow, floor patch or background of any kind. All spaces between objects and outside exact physical contours truly TRANSPARENT, including underneath each object. Preserve actual shading within physical objects and highlights on surfaces. Refine any broad grid-shaped corners into smooth physically plausible contours; high-resolution wood grain, metal and fabric detail, no pixel-art stair steps or black cartoon outlines. No added props, text, labels, grid or border. Keep exact original order, all listed objects present, empty cell stays entirely transparent."
+    },
+    {
+      "key": "rev2_guard_restoration",
+      "asset": "guard-movement.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-dc4d32d7-f068-4291-badf-aa28a741a5d3.png",
+      "transparent_background": true,
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/guard-hd/v1/movement-no-outline.png"
+      ],
+      "prompt": "Precise correction of this APPROVED fictional game character animation sheet, retaining its exact same character design and all existing poses. Exactly8 columns by5 rows,40 figures in unchanged row-major order. Do not redesign the face, body proportions, tan brown clothing, slate helmet, black diagonal strap and belt, or cobalt blue boots. Correct the clearly CROPPED BOTTOM ROW: restore the COMPLETE missing boot bottoms/soles and enough transparent space below every figure. All40 sprites must be fully contained in their respective cells with consistent clean transparent gutters. Refine coarse pixel-shaped contour edges into smooth antialiased continuous outlines and add clean fabric/metal detail without altering limb poses, camera directions or silhouettes. Remove stray red/yellow fringe or glow outside body, and make collars plain black without markings. No new weapons, limbs or decorative elements. Genuine transparent background, no backdrop, no floor, no ground shadow, aura, caption, labels or grid. This is a preservation/restoration edit of the existing sprite sheet; retain its approved compact painted game style."
+    },
+    {
+      "key": "rev2_guard_actions_restoration",
+      "asset": "guard-actions.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-165abc39-51e3-4c50-9690-89e30f185c33.png",
+      "transparent_background": true,
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/guard-hd/v1/front-actions-no-outline.png"
+      ],
+      "prompt": "Precisely restore this existing approved game-animation atlas, keeping the exact compact painted character identity, body proportions and expressions. Keep EXACTLY4 columns and4 rows, with the same14 existing figures and last2 empty cells, same frame order, poses, camera views and blood/muzzle flash positions. Brown uniform, gray helmet, blue boots, black belt and diagonal strap. Preserve design; do not reinterpret as a different realistic man. Fix contour quality so material edges are smooth continuous antialiased surfaces, not stepped pixel blocks. Remove extraneous red/yellow fringe on unaffected silhouette edges. Preserve injury droplets as rounded red drops only where already present, no blood outline around living untouched figures. Restore complete clipped bottom edges of the prone corpse and give it transparent bottom margin. Every figure, loose helmet, boot and blood droplet fully contained in its cell, generous transparent gutters. Genuine alpha background, no floor patches, cast shadows, auras, labels, captions, new markings, extra figures or limbs. Retain only already existing gun and compact muzzle flashes. This is preservation of an already approved sprite sheet, not a character redesign."
+    },
+    {
+      "key": "rev2_dog_clean_0",
+      "asset": "dog-movement-0.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-702bda33-e383-4204-88da-88c20d5ef61f.png",
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/revision-2/references/dog-movement-0.png"
+      ],
+      "transparent_background": true,
+      "prompt": "Remake the eight original game dog sprites as a faithful high resolution painted game animation atlas, EXACTLY 4 columns by2 rows, same original row-major order and pose. Cohort 0. Adult lean German shepherd dogs, brown fur charcoal gray-black muzzle, chest and saddle, pointed ears long thin tail, FOUR legs. First reference controls all camera directions and precise leg positions and gait phase: front, front-left, left, back-left, back, back-right, right, front-right. Restore smooth natural canine body proportions from pixel reference, never chunky puppy/chibi, no thick drawn outlines or inherited blocky edges. Detailed softly shaded classic game illustration, consistent adult dog design in all frames. Draw physical dog ONLY on true transparent background, OMIT original gray ground shadow strips, no floor plane or contact oval, no colored aura or glow. Every dog fully fits its own cell with generous transparent gutters and complete paws/tail. No collars, text, grid, weapons or extra animals."
+    },
+    {
+      "key": "rev2_dog_clean_1",
+      "asset": "dog-movement-1.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-6109ee3f-ac74-4c33-aa7d-3dfed4af5e80.png",
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/revision-2/references/dog-movement-1.png"
+      ],
+      "transparent_background": true,
+      "prompt": "Remake the eight original game dog sprites as a faithful high resolution painted game animation atlas, EXACTLY 4 columns by2 rows, same original row-major order and pose. Cohort 1. Adult lean German shepherd dogs, brown fur charcoal gray-black muzzle, chest and saddle, pointed ears long thin tail, FOUR legs. First reference controls all camera directions and precise leg positions and gait phase: front, front-left, left, back-left, back, back-right, right, front-right. Restore smooth natural canine body proportions from pixel reference, never chunky puppy/chibi, no thick drawn outlines or inherited blocky edges. Detailed softly shaded classic game illustration, consistent adult dog design in all frames. Draw physical dog ONLY on true transparent background, OMIT original gray ground shadow strips, no floor plane or contact oval, no colored aura or glow. Every dog fully fits its own cell with generous transparent gutters and complete paws/tail. No collars, text, grid, weapons or extra animals."
+    },
+    {
+      "key": "rev2_dog_clean_2",
+      "asset": "dog-movement-2.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-f2077f39-d717-41b3-bcb6-9b70c863e181.png",
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/revision-2/references/dog-movement-2.png"
+      ],
+      "transparent_background": true,
+      "prompt": "Remake the eight original game dog sprites as a faithful high resolution painted game animation atlas, EXACTLY 4 columns by2 rows, same original row-major order and pose. Cohort 2. Adult lean German shepherd dogs, brown fur charcoal gray-black muzzle, chest and saddle, pointed ears long thin tail, FOUR legs. First reference controls all camera directions and precise leg positions and gait phase: front, front-left, left, back-left, back, back-right, right, front-right. Restore smooth natural canine body proportions from pixel reference, never chunky puppy/chibi, no thick drawn outlines or inherited blocky edges. Detailed softly shaded classic game illustration, consistent adult dog design in all frames. Draw physical dog ONLY on true transparent background, OMIT original gray ground shadow strips, no floor plane or contact oval, no colored aura or glow. Every dog fully fits its own cell with generous transparent gutters and complete paws/tail. No collars, text, grid, weapons or extra animals."
+    },
+    {
+      "key": "rev2_dog_clean_3",
+      "asset": "dog-movement-3.png",
+      "source": "/home/dist/.codex/generated_images/01a0f3df-ed17-7942-a576-f704ec97caa4/exec-13969dbc-86a9-4c74-afed-140b44a1a3cd.png",
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/revision-2/references/dog-movement-3.png"
+      ],
+      "transparent_background": true,
+      "prompt": "Remake the eight original game dog sprites as a faithful high resolution painted game animation atlas, EXACTLY 4 columns by2 rows, same original row-major order and pose. Cohort 3. Adult lean German shepherd dogs, brown fur charcoal gray-black muzzle, chest and saddle, pointed ears long thin tail, FOUR legs. First reference controls all camera directions and precise leg positions and gait phase: front, front-left, left, back-left, back, back-right, right, front-right. Restore smooth natural canine body proportions from pixel reference, never chunky puppy/chibi, no thick drawn outlines or inherited blocky edges. Detailed softly shaded classic game illustration, consistent adult dog design in all frames. Draw physical dog ONLY on true transparent background, OMIT original gray ground shadow strips, no floor plane or contact oval, no colored aura or glow. Every dog fully fits its own cell with generous transparent gutters and complete paws/tail. No collars, text, grid, weapons or extra animals."
+    }
+  ],
+  "discardedGuardDrafts": "Cohort redraws changed the approved character proportions. Selected targeted restoration of the original guard sheets instead.",
+  "blocked": [
+    {
+      "key": "rev2_guard_clean_0",
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/revision-2/references/guard-movement-0.png"
+      ],
+      "transparent_background": true,
+      "prompt": "Remake these eight vintage game sprites in high resolution as fictional dungeon sentries. EXACTLY four columns by two rows in identical pose order. Cohort 0. Original reference is authoritative for each viewing angle and each walking limb position. Same lean adult man with tan-brown fabric tunic and trousers, charcoal diagonal strap, black belt with rectangular silver buckle, slate gray steel helmet, tall dark cobalt-blue boots. PLAIN BLACK COLLAR WITHOUT INSIGNIA OR SYMBOLS. Preserve original 8 directions front, front-left, left, back-left, back, back-right, right, front-right and original walking phase, including visible arm swings and bent knees. Smooth detailed painted classic game illustration, softly shaded fabric/skin/metal, natural body proportions, no exaggerated muscles or chibi heads, no black drawn outlines or pixel-stepped shapes. Two arms and two legs each, complete feet and soles. Each whole person fully contained and centered in its own cell, generous transparent gutters on all sides, especially under bottom row boots. Transparent background only; no shadows, floor plane, colored halo or aura. No weapons, badges, logos, text or grid.",
+      "error": "image generation failed: http 400 Bad Request: Some(\"{\\n  \\\"error\\\": {\\n    \\\"message\\\": \\\"Your request was rejected by the safety system. If you believe this is an error, contact us at help.openai.com and include the request ID 5a58afd3-bc43-4df2-ae77-28c11a76b94a. safety_violations=[abuse].\\\",\\n    \\\"type\\\": \\\"image_generation_user_error\\\",\\n    \\\"param\\\": null,\\n    \\\"code\\\": \\\"moderation_blocked\\\",\\n    \\\"moderation_details\\\": {\\n      \\\"moderation_stage\\\": \\\"output\\\",\\n      \\\"categories\\\": [\\n        \\\"other\\\"\\n      ]\\n    }\\n  }\\n}\")"
+    },
+    {
+      "key": "rev2_guard_clean_2",
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/revision-2/references/guard-movement-2.png"
+      ],
+      "transparent_background": true,
+      "prompt": "Remake these eight vintage game sprites in high resolution as fictional dungeon sentries. EXACTLY four columns by two rows in identical pose order. Cohort 2. Original reference is authoritative for each viewing angle and each walking limb position. Same lean adult man with tan-brown fabric tunic and trousers, charcoal diagonal strap, black belt with rectangular silver buckle, slate gray steel helmet, tall dark cobalt-blue boots. PLAIN BLACK COLLAR WITHOUT INSIGNIA OR SYMBOLS. Preserve original 8 directions front, front-left, left, back-left, back, back-right, right, front-right and original walking phase, including visible arm swings and bent knees. Smooth detailed painted classic game illustration, softly shaded fabric/skin/metal, natural body proportions, no exaggerated muscles or chibi heads, no black drawn outlines or pixel-stepped shapes. Two arms and two legs each, complete feet and soles. Each whole person fully contained and centered in its own cell, generous transparent gutters on all sides, especially under bottom row boots. Transparent background only; no shadows, floor plane, colored halo or aura. No weapons, badges, logos, text or grid.",
+      "error": "image generation failed: http 400 Bad Request: Some(\"{\\n  \\\"error\\\": {\\n    \\\"message\\\": \\\"Your request was rejected by the safety system. If you believe this is an error, contact us at help.openai.com and include the request ID ef768039-bb3e-4b16-a40d-e9708906da1e. safety_violations=[abuse].\\\",\\n    \\\"type\\\": \\\"image_generation_user_error\\\",\\n    \\\"param\\\": null,\\n    \\\"code\\\": \\\"moderation_blocked\\\",\\n    \\\"moderation_details\\\": {\\n      \\\"moderation_stage\\\": \\\"output\\\",\\n      \\\"categories\\\": [\\n        \\\"other\\\"\\n      ]\\n    }\\n  }\\n}\")"
+    },
+    {
+      "key": "rev2_guard_clean_3",
+      "referenced_image_paths": [
+        "/home/dist/github/GD-WOLF/art/e1f1-hd/revision-2/references/guard-movement-3.png"
+      ],
+      "transparent_background": true,
+      "prompt": "Remake these eight vintage game sprites in high resolution as fictional dungeon sentries. EXACTLY four columns by two rows in identical pose order. Cohort 3. Original reference is authoritative for each viewing angle and each walking limb position. Same lean adult man with tan-brown fabric tunic and trousers, charcoal diagonal strap, black belt with rectangular silver buckle, slate gray steel helmet, tall dark cobalt-blue boots. PLAIN BLACK COLLAR WITHOUT INSIGNIA OR SYMBOLS. Preserve original 8 directions front, front-left, left, back-left, back, back-right, right, front-right and original walking phase, including visible arm swings and bent knees. Smooth detailed painted classic game illustration, softly shaded fabric/skin/metal, natural body proportions, no exaggerated muscles or chibi heads, no black drawn outlines or pixel-stepped shapes. Two arms and two legs each, complete feet and soles. Each whole person fully contained and centered in its own cell, generous transparent gutters on all sides, especially under bottom row boots. Transparent background only; no shadows, floor plane, colored halo or aura. No weapons, badges, logos, text or grid.",
+      "error": "image generation failed: http 400 Bad Request: Some(\"{\\n  \\\"error\\\": {\\n    \\\"message\\\": \\\"Your request was rejected by the safety system. If you believe this is an error, contact us at help.openai.com and include the request ID 4524dbf2-47b9-40e6-b394-4ba0db432eeb. safety_violations=[abuse].\\\",\\n    \\\"type\\\": \\\"image_generation_user_error\\\",\\n    \\\"param\\\": null,\\n    \\\"code\\\": \\\"moderation_blocked\\\",\\n    \\\"moderation_details\\\": {\\n      \\\"moderation_stage\\\": \\\"output\\\",\\n      \\\"categories\\\": [\\n        \\\"other\\\"\\n      ]\\n    }\\n  }\\n}\")"
+    }
+  ]
+}

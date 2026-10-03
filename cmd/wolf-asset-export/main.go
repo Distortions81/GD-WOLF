@@ -244,7 +244,7 @@ func exportWalls(files *wl6.Files, outDir, imageLayout string, magnifyScale int)
 		if tex.Empty() {
 			continue
 		}
-		if !isExportedHorizontalWallPage(tex.Page) && isPairedWallPage(tex.Page) {
+		if !isExportedWallPage(tex.Page) {
 			continue
 		}
 		img := wallTextureImage(tex)
@@ -292,8 +292,8 @@ func isPairedWallPage(page int) bool {
 	return page >= 0 && page < pairedWallPageCount()
 }
 
-func isExportedHorizontalWallPage(page int) bool {
-	return isPairedWallPage(page) && page%2 == 0
+func isExportedWallPage(page int) bool {
+	return !isPairedWallPage(page) || page%2 == 0 || wl6.WallTileUsesExplicitVertical(page/2+1)
 }
 
 func exportSprites(files *wl6.Files, outDir, imageLayout string, magnifyScale int) error {

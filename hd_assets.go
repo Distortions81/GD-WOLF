@@ -59,7 +59,7 @@ func (g *game) applyHDWallOverrides() {
 		if nextPage >= 0 && nextPage < len(g.walls.AllPages) {
 			g.walls.AllPages[nextPage] = buildWallTextureFromImage(g.walls.AllPages[nextPage].Page, dimWallImage(img, wl6.WallShadeScale))
 		}
-		applied = append(applied, filepath.Join("walls", "pages", wallPageFileName(page))+" (next page auto-dimmed 50%)")
+		applied = append(applied, filepath.Join("walls", "pages", wallPageFileName(page))+" (next page auto-dimmed 66%)")
 	}
 
 	for page := range g.walls.AllPages {
@@ -93,20 +93,28 @@ func (g *game) applyHDWallOverrides() {
 
 	for tile := 1; tile < len(g.walls.Horizontal); tile++ {
 		hImg, hOK := g.loadHDPNG("walls", "horizontal", wallTileFileName(tile))
+		if wl6.WallTileUsesExplicitVertical(tile) {
+			if hOK {
+				g.walls.Horizontal[tile] = buildWallTextureFromImage(g.walls.Horizontal[tile].Page, hImg)
+				applied = append(applied, filepath.Join("walls", "horizontal", wallTileFileName(tile)))
+			}
+			if vImg, vOK := g.loadHDPNG("walls", "vertical", wallTileFileName(tile)); vOK {
+				g.walls.Vertical[tile] = buildWallTextureFromImage(g.walls.Vertical[tile].Page, vImg)
+				applied = append(applied, filepath.Join("walls", "vertical", wallTileFileName(tile)))
+			}
+			continue
+		}
 		if !hOK {
 			continue
 		}
 		g.walls.Horizontal[tile] = buildWallTextureFromImage(g.walls.Horizontal[tile].Page, hImg)
-		if wl6.WallTileUsesExplicitVertical(tile) {
-			applied = append(applied, filepath.Join("walls", "horizontal", wallTileFileName(tile)))
-			continue
-		}
 		g.walls.Vertical[tile] = buildWallTextureFromImage(g.walls.Vertical[tile].Page, dimWallImage(hImg, wl6.WallShadeScale))
 		applied = append(applied,
-			filepath.Join("walls", "horizontal", wallTileFileName(tile))+" (vertical auto-dimmed 50%)",
+			filepath.Join("walls", "horizontal", wallTileFileName(tile))+" (vertical auto-dimmed 66%)",
 		)
 	}
 
+	applied = append(applied, g.applyHDWallCompositions()...)
 	if len(applied) > 0 {
 		log.Printf("hd-assets: applied %d wall replacement(s) from %s: %v", len(applied), g.hdAssetRoot, applied)
 	}

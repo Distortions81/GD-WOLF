@@ -2,44 +2,90 @@
   "mode": "built-in image_gen",
   "selected": [
     {
-      "tile": 1,
-      "path": "walls/horizontal/tile-01.png",
-      "contourGuide": "alternatives/tile-01-direct.png",
-      "references": [
-        "alternatives/tile-01-direct.png",
-        "previous/tile-01-stepped-contours.png"
-      ],
-      "prompt": "Use case: style-transfer\nAsset type: opaque HD classic game wall texture, gray stone tile01.\nImage1 is a manually drawn continuous-curve contour guide. Use EXACTLY its stone placement, sizes and smooth continuous outer contours. Image2 supplies ONLY the matte natural stone face material, fine fissures and muted gray palette.\nRender the blocks in image1 as natural gray cut stone instead of the smooth plastic-looking guide. Give the faces subtle cloudy tonal variation, very fine low-contrast mineral grain, and a few thin organic curved hairline cracks. Create realistic smooth shallow bevels and quiet dark recessed mortar. Match image2's softly illustrated classic game remaster material quality.\nCritical geometry constraint: every outer edge and every corner must keep image1's continuous curved silhouette. Do not import any outline from image2. Do not add jagged chips, rectangular notches, stair steps, polygon facets, tiny hard angular corners, or pixel-era broken outlines. All blocks are gently worn cut stone with smooth subtly irregular contours, never chunky chipped pixel-art shapes. Stone cracks may appear only on the faces and must not create broken steps in the perimeter. Preserve the same number of stones and pattern from image1.\nOne front-on flat square texture filling the full image, entirely opaque. Quiet even illumination with a little top-left bevel shading, no directional lighting gradient or vignette. No border, perspective, added objects, characters, text, symbols or watermark. High-resolution curves and material detail from scratch, not pixel art and not an upscale."
-    },
-    {
-      "tile": 2,
-      "path": "walls/horizontal/tile-02.png",
-      "references": [
-        "references/stone-user-style.png"
-      ],
-      "prompt": "Use case: precise-object-edit\nEdit this gray stone wall texture. Keep the rough stone surface, fine pitting, cracks, gray palette, bright chiseled top/left bevels, darker lower/right bevels, dark mortar, stone count, positions and sizes. The user likes this exact look.\nCHANGE ONLY THE LARGE PIXEL-ART SHAPES IN THE STONE PERIMETERS AND THEIR ADJACENT BEVELS. Replace their coarse horizontal/vertical staircase notches with natural irregular rock fracture contours drawn at full resolution. Preserve asymmetric irregular stone shapes; do not turn the stones into squares, neat rectangles, rounded rectangles, pillow shapes or buttons.\nSpecific corrections: the lower-right side of the tall central stone currently descends in several big square steps—replace those steps with a continuous oblique broken-rock edge, gently bowed and finely irregular. The small stone immediately below it must follow that new broken diagonal gap naturally. The middle-left stone's lower-left stepped bite becomes an asymmetric natural curved/diagonal fracture. The bottom-center horizontal stone's top-right rectangular step becomes a natural sloping fractured shoulder. Replace similar large square notches elsewhere with organic broken-stone edges. Keep the broad individual identities and the same arrangement.\nThe outlines can have small naturally uneven chips with fine high-resolution detail, but NEVER conspicuous coarse 90-degree staircases or inherited pixel-grid geometry. Bevel faces must follow the newly sculpted silhouettes with irregular chiseled stone planes, not uniform rounded radii. Do not smooth or flatten the rough stone faces, do not invent a new all-over surface pattern, and do not add cracks or change the lighting. No other redesign.\nReturn one opaque square texture, same framing and composition, edge to edge, no border, margin, scene, text or watermark."
-    },
-    {
-      "tile": 3,
-      "path": "walls/horizontal/tile-03.png",
-      "references": [
-        "walls/horizontal/tile-01.png"
-      ],
-      "prompt": "Use case: precise-object-edit\nAsset type: opaque high-resolution classic game wall texture, tile03: a plain red cloth banner on a gray stone wall.\nUse the reference as the exact gray stone background and finish. Preserve its stone block layout, joint locations, palette, smooth continuous bevels and fine low-contrast grain. Add a centered plain crimson red fabric banner hanging from a thin warm gold rod with small simple round finials. The rod spans about 78% of the width at 8% of the image height. The banner itself spans about 58% of the width from x=21% to x=79%, with its top at y=13% and straight horizontal bottom at y=90%. The cloth is rectangular with softly modeled vertical folds, subtle edge seams and natural smooth red shading, front-facing and hanging flat against the stone. A small quiet shadow behind the fabric grounds it against the wall. The cloth is completely unmarked: no emblem, medallion, insignia, symbol, stripes, lettering or decoration. Keep the gold rod simple and thin, no ornate sculptural elements.\nMatch the reference's clean smoothly illustrated high-resolution game remaster finish. Fine continuous edges, soft dimensional fabric folds, no chunky mottling, pixel art, square noise, stair steps or black outline. One flat orthographic square wall texture filling the entire frame, all pixels opaque. No perspective, borders, margins, vignette, scene, floor, text or watermark.\nCritical update: keep the reference's newly corrected continuous stone contours exactly. All outer stone edges and corners must remain smooth curves, with no pixel-era stair steps, square chips, jagged notches or faceted broken outlines. Preserve this stone layout behind the new plain red cloth banner."
-    },
-    {
       "tile": 12,
       "path": "walls/horizontal/tile-12.png",
       "references": [
         "references/horizontal/tile-12-enlarged.png"
       ],
       "prompt": "Use case: style-transfer\nAsset type: opaque square high-resolution Wolfenstein 3D wall texture, tile12 wood paneling.\nInput1 is the authoritative original texture, enlarged without adding detail. Redraw this exact wood wall at high resolution, keeping the original plank and narrow groove/batten positions, number of panels, widths, tall vertical geometry and slim horizontal trim rail at the very top. It must remain the same recognizable warm medium-brown original wall, simply with smooth detailed wood grain and shaded edge bevels instead of large pixels. Copy the exact original restrained brown palette, dark grooves, golden-brown edge highlights and broad wavy grain knots. Fine natural grain details, no strong varnish gloss, no new cross rails, no different board count, no nails, no decoration, no distressed peeling paint.\nComposition: one perfectly flat orthographic front-on 1024x1024 wall texture, fills the entire square edge to edge. Seamless repeat horizontally: the original partial board/groove at the left edge continues correctly at the right edge. Full wall height is from the original slim top trim down to the existing board ends, with no extra baseboard or added border. Even baked material shading, no scene lighting gradient, perspective, cast object shadow or vignette. All pixels opaque. No margins, transparency, room scene, separate plank objects, text, numbers, symbols or watermark. Faithful HD remaster, preserve the input's structural geometry."
+    },
+    {
+      "path": "walls/horizontal/tile-21.png",
+      "references": [
+        "references/horizontal/tile-21-enlarged.png"
+      ],
+      "prompt": "Use case: precise-object-edit / style-transfer. Asset type: classic game HD wall tile 21.\nRemaster the exact classic elevator wall in the reference as an HD opaque square game wall texture. Keep its plain medium-gray metal panel, charcoal vertical border rails at the far left and right, the four small turquoise/teal bolt heads down each side, and the thin warm brown wooden handrail horizontally at 62% height with small golden brackets below. Maintain exact broad positions, spacing, muted palette, original simple design and orthographic viewpoint. Add subtle fine gray brushed/pitted metal grain and natural brown wood grain, softly modeled bevels and smooth ROUND bolt heads. Do not invent large metal plates, extra controls, signs or details. Remove all coarse square dithering, pixel shapes, staircase edges, blur and enlarged low-res texture. Smooth high-resolution illustrated game material, one flat square wall texture entirely opaque, edge-to-edge, no border or watermark."
+    },
+    {
+      "path": "walls/vertical/tile-21.png",
+      "references": [
+        "references/pages/page-041.png"
+      ],
+      "prompt": "Use case: style-transfer. Repaint this game elevator wall control panel at high resolution, preserving its precise design, composition and understated gray metal/teal bolt/red arrow palette. Medium gray metal panel with charcoal vertical side rails and four small teal bolt heads down each side. Upper-left rectangular horizontal vent with narrow vertical slots. Upper-middle a small square mounting plate containing a RED UPWARD ARROW. Lower-middle a similar mounting plate with a darker RED DOWNWARD ARROW. Right side has two slim vertical steel conduits with dark clips and a curved dark pipe near lower right. Central large recessed dark gray square mechanism panel with a small U-shaped gray-metal lever: its horizontal grip is in the LOWER position, exactly as in reference (inactive state). Left of it a small slim electrical box with a muted yellow diagonally striped insert and a tiny dark control below. Keep every part in its existing place and size; create fine subtly worn gray metal grain, soft dimensional bevels and smooth round teal bolts and edges. No coarse pixel blocks, checkerboard dithering, stair-step diagonals or blur. One opaque square front-facing texture filling edge to edge, no scene, added hardware, lettering, symbol, border or watermark."
+    },
+    {
+      "path": "walls/vertical/tile-22.png",
+      "references": [
+        "walls/vertical/tile-21.png"
+      ],
+      "prompt": "Use case: precise-object-edit\nEdit the reference HD elevator control wall to show its ACTIVATED switch state. Keep exactly the same gray metal wall, teal bolt rows, vent, yellow hazard panel, twin pipes, two arrow signs, overall positions, material texture, palette, orthographic framing, and all fine details. Change only the central U-shaped switch lever: pivot its silver U-shaped handle from the LOWER position into the UPPER position inside the same recessed square compartment. The orange horizontal grip is now near the top of that recess, with the U arms pointing downward toward its hinge; keep the hinge and outer housing unchanged. The upper red arrow may be slightly brighter and the lower arrow slightly darker, with no extra glow halo or other redesign. One fully opaque square wall texture, same dimensions and composition, no added objects, text, symbols, perspective, transparency or pixel artifacts."
+    },
+    {
+      "path": "walls/pages/page-100.png",
+      "references": [
+        "references/pages/page-100.png",
+        "/home/dist/github/GD-WOLF/hd-assets/walls/horizontal/tile-51.png"
+      ],
+      "prompt": "Use case: style-transfer. Asset type: opaque square HD game door-frame texture page100. Image1 is the authoritative 64px source geometry: TWO tall narrow turquoise/teal metal panel faces across a square, separated by a solid near-black VERTICAL RECESS STRIP centered in the middle, approximately 12% of the width, reaching from the very top to the very bottom. Preserve that centered black gap and exact broad panel layout. Both teal panels have their simple inset rectangular moldings and softly highlighted rims, without locks or added knobs. Image2 supplies ONLY the approved smooth high-resolution painted teal metal finish, not its two-door layout. Repaint the source from scratch with fine subtle teal metal grain, softly worn clean bevels and smooth detailed edges. No pixel blocks or large square dithering patterns, no staircase shapes or blur, no new hardware or scene. One opaque front-facing square texture filling edge to edge. Match the source's muted teal game palette. The black center recess stays fully black, opaque and vertical. No text, caption, watermark, margin or perspective."
+    },
+    {
+      "path": "walls/pages/page-102.png",
+      "references": [
+        "references/pages/page-102.png"
+      ],
+      "prompt": "Use case: style-transfer. Remaster this classic game elevator door page102 as a smooth high-resolution opaque square wall texture. Preserve the gray metal outer riveted border and large gray inset steel plate with a raised/recessed diagonal X brace. Preserve its narrow left control column: red upward triangle and red downward triangle near the upper left, a small red circular button below them in a gray metal mounting plate, and its thin vertical divider. Same positions, proportions, muted gray and red palette, simple old game design. Smooth real tiny brushed metal grain, understated scratches, softly modeled rivets, fine continuous antialiased edges. Do not retain pixel-grid contours, coarse checkerboard dithering, blocky diagonal X edges or blurry enlarged pixels. Do not change the design or add signs, numbers, labels, extra switches, perspective, scenery or extra door panels. Exactly one front-on square elevator door texture, opaque edge-to-edge, no border or watermark."
+    },
+    {
+      "path": "walls/pages/page-098.png",
+      "source": "Preserved approved HD artwork from the existing local hd-assets pack; no new generation."
+    },
+    {
+      "tile": 1,
+      "path": "walls/horizontal/tile-01.png",
+      "pairSource": "pairs/gray-ab.png",
+      "promptRecord": "pairs/prompts.json",
+      "registration": "pairs/registrations.json",
+      "source": "Half of one continuous two-tile-wide image; designed for A-B-A-B repetition."
+    },
+    {
+      "tile": 2,
+      "path": "walls/horizontal/tile-02.png",
+      "pairSource": "pairs/gray-ab.png",
+      "promptRecord": "pairs/prompts.json",
+      "registration": "pairs/registrations.json",
+      "source": "Half of one continuous two-tile-wide image; designed for A-B-A-B repetition."
+    },
+    {
+      "tile": 8,
+      "path": "walls/horizontal/tile-08.png",
+      "pairSource": "pairs/blue-ab.png",
+      "promptRecord": "pairs/prompts.json",
+      "registration": "pairs/registrations.json",
+      "source": "Half of one continuous two-tile-wide image; designed for A-B-A-B repetition."
+    },
+    {
+      "tile": 9,
+      "path": "walls/horizontal/tile-09.png",
+      "pairSource": "pairs/blue-ab.png",
+      "promptRecord": "pairs/prompts.json",
+      "registration": "pairs/registrations.json",
+      "source": "Half of one continuous two-tile-wide image; designed for A-B-A-B repetition."
     }
   ],
   "directDrawing": {
     "stoneSource": "remake_stone.go",
     "woodSource": "remake_wood.go",
-    "notes": "Earlier continuous-curve contour guides and the direct wood alternative are retained for reference. Tile02 now uses the user's rough-stone reference with only its large stepped outline notches reshaped. The base stone wall and banner still need to match that approved direction."
+    "notes": "Earlier alternatives remain for reference. Selected gray walls and banner now match the approved rough chiseled stone direction."
   },
   "discarded": [
     {
@@ -65,6 +111,196 @@
     {
       "path": "previous/tile-02-rounded-blocks.png",
       "reason": "The user requested the earlier rough chiseled surface with natural irregular silhouettes, rather than rounded rectangular blocks."
+    },
+    {
+      "path": "previous/tile-01-rounded-blocks.png",
+      "reason": "Earlier smooth block finish replaced by approved rough chiseled stone."
+    },
+    {
+      "path": "previous/tile-03-rounded-blocks.png",
+      "reason": "Banner background replaced by approved rough chiseled stone."
+    },
+    {
+      "path": "previous/tile-09-duplicate-layout.png",
+      "reason": "Duplicate of tile08 replaced by a distinct blue stone arrangement."
+    },
+    {
+      "path": "previous/tile-04-neutral-portrait.png",
+      "reason": "Detailed neutral portrait replaced by silhouette at the user's request."
     }
-  ]
+  ],
+  "previousGenerations": [
+    {
+      "tile": 3,
+      "path": "previous/tile-03-baked-banner.png",
+      "references": [
+        "walls/horizontal/tile-01.png"
+      ],
+      "prompt": "Use case: precise-object-edit\nUse the corrected rough gray tile01 stone wall as the background. Add a centered plain crimson cloth banner on a thin gold rod, preserving the original broad proportions. Keep rough pitted stone faces, cracks, strong chiseled bevels and natural fractured stone contours. Give the fabric smooth detailed folds. No emblem, insignia, lettering, thick black outlines or pixel-grid artifacts. Front-on fully opaque square wall texture.",
+      "promptRecord": "Production specification summary; exact generation wording is in the chat tool history."
+    },
+    {
+      "path": "previous/tile-04-silhouette-composite.png",
+      "references": [
+        "previous/tile-04-neutral-portrait.png"
+      ],
+      "prompt": "Use case: precise-object-edit\nEdit the reference wall artwork. Keep the gray stone wall, its layout, rough chiseled stone finish, dark gray tall picture frame, framing, painted gray interior backdrop, and palette exactly unchanged. Replace the detailed portrait with a simple anonymous DARK SILHOUETTE of a person's head and upper torso facing left, occupying the same overall area. The figure should be flat deep charcoal, with a natural continuous outline of short hair, forehead, nose, chin, neck, jacket and shoulders. No facial detail, eye, mouth, skin, fabric detail, facial hair, insignia or identifiable likeness. Use a clean shape without thick outlines, halo or pixel artifacts; no transparency. The result is the same opaque square wall texture with a restrained dark silhouette portrait inside the frame. No additional objects, text, logos or watermark."
+    },
+    {
+      "path": "previous/tile-06-baked-eagle-arch.png",
+      "references": [
+        "references/horizontal/tile-06-enlarged.png",
+        "walls/horizontal/tile-02.png"
+      ],
+      "prompt": "Use case: precise-object-edit / style-transfer. Asset type: classic game HD wall tile 6.\nRemaster image1 as an opaque square HD game wall texture: a gray stone arch with its dark recessed niche, a golden decorative eagle with upward spread wings standing over a circular RED PLAQUE on a small golden base. Make the circular red plaque PLAIN RED, no symbol or insignia. Preserve the original arch placement, eagle silhouette and gold/red/black palette, viewing angle and broad geometry. Use image2's APPROVED rough chiseled gray stone material for the arch blocks and surrounding wall: pitted gray faces, bright irregular upper/left and darker lower/right bevels, natural asymmetric broken-rock outlines, dark mortar. All stone edges must be drawn at full high resolution with fine natural diagonal/curved fractures, not coarse square pixel notches and not rounded buttons. Clear sculpted golden feathers, smooth metal shading and detailed edges, same recognizable original game look. One front-facing flat wall texture, opaque edge-to-edge, no extra elements, text, symbols, borders, scene or watermark."
+    },
+    {
+      "path": "previous/tile-10-baked-eagle-picture.png",
+      "references": [
+        "references/horizontal/tile-10-enlarged.png",
+        "walls/horizontal/tile-12.png"
+      ],
+      "prompt": "Use case: precise-object-edit / style-transfer. Asset type: classic game HD wall tile 10.\nFaithfully remake image1's classic game wall at high resolution: a centered square GOLD FRAMED PAINTING hanging on warm brown vertical wooden wall paneling. The painting shows a gray/silver eagle with outstretched upward wings, a red wreath-like circular backdrop, teal turquoise painted background, and a small golden pedestal/plaque below. Keep the pedestal's inset entirely PLAIN RED with no symbol or insignia. Match the same framing, object proportions, palette and composition. Image2 is the approved HD wood grain/paneling finish; use that exact material quality and brown tone for the background around the painting. Smooth painted forms, clear feathers and softly shaded gold frame, natural tiny wood grain, no black cartoon outlines, square pixel shapes, stair steps, blur or enlarged low-res edges. One orthographic opaque square texture, fills frame edge-to-edge, no extra decoration, text, symbols, border, scene or watermark."
+    },
+    {
+      "path": "previous/tile-11-silhouette-composite.png",
+      "references": [
+        "previous/tile-04-neutral-portrait.png",
+        "walls/horizontal/tile-12.png"
+      ],
+      "prompt": "Use case: style-transfer\nCreate an opaque square HD game wall texture using image 2's approved vertical warm-brown wood wall as the entire background. Add a wide near-square classic warm gold picture frame centered on the wood, outer bounds x=8% to 92%, y=7% to 94%, with simple stepped beveled gold molding, a slender dark inside lip and quiet shadow. Inside it, keep a muted medium-gray painted backdrop. Image 1 supplies ONLY the broad head and upper-torso placement and left-facing pose: REPLACE its detailed man with a plain deep-charcoal SILHOUETTE of an anonymous person's head, neck and shoulders facing left. No skin or any facial features, eyes, mouth, fabric detail, insignia or identifiable likeness. A simple flat dark shape with a natural smooth silhouette outline of short hair, nose, chin, neck and jacket shoulders. The dark tall frame and stone from image 1 must be replaced by the wide gold frame and wood from image 2. Maintain the brown/gold/gray classic game palette and smooth high-resolution painted material finish. No weapons, hats, armbands, emblems, text, political figures, pixel artifacts or watermark. Front-on orthographic wall filling every edge, entirely opaque."
+    },
+    {
+      "path": "previous/tile-05-baked-window.png",
+      "source": "Preserved approved HD artwork from the existing local hd-assets pack; no new generation."
+    },
+    {
+      "path": "previous/tile-07-baked-skeleton-window.png",
+      "source": "Preserved approved HD artwork from the existing local hd-assets pack; no new generation."
+    }
+  ],
+  "components": [
+    {
+      "path": "walls/decorations/red-banner.png",
+      "references": [
+        "previous/tile-03-baked-banner.png"
+      ],
+      "prompt": "Use case: background-extraction\nAsset type: reusable HD wall decoration PNG for runtime compositing.\nKeep only the plain crimson cloth banner and its thin gold hanging rod with round finials. Remove ALL stone, mortar and wall background to transparency. Keep the original cloth folds, red color, rod, object scale and normalized placement within the square wall canvas. Preserve soft clean antialiased edges with no opaque matte or wall-colored halo. Do not add any emblem or lettering.\nReturn a square high-resolution image with genuine alpha transparency. No checkerboard painted into pixels, solid backdrop, border, text or watermark.",
+      "transparentBackground": true
+    },
+    {
+      "path": "walls/decorations/dark-portrait-frame.png",
+      "references": [
+        "previous/tile-04-silhouette-composite.png"
+      ],
+      "prompt": "Use case: background-extraction\nAsset type: reusable HD wall decoration PNG for runtime compositing.\nKeep only the dark charcoal beveled picture frame and its medium-gray painted inner canvas. REMOVE the person's silhouette entirely, filling its former area with the same quiet medium-gray painted canvas. Remove ALL surrounding stone wall to transparency. Keep the exact full square canvas, original frame placement, proportions, stone-like frame texture and bevels. The inside gray painted canvas stays opaque; only the area outside the frame is transparent.\nReturn a square high-resolution image with genuine alpha transparency. No checkerboard painted into pixels, solid backdrop, border, text or watermark.",
+      "transparentBackground": true
+    },
+    {
+      "path": "walls/decorations/gold-portrait-frame.png",
+      "references": [
+        "previous/tile-11-silhouette-composite.png"
+      ],
+      "prompt": "Use case: background-extraction\nAsset type: reusable HD wall decoration PNG for runtime compositing.\nKeep only the warm gold beveled picture frame and its medium-gray painted inner canvas. REMOVE the person's silhouette entirely, filling its former area with the same quiet medium-gray painted canvas. Remove ALL surrounding brown wood wall to transparency. Keep the exact full square canvas, frame position, proportions, gold material, molding and bevels. The inner gray painted canvas stays opaque; only the exterior of the gold frame becomes transparent.\nReturn a square high-resolution image with genuine alpha transparency. No checkerboard painted into pixels, solid backdrop, border, text or watermark.",
+      "transparentBackground": true
+    },
+    {
+      "path": "walls/decorations/portrait-silhouette.png",
+      "references": [
+        "previous/tile-04-silhouette-composite.png"
+      ],
+      "prompt": "Use case: background-extraction\nAsset type: reusable HD wall decoration PNG for runtime compositing.\nKeep only the anonymous charcoal SILHOUETTE of the left-facing head, neck and upper torso. Remove ALL picture frame, painted gray backdrop and stone wall to genuine transparency. The silhouette is a plain flat dark charcoal shape with no identifying facial details, eye, mouth, fabric detail or insignia. Center this standalone figure tightly in a square canvas with about 5% transparent margin on the sides/top, and a clean flat cropped torso bottom. Smooth continuous high-resolution contours with clean antialiasing. No shadow, outline or gray background.\nReturn a square high-resolution image with genuine alpha transparency. No checkerboard painted into pixels, solid backdrop, border, text or watermark.",
+      "transparentBackground": true
+    },
+    {
+      "path": "walls/decorations/eagle-arch.png",
+      "references": [
+        "previous/tile-06-baked-eagle-arch.png"
+      ],
+      "prompt": "Use case: background-extraction\nAsset type: reusable HD wall decoration PNG for runtime compositing.\nKeep the full gray stone arch surround, recessed dark arched inner opening, golden eagle statue, plain red round plaque and gold plinth as one architectural decoration. Remove ALL gray brick wall surrounding the arch to transparency. Retain the same exact overall full-square wall canvas, scale, positions, fine rough chiseled stone and gold material. The arch's recessed dark opening stays opaque dark stone; the area outside the arch becomes transparent. The circular red plaque remains completely plain, without emblem or text.\nReturn a square high-resolution image with genuine alpha transparency. No checkerboard painted into pixels, solid backdrop, border, text or watermark.",
+      "transparentBackground": true
+    },
+    {
+      "path": "walls/decorations/eagle-picture.png",
+      "references": [
+        "previous/tile-10-baked-eagle-picture.png"
+      ],
+      "prompt": "Use case: background-extraction\nAsset type: reusable HD wall decoration PNG for runtime compositing.\nKeep only the gold-framed painted eagle artwork including its teal inner canvas, red ribbons, silver eagle and plain red gold pedestal. Remove ALL brown wood panel wall outside the picture frame to genuine transparency. Preserve the full square wall canvas, exact picture placement and size, illustrated detail, colors, gold frame molding, red ribbons and silver eagle. The teal painting interior stays opaque. Plain red pedestal without emblems or text.\nReturn a square high-resolution image with genuine alpha transparency. No checkerboard painted into pixels, solid backdrop, border, text or watermark.",
+      "transparentBackground": true
+    },
+    {
+      "path": "walls/decorations/iron-bars.png",
+      "references": [
+        "previous/tile-05-baked-window.png"
+      ],
+      "prompt": "Use case: background-extraction\nAsset type: reusable HD wall decoration PNG for runtime compositing.\nExtract only the charcoal metal barred-window frame, five iron bars and small keyhole plate. Remove ALL blue brick wall, and also remove the black backdrop BETWEEN the bars to genuine transparency, so objects can later be drawn behind these bars. Preserve exactly the full square wall canvas, original iron frame/bar positions, widths, scale, dark metal material and keyhole plate. The frame and bars remain opaque clean metal with smooth antialiased edges; the blue wall and open spaces between the bars become transparent. No opaque black rectangular matte.\nReturn a square high-resolution image with genuine alpha transparency. No checkerboard painted into pixels, solid backdrop, border, text or watermark.",
+      "transparentBackground": true
+    },
+    {
+      "path": "walls/decorations/window-skeleton.png",
+      "references": [
+        "previous/tile-07-baked-skeleton-window.png"
+      ],
+      "prompt": "Use case: background-extraction\nAsset type: reusable HD wall decoration PNG for runtime compositing.\nExtract ONLY the ivory skeleton, skull, ribcage, arm and gripping bony hand as a transparent cutout. Remove every iron bar, keyhole plate, window frame, black recess and blue stone wall completely. Reconstruct the narrow missing bone segments where bars crossed its skull and ribcage. Preserve the skeleton's original broad pose, scale, ivory material and exact position in the full square canvas: it appears in the lower-right part of a barred-window opening, with one hand raised around x=50%, y=58%. Do not include bars or wall, cast shadow, background matte or outline. Smooth high-resolution bone edges and genuine transparent background.\nReturn a square high-resolution image with genuine alpha transparency. No checkerboard painted into pixels, solid backdrop, border, text or watermark.",
+      "transparentBackground": true
+    }
+  ],
+  "compositions": {
+    "path": "walls/compositions.json",
+    "mode": "Engine composition once at HD pack load",
+    "sharedPortrait": "walls/decorations/portrait-silhouette.png",
+    "sharedWindow": "walls/decorations/iron-bars.png",
+    "notes": "The raycaster uses cached composed textures. Decorations are independent transparent images, and backgrounds are reused from plain wall files. Tile22 reuses tile21's rail image."
+  },
+  "blueWallLayoutCorrection": {
+    "asset": "walls/horizontal/tile-09.png",
+    "record": "blue-layout-correction.json",
+    "description": "Earlier single-tile layout study; superseded by the matched blue A/B pair in pairs/."
+  },
+  "supersededStoneRequests": [
+    {
+      "tile": 1,
+      "path": "walls/horizontal/tile-01.png",
+      "references": [
+        "walls/horizontal/tile-02.png",
+        "references/horizontal/tile-01-enlarged.png"
+      ],
+      "prompt": "Use case: style-transfer\nMatch the approved tile02 rough gray stone material, pitted faces, cracks, bright chiseled top-left bevels and dark mortar. Recreate tile01's broad block arrangement with natural irregular fracture contours drawn at full resolution, replacing coarse pixel-grid steps. Preserve the original muted gray palette. Avoid rounded pillow blocks, square stair notches, coarse pixelated surface detail and thick black outlines. Opaque front-on square game wall texture, edge to edge.",
+      "promptRecord": "Production specification summary; exact generation wording is in the chat tool history."
+    },
+    {
+      "tile": 2,
+      "path": "walls/horizontal/tile-02.png",
+      "references": [
+        "references/stone-user-style.png"
+      ],
+      "prompt": "Use case: precise-object-edit\nEdit this gray stone wall texture. Keep the rough stone surface, fine pitting, cracks, gray palette, bright chiseled top/left bevels, darker lower/right bevels, dark mortar, stone count, positions and sizes. The user likes this exact look.\nCHANGE ONLY THE LARGE PIXEL-ART SHAPES IN THE STONE PERIMETERS AND THEIR ADJACENT BEVELS. Replace their coarse horizontal/vertical staircase notches with natural irregular rock fracture contours drawn at full resolution. Preserve asymmetric irregular stone shapes; do not turn the stones into squares, neat rectangles, rounded rectangles, pillow shapes or buttons.\nSpecific corrections: the lower-right side of the tall central stone currently descends in several big square steps\u2014replace those steps with a continuous oblique broken-rock edge, gently bowed and finely irregular. The small stone immediately below it must follow that new broken diagonal gap naturally. The middle-left stone's lower-left stepped bite becomes an asymmetric natural curved/diagonal fracture. The bottom-center horizontal stone's top-right rectangular step becomes a natural sloping fractured shoulder. Replace similar large square notches elsewhere with organic broken-stone edges. Keep the broad individual identities and the same arrangement.\nThe outlines can have small naturally uneven chips with fine high-resolution detail, but NEVER conspicuous coarse 90-degree staircases or inherited pixel-grid geometry. Bevel faces must follow the newly sculpted silhouettes with irregular chiseled stone planes, not uniform rounded radii. Do not smooth or flatten the rough stone faces, do not invent a new all-over surface pattern, and do not add cracks or change the lighting. No other redesign.\nReturn one opaque square texture, same framing and composition, edge to edge, no border, margin, scene, text or watermark."
+    },
+    {
+      "path": "walls/horizontal/tile-09.png",
+      "references": [
+        "references/horizontal/tile-09-enlarged.png",
+        "/home/dist/github/GD-WOLF/hd-assets/walls/horizontal/tile-08.png",
+        "walls/horizontal/tile-02.png"
+      ],
+      "prompt": "Use case: precise-object-edit / style-transfer. Asset type: classic game HD wall tile 9.\nImage1 defines the authoritative ORIGINAL layout of alternate blue stone wall tile09. Image2 supplies the existing saturated deep COBALT BLUE palette and rough mineral surface. Image3 supplies the approved current natural irregular CHISELED stone bevels and outline style. Create an HD opaque square wall texture using image1's EXACT stone block arrangement, individual sizes and locations, particularly its large tall block on the LEFT and different middle/right arrangement. Tile09 must not copy tile08's layout. Keep the deep cobalt blue stone color and muted gray/dark mortar from image2; give every stone naturally irregular asymmetric fracture outlines and rough pitted faces with fine cracks and chiseled bevels like image3, with restrained blue highlights. No coarse pixel-grid notches, square stairs, neat rounded/pillow blocks or blurry enlargement. Same classic game look, front-on orthographic, edge-to-edge, no other objects, symbols, text, margins, borders or watermark."
+    },
+    {
+      "path": "walls/horizontal/tile-08.png",
+      "source": "Preserved approved HD artwork from the existing local hd-assets pack; no new generation."
+    }
+  ],
+  "stonePairs": {
+    "gray": [
+      1,
+      2
+    ],
+    "blue": [
+      8,
+      9
+    ],
+    "record": "pairs/prompts.json",
+    "registration": "pairs/registrations.json",
+    "repeat": "A-B-A-B"
+  }
 }

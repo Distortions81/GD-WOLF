@@ -37,8 +37,8 @@ Run from the repo root:
 go run ./art/player-weapons-hd/v1/register_weapon_frames.go
 ```
 
-The registration step finds transparent gaps between the five figures in each atlas, then maps each figure's occupied bounds to eight times the corresponding original bounds on a 512 × 512 canvas. It uses nearest-neighbor sampling to retain the generated color/alpha values. Generated background margins are discarded; the original arm cropping, muzzle height, recoil shifts, and screen alignment are restored. This is a canvas size of 8× the original; the amount of recovered detail is determined by the generated artwork, not the canvas dimensions.
+The registration step finds transparent gaps between the five figures in each atlas, then maps each figure's occupied bounds to eight times the corresponding original bounds on a 512 × 512 canvas. It uses premultiplied bilinear sampling to preserve smooth transparency without borrowing RGB from invisible background pixels. Generated background margins are discarded; the original arm cropping, muzzle height, recoil shifts, and screen alignment are restored. This is a canvas size of 8× the original; the amount of recovered detail is determined by the generated artwork, not the canvas dimensions.
 
-Every frame is checked for visible content and transparent background, and atlas splits must pass through transparent gaps. These remain art drafts: fine colored edge fringes and small design/hand differences may need cleanup after visual review. They are saved separately from the active HD overrides.
+Every frame is checked for visible content and transparent background, and atlas splits must pass through transparent gaps. The approved anatomy is retained in the active first-level pack under `art/e1f1-hd/sprites/`. This directory preserves the source sheets and repeatable weapon registration.
 
 To try these in a native build, copy the files under `sprites/` into `hd-assets/sprites/`, enable HD textures, and select `ULTRA` mode. Existing replacements should be backed up before copying. Browser builds do not currently package filesystem HD overrides.

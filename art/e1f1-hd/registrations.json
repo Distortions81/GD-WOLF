@@ -1,1318 +1,2116 @@
 [
   {
-    "shape": 99,
-    "atlas": "dog-movement.png",
+    "shape": 50,
+    "atlas": "revision-2/atlases/guard-movement.png",
     "sourceRegion": {
       "Min": {
         "X": 0,
         "Y": 0
       },
       "Max": {
-        "X": 221,
-        "Y": 230
+        "X": 198,
+        "Y": 212
       }
     },
     "sourceContent": [
       {
         "Min": {
-          "X": 79,
-          "Y": 101
+          "X": 47,
+          "Y": 30
         },
         "Max": {
-          "X": 182,
-          "Y": 226
+          "X": 152,
+          "Y": 212
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 104,
-          "Y": 124
+          "X": 168,
+          "Y": 128
         },
         "Max": {
-          "X": 224,
-          "Y": 256
+          "X": 344,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 51,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 198,
+        "Y": 0
+      },
+      "Max": {
+        "X": 396,
+        "Y": 212
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 259,
+          "Y": 30
+        },
+        "Max": {
+          "X": 347,
+          "Y": 212
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 200,
+          "Y": 128
+        },
+        "Max": {
+          "X": 336,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 52,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 396,
+        "Y": 0
+      },
+      "Max": {
+        "X": 594,
+        "Y": 212
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 462,
+          "Y": 29
+        },
+        "Max": {
+          "X": 528,
+          "Y": 212
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 216,
+          "Y": 128
+        },
+        "Max": {
+          "X": 328,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 53,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 594,
+        "Y": 0
+      },
+      "Max": {
+        "X": 792,
+        "Y": 212
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 648,
+          "Y": 29
+        },
+        "Max": {
+          "X": 735,
+          "Y": 212
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 176,
+          "Y": 128
+        },
+        "Max": {
+          "X": 304,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 54,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 792,
+        "Y": 0
+      },
+      "Max": {
+        "X": 990,
+        "Y": 212
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 835,
+          "Y": 31
+        },
+        "Max": {
+          "X": 945,
+          "Y": 212
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 176,
+          "Y": 128
+        },
+        "Max": {
+          "X": 344,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 55,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 990,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1188,
+        "Y": 212
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1042,
+          "Y": 30
+        },
+        "Max": {
+          "X": 1132,
+          "Y": 212
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 200,
+          "Y": 128
+        },
+        "Max": {
+          "X": 336,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 56,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1188,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1386,
+        "Y": 212
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1257,
+          "Y": 30
+        },
+        "Max": {
+          "X": 1326,
+          "Y": 212
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 184,
+          "Y": 128
+        },
+        "Max": {
+          "X": 296,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 57,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1386,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1585,
+        "Y": 212
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1433,
+          "Y": 32
+        },
+        "Max": {
+          "X": 1528,
+          "Y": 212
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 184,
+          "Y": 128
+        },
+        "Max": {
+          "X": 320,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 58,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 212
+      },
+      "Max": {
+        "X": 198,
+        "Y": 419
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 53,
+          "Y": 233
+        },
+        "Max": {
+          "X": 145,
+          "Y": 419
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 192,
+          "Y": 144
+        },
+        "Max": {
+          "X": 336,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 59,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 198,
+        "Y": 212
+      },
+      "Max": {
+        "X": 396,
+        "Y": 419
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 242,
+          "Y": 233
+        },
+        "Max": {
+          "X": 353,
+          "Y": 418
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 160,
+          "Y": 136
+        },
+        "Max": {
+          "X": 360,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 60,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 396,
+        "Y": 212
+      },
+      "Max": {
+        "X": 594,
+        "Y": 419
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 442,
+          "Y": 233
+        },
+        "Max": {
+          "X": 563,
+          "Y": 419
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 160,
+          "Y": 128
+        },
+        "Max": {
+          "X": 392,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 61,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 594,
+        "Y": 212
+      },
+      "Max": {
+        "X": 792,
+        "Y": 419
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 631,
+          "Y": 233
+        },
+        "Max": {
+          "X": 746,
+          "Y": 419
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 136,
+          "Y": 128
+        },
+        "Max": {
+          "X": 344,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 62,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 792,
+        "Y": 212
+      },
+      "Max": {
+        "X": 990,
+        "Y": 419
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 841,
+          "Y": 233
+        },
+        "Max": {
+          "X": 941,
+          "Y": 419
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 184,
+          "Y": 128
+        },
+        "Max": {
+          "X": 344,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 63,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 990,
+        "Y": 212
+      },
+      "Max": {
+        "X": 1188,
+        "Y": 419
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1034,
+          "Y": 233
+        },
+        "Max": {
+          "X": 1147,
+          "Y": 419
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 176,
+          "Y": 128
+        },
+        "Max": {
+          "X": 376,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 64,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1188,
+        "Y": 212
+      },
+      "Max": {
+        "X": 1386,
+        "Y": 419
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1222,
+          "Y": 233
+        },
+        "Max": {
+          "X": 1340,
+          "Y": 419
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 120,
+          "Y": 128
+        },
+        "Max": {
+          "X": 344,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 65,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1386,
+        "Y": 212
+      },
+      "Max": {
+        "X": 1585,
+        "Y": 419
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1432,
+          "Y": 233
+        },
+        "Max": {
+          "X": 1535,
+          "Y": 419
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 176,
+          "Y": 136
+        },
+        "Max": {
+          "X": 352,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 66,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 419
+      },
+      "Max": {
+        "X": 198,
+        "Y": 625
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 47,
+          "Y": 435
+        },
+        "Max": {
+          "X": 152,
+          "Y": 625
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 168,
+          "Y": 136
+        },
+        "Max": {
+          "X": 352,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 67,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 198,
+        "Y": 419
+      },
+      "Max": {
+        "X": 396,
+        "Y": 625
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 250,
+          "Y": 433
+        },
+        "Max": {
+          "X": 347,
+          "Y": 625
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 168,
+          "Y": 128
+        },
+        "Max": {
+          "X": 336,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 68,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 396,
+        "Y": 419
+      },
+      "Max": {
+        "X": 594,
+        "Y": 625
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 460,
+          "Y": 434
+        },
+        "Max": {
+          "X": 541,
+          "Y": 625
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 208,
+          "Y": 128
+        },
+        "Max": {
+          "X": 344,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 69,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 594,
+        "Y": 419
+      },
+      "Max": {
+        "X": 792,
+        "Y": 625
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 647,
+          "Y": 433
+        },
+        "Max": {
+          "X": 733,
+          "Y": 625
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 184,
+          "Y": 128
+        },
+        "Max": {
+          "X": 304,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 70,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 792,
+        "Y": 419
+      },
+      "Max": {
+        "X": 990,
+        "Y": 625
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 835,
+          "Y": 435
+        },
+        "Max": {
+          "X": 945,
+          "Y": 625
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 176,
+          "Y": 128
+        },
+        "Max": {
+          "X": 344,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 71,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 990,
+        "Y": 419
+      },
+      "Max": {
+        "X": 1188,
+        "Y": 625
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1044,
+          "Y": 435
+        },
+        "Max": {
+          "X": 1133,
+          "Y": 625
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 208,
+          "Y": 128
+        },
+        "Max": {
+          "X": 336,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 72,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1188,
+        "Y": 419
+      },
+      "Max": {
+        "X": 1386,
+        "Y": 625
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1246,
+          "Y": 435
+        },
+        "Max": {
+          "X": 1327,
+          "Y": 625
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 176,
+          "Y": 128
+        },
+        "Max": {
+          "X": 304,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 73,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1386,
+        "Y": 419
+      },
+      "Max": {
+        "X": 1585,
+        "Y": 625
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1434,
+          "Y": 435
+        },
+        "Max": {
+          "X": 1537,
+          "Y": 625
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 184,
+          "Y": 128
+        },
+        "Max": {
+          "X": 360,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 74,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 625
+      },
+      "Max": {
+        "X": 198,
+        "Y": 818
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 51,
+          "Y": 645
+        },
+        "Max": {
+          "X": 144,
+          "Y": 818
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 184,
+          "Y": 144
+        },
+        "Max": {
+          "X": 328,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 75,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 198,
+        "Y": 625
+      },
+      "Max": {
+        "X": 396,
+        "Y": 818
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 244,
+          "Y": 641
+        },
+        "Max": {
+          "X": 364,
+          "Y": 818
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 160,
+          "Y": 144
+        },
+        "Max": {
+          "X": 376,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 76,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 396,
+        "Y": 625
+      },
+      "Max": {
+        "X": 594,
+        "Y": 818
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 439,
+          "Y": 641
+        },
+        "Max": {
+          "X": 563,
+          "Y": 818
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 160,
+          "Y": 128
+        },
+        "Max": {
+          "X": 392,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 77,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 594,
+        "Y": 625
+      },
+      "Max": {
+        "X": 792,
+        "Y": 818
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 637,
+          "Y": 639
+        },
+        "Max": {
+          "X": 737,
+          "Y": 818
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 160,
+          "Y": 128
+        },
+        "Max": {
+          "X": 328,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 78,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 792,
+        "Y": 625
+      },
+      "Max": {
+        "X": 990,
+        "Y": 818
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 841,
+          "Y": 641
+        },
+        "Max": {
+          "X": 938,
+          "Y": 818
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 184,
+          "Y": 128
+        },
+        "Max": {
+          "X": 336,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 79,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 990,
+        "Y": 625
+      },
+      "Max": {
+        "X": 1188,
+        "Y": 818
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1036,
+          "Y": 641
+        },
+        "Max": {
+          "X": 1143,
+          "Y": 818
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 192,
+          "Y": 128
+        },
+        "Max": {
+          "X": 360,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 80,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1188,
+        "Y": 625
+      },
+      "Max": {
+        "X": 1386,
+        "Y": 818
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1221,
+          "Y": 641
+        },
+        "Max": {
+          "X": 1343,
+          "Y": 818
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 120,
+          "Y": 128
+        },
+        "Max": {
+          "X": 352,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 81,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1386,
+        "Y": 625
+      },
+      "Max": {
+        "X": 1585,
+        "Y": 818
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1427,
+          "Y": 645
+        },
+        "Max": {
+          "X": 1537,
+          "Y": 818
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 168,
+          "Y": 144
+        },
+        "Max": {
+          "X": 368,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 82,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 818
+      },
+      "Max": {
+        "X": 198,
+        "Y": 992
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 48,
+          "Y": 828
+        },
+        "Max": {
+          "X": 150,
+          "Y": 992
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 168,
+          "Y": 136
+        },
+        "Max": {
+          "X": 352,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 83,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 198,
+        "Y": 818
+      },
+      "Max": {
+        "X": 396,
+        "Y": 992
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 251,
+          "Y": 828
+        },
+        "Max": {
+          "X": 348,
+          "Y": 992
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 168,
+          "Y": 136
+        },
+        "Max": {
+          "X": 336,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 84,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 396,
+        "Y": 818
+      },
+      "Max": {
+        "X": 594,
+        "Y": 992
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 459,
+          "Y": 827
+        },
+        "Max": {
+          "X": 532,
+          "Y": 991
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 208,
+          "Y": 128
+        },
+        "Max": {
+          "X": 344,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 85,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 594,
+        "Y": 818
+      },
+      "Max": {
+        "X": 792,
+        "Y": 992
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 648,
+          "Y": 827
+        },
+        "Max": {
+          "X": 732,
+          "Y": 991
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 184,
+          "Y": 128
+        },
+        "Max": {
+          "X": 304,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 86,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 792,
+        "Y": 818
+      },
+      "Max": {
+        "X": 990,
+        "Y": 992
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 835,
+          "Y": 828
+        },
+        "Max": {
+          "X": 944,
+          "Y": 992
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 176,
+          "Y": 128
+        },
+        "Max": {
+          "X": 344,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 87,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 990,
+        "Y": 818
+      },
+      "Max": {
+        "X": 1188,
+        "Y": 992
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1049,
+          "Y": 828
+        },
+        "Max": {
+          "X": 1132,
+          "Y": 992
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 208,
+          "Y": 128
+        },
+        "Max": {
+          "X": 336,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 88,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1188,
+        "Y": 818
+      },
+      "Max": {
+        "X": 1386,
+        "Y": 992
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1248,
+          "Y": 828
+        },
+        "Max": {
+          "X": 1325,
+          "Y": 992
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 176,
+          "Y": 128
+        },
+        "Max": {
+          "X": 304,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 89,
+    "atlas": "revision-2/atlases/guard-movement.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1386,
+        "Y": 818
+      },
+      "Max": {
+        "X": 1585,
+        "Y": 992
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1432,
+          "Y": 828
+        },
+        "Max": {
+          "X": 1537,
+          "Y": 992
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 184,
+          "Y": 128
+        },
+        "Max": {
+          "X": 360,
+          "Y": 504
+        }
+      }
+    ]
+  },
+  {
+    "shape": 96,
+    "atlas": "revision-2/atlases/guard-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 313,
+        "Y": 332
+      },
+      "Max": {
+        "X": 627,
+        "Y": 637
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 379,
+          "Y": 381
+        },
+        "Max": {
+          "X": 544,
+          "Y": 637
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 144,
+          "Y": 128
+        },
+        "Max": {
+          "X": 368,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 97,
+    "atlas": "revision-2/atlases/guard-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 627,
+        "Y": 332
+      },
+      "Max": {
+        "X": 940,
+        "Y": 637
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 714,
+          "Y": 391
+        },
+        "Max": {
+          "X": 856,
+          "Y": 637
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 160,
+          "Y": 144
+        },
+        "Max": {
+          "X": 360,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 98,
+    "atlas": "revision-2/atlases/guard-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 940,
+        "Y": 332
+      },
+      "Max": {
+        "X": 1254,
+        "Y": 637
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1033,
+          "Y": 389
+        },
+        "Max": {
+          "X": 1176,
+          "Y": 637
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 160,
+          "Y": 144
+        },
+        "Max": {
+          "X": 360,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 90,
+    "atlas": "revision-2/atlases/guard-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 637
+      },
+      "Max": {
+        "X": 313,
+        "Y": 948
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 72,
+          "Y": 695
+        },
+        "Max": {
+          "X": 216,
+          "Y": 943
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 168,
+          "Y": 144
+        },
+        "Max": {
+          "X": 376,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 94,
+    "atlas": "revision-2/atlases/guard-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 313,
+        "Y": 637
+      },
+      "Max": {
+        "X": 627,
+        "Y": 948
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 385,
+          "Y": 696
+        },
+        "Max": {
+          "X": 555,
+          "Y": 948
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 144,
+          "Y": 136
+        },
+        "Max": {
+          "X": 360,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 91,
+    "atlas": "revision-2/atlases/guard-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 627,
+        "Y": 637
+      },
+      "Max": {
+        "X": 940,
+        "Y": 948
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 724,
+          "Y": 681
+        },
+        "Max": {
+          "X": 884,
+          "Y": 933
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 200,
+          "Y": 96
+        },
+        "Max": {
+          "X": 472,
+          "Y": 480
+        }
+      }
+    ]
+  },
+  {
+    "shape": 92,
+    "atlas": "revision-2/atlases/guard-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 940,
+        "Y": 637
+      },
+      "Max": {
+        "X": 1254,
+        "Y": 948
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1050,
+          "Y": 712
+        },
+        "Max": {
+          "X": 1243,
+          "Y": 913
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 208,
+          "Y": 136
+        },
+        "Max": {
+          "X": 504,
+          "Y": 440
+        }
+      }
+    ]
+  },
+  {
+    "shape": 93,
+    "atlas": "revision-2/atlases/guard-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 948
+      },
+      "Max": {
+        "X": 313,
+        "Y": 1254
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 91,
+          "Y": 1056
+        },
+        "Max": {
+          "X": 284,
+          "Y": 1223
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 208,
+          "Y": 224
+        },
+        "Max": {
+          "X": 512,
+          "Y": 472
+        }
+      }
+    ]
+  },
+  {
+    "shape": 95,
+    "atlas": "revision-2/atlases/guard-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 313,
+        "Y": 948
+      },
+      "Max": {
+        "X": 639,
+        "Y": 1254
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 350,
+          "Y": 1167
+        },
+        "Max": {
+          "X": 639,
+          "Y": 1252
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 120,
+          "Y": 400
+        },
+        "Max": {
+          "X": 504,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 99,
+    "atlas": "revision-2/atlases/dog-movement-0.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 0
+      },
+      "Max": {
+        "X": 440,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 110,
+          "Y": 54
+        },
+        "Max": {
+          "X": 231,
+          "Y": 409
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 208,
+          "Y": 248
+        },
+        "Max": {
+          "X": 320,
+          "Y": 496
         }
       }
     ]
   },
   {
     "shape": 100,
-    "atlas": "dog-movement.png",
+    "atlas": "revision-2/atlases/dog-movement-0.png",
     "sourceRegion": {
       "Min": {
-        "X": 221,
+        "X": 440,
         "Y": 0
       },
       "Max": {
-        "X": 443,
-        "Y": 230
+        "X": 887,
+        "Y": 443
       }
     },
     "sourceContent": [
       {
         "Min": {
-          "X": 280,
-          "Y": 100
+          "X": 440,
+          "Y": 71
         },
         "Max": {
-          "X": 415,
-          "Y": 227
+          "X": 831,
+          "Y": 410
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 76,
-          "Y": 128
+          "X": 152,
+          "Y": 256
         },
         "Max": {
-          "X": 220,
-          "Y": 256
+          "X": 408,
+          "Y": 504
         }
       }
     ]
   },
   {
     "shape": 101,
-    "atlas": "dog-movement.png",
+    "atlas": "revision-2/atlases/dog-movement-0.png",
     "sourceRegion": {
       "Min": {
-        "X": 443,
+        "X": 887,
         "Y": 0
       },
       "Max": {
-        "X": 665,
-        "Y": 230
+        "X": 1382,
+        "Y": 443
       }
     },
     "sourceContent": [
       {
         "Min": {
-          "X": 470,
-          "Y": 102
+          "X": 900,
+          "Y": 96
         },
         "Max": {
-          "X": 652,
-          "Y": 227
+          "X": 1382,
+          "Y": 414
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 40,
-          "Y": 128
+          "X": 80,
+          "Y": 256
         },
         "Max": {
-          "X": 244,
-          "Y": 256
+          "X": 488,
+          "Y": 504
         }
       }
     ]
   },
   {
     "shape": 102,
-    "atlas": "dog-movement.png",
+    "atlas": "revision-2/atlases/dog-movement-0.png",
     "sourceRegion": {
       "Min": {
-        "X": 665,
+        "X": 1382,
         "Y": 0
       },
       "Max": {
-        "X": 887,
-        "Y": 230
+        "X": 1774,
+        "Y": 443
       }
     },
     "sourceContent": [
       {
         "Min": {
-          "X": 712,
-          "Y": 97
+          "X": 1440,
+          "Y": 84
         },
         "Max": {
-          "X": 856,
-          "Y": 229
+          "X": 1738,
+          "Y": 415
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 64,
-          "Y": 124
+          "X": 128,
+          "Y": 248
         },
         "Max": {
-          "X": 216,
-          "Y": 256
+          "X": 408,
+          "Y": 512
         }
       }
     ]
   },
   {
     "shape": 103,
-    "atlas": "dog-movement.png",
+    "atlas": "revision-2/atlases/dog-movement-0.png",
     "sourceRegion": {
       "Min": {
-        "X": 887,
-        "Y": 0
+        "X": 0,
+        "Y": 443
       },
       "Max": {
-        "X": 1108,
-        "Y": 230
+        "X": 438,
+        "Y": 887
       }
     },
     "sourceContent": [
       {
         "Min": {
-          "X": 972,
-          "Y": 104
+          "X": 116,
+          "Y": 487
         },
         "Max": {
-          "X": 1068,
-          "Y": 230
+          "X": 245,
+          "Y": 833
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 108,
-          "Y": 132
+          "X": 216,
+          "Y": 264
         },
         "Max": {
-          "X": 216,
-          "Y": 256
+          "X": 336,
+          "Y": 496
         }
       }
     ]
   },
   {
     "shape": 104,
-    "atlas": "dog-movement.png",
+    "atlas": "revision-2/atlases/dog-movement-0.png",
     "sourceRegion": {
       "Min": {
-        "X": 1108,
-        "Y": 0
+        "X": 438,
+        "Y": 443
       },
       "Max": {
-        "X": 1330,
-        "Y": 230
+        "X": 848,
+        "Y": 887
       }
     },
     "sourceContent": [
       {
         "Min": {
-          "X": 1143,
-          "Y": 98
+          "X": 438,
+          "Y": 494
         },
         "Max": {
-          "X": 1302,
-          "Y": 230
+          "X": 777,
+          "Y": 832
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 40,
-          "Y": 124
+          "X": 80,
+          "Y": 248
         },
         "Max": {
-          "X": 228,
-          "Y": 256
+          "X": 400,
+          "Y": 512
         }
       }
     ]
   },
   {
     "shape": 105,
-    "atlas": "dog-movement.png",
+    "atlas": "revision-2/atlases/dog-movement-0.png",
     "sourceRegion": {
       "Min": {
-        "X": 1330,
-        "Y": 0
-      },
-      "Max": {
-        "X": 1552,
-        "Y": 230
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1342,
-          "Y": 103
-        },
-        "Max": {
-          "X": 1531,
-          "Y": 229
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 12,
-          "Y": 128
-        },
-        "Max": {
-          "X": 240,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 106,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1552,
-        "Y": 0
-      },
-      "Max": {
-        "X": 1774,
-        "Y": 230
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1592,
-          "Y": 100
-        },
-        "Max": {
-          "X": 1734,
-          "Y": 227
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 52,
-          "Y": 124
-        },
-        "Max": {
-          "X": 216,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 107,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 0,
-        "Y": 230
-      },
-      "Max": {
-        "X": 221,
-        "Y": 453
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 81,
-          "Y": 320
-        },
-        "Max": {
-          "X": 190,
-          "Y": 448
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 104,
-          "Y": 124
-        },
-        "Max": {
-          "X": 216,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 108,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 221,
-        "Y": 230
-      },
-      "Max": {
-        "X": 443,
-        "Y": 453
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 272,
-          "Y": 318
-        },
-        "Max": {
-          "X": 428,
-          "Y": 450
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 64,
-          "Y": 128
-        },
-        "Max": {
-          "X": 240,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 109,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 443,
-        "Y": 230
-      },
-      "Max": {
-        "X": 665,
-        "Y": 453
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 475,
-          "Y": 319
-        },
-        "Max": {
-          "X": 659,
-          "Y": 451
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 40,
-          "Y": 128
-        },
-        "Max": {
-          "X": 252,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 110,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 665,
-        "Y": 230
-      },
-      "Max": {
-        "X": 887,
-        "Y": 453
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 711,
-          "Y": 317
-        },
-        "Max": {
-          "X": 866,
-          "Y": 451
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 60,
-          "Y": 124
-        },
-        "Max": {
-          "X": 232,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 111,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 887,
-        "Y": 230
-      },
-      "Max": {
-        "X": 1108,
-        "Y": 453
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 973,
-          "Y": 322
-        },
-        "Max": {
-          "X": 1078,
-          "Y": 453
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 108,
-          "Y": 128
-        },
-        "Max": {
-          "X": 220,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 112,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1108,
-        "Y": 230
-      },
-      "Max": {
-        "X": 1330,
-        "Y": 453
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1151,
-          "Y": 316
-        },
-        "Max": {
-          "X": 1284,
-          "Y": 453
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 52,
-          "Y": 120
-        },
-        "Max": {
-          "X": 208,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 113,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1330,
-        "Y": 230
-      },
-      "Max": {
-        "X": 1552,
-        "Y": 453
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1346,
-          "Y": 321
-        },
-        "Max": {
-          "X": 1528,
-          "Y": 452
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 20,
-          "Y": 124
-        },
-        "Max": {
-          "X": 240,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 114,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1552,
-        "Y": 230
-      },
-      "Max": {
-        "X": 1774,
-        "Y": 453
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1592,
-          "Y": 319
-        },
-        "Max": {
-          "X": 1733,
-          "Y": 450
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 56,
-          "Y": 124
-        },
-        "Max": {
-          "X": 208,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 115,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 0,
-        "Y": 453
-      },
-      "Max": {
-        "X": 221,
-        "Y": 676
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 81,
-          "Y": 552
-        },
-        "Max": {
-          "X": 185,
-          "Y": 674
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 104,
-          "Y": 136
-        },
-        "Max": {
-          "X": 224,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 116,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 221,
-        "Y": 453
-      },
-      "Max": {
-        "X": 443,
-        "Y": 676
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 271,
-          "Y": 552
-        },
-        "Max": {
-          "X": 421,
-          "Y": 675
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 60,
-          "Y": 140
-        },
-        "Max": {
-          "X": 244,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 117,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 443,
-        "Y": 453
-      },
-      "Max": {
-        "X": 665,
-        "Y": 676
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 476,
-          "Y": 551
-        },
-        "Max": {
-          "X": 656,
-          "Y": 675
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 40,
-          "Y": 136
-        },
-        "Max": {
-          "X": 244,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 118,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 665,
-        "Y": 453
-      },
-      "Max": {
-        "X": 887,
-        "Y": 676
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 710,
-          "Y": 547
-        },
-        "Max": {
-          "X": 870,
-          "Y": 672
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 60,
-          "Y": 132
-        },
-        "Max": {
-          "X": 244,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 119,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 887,
-        "Y": 453
-      },
-      "Max": {
-        "X": 1108,
-        "Y": 676
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 968,
-          "Y": 552
-        },
-        "Max": {
-          "X": 1076,
-          "Y": 676
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 104,
-          "Y": 136
-        },
-        "Max": {
-          "X": 220,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 120,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1108,
-        "Y": 453
-      },
-      "Max": {
-        "X": 1330,
-        "Y": 676
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1143,
-          "Y": 549
-        },
-        "Max": {
-          "X": 1302,
-          "Y": 672
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 48,
-          "Y": 140
-        },
-        "Max": {
-          "X": 220,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 121,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1330,
-        "Y": 453
-      },
-      "Max": {
-        "X": 1552,
-        "Y": 676
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1342,
-          "Y": 550
-        },
-        "Max": {
-          "X": 1550,
-          "Y": 676
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 16,
-          "Y": 136
-        },
-        "Max": {
-          "X": 252,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 122,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1552,
-        "Y": 453
-      },
-      "Max": {
-        "X": 1774,
-        "Y": 676
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1592,
-          "Y": 553
-        },
-        "Max": {
-          "X": 1756,
-          "Y": 676
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 56,
-          "Y": 140
-        },
-        "Max": {
-          "X": 236,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 123,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 0,
-        "Y": 676
-      },
-      "Max": {
-        "X": 221,
-        "Y": 887
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 78,
-          "Y": 761
-        },
-        "Max": {
-          "X": 186,
-          "Y": 877
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 100,
-          "Y": 132
-        },
-        "Max": {
-          "X": 228,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 124,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 221,
-        "Y": 676
-      },
-      "Max": {
-        "X": 443,
-        "Y": 887
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 275,
-          "Y": 756
-        },
-        "Max": {
-          "X": 415,
-          "Y": 880
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 64,
-          "Y": 132
-        },
-        "Max": {
-          "X": 232,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 125,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 443,
-        "Y": 676
-      },
-      "Max": {
-        "X": 665,
-        "Y": 887
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 474,
-          "Y": 760
-        },
-        "Max": {
-          "X": 654,
-          "Y": 878
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 36,
-          "Y": 140
-        },
-        "Max": {
-          "X": 248,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 126,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 665,
-        "Y": 676
-      },
-      "Max": {
-        "X": 887,
-        "Y": 887
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 709,
-          "Y": 754
-        },
-        "Max": {
-          "X": 863,
-          "Y": 880
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 60,
-          "Y": 132
-        },
-        "Max": {
-          "X": 232,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 127,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 887,
-        "Y": 676
-      },
-      "Max": {
-        "X": 1108,
-        "Y": 887
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 972,
-          "Y": 757
-        },
-        "Max": {
-          "X": 1073,
-          "Y": 878
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 108,
-          "Y": 132
-        },
-        "Max": {
-          "X": 232,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 128,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1108,
-        "Y": 676
-      },
-      "Max": {
-        "X": 1330,
-        "Y": 887
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1145,
-          "Y": 756
-        },
-        "Max": {
-          "X": 1302,
-          "Y": 879
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 56,
-          "Y": 136
-        },
-        "Max": {
-          "X": 236,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 129,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1330,
-        "Y": 676
-      },
-      "Max": {
-        "X": 1552,
-        "Y": 887
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1348,
-          "Y": 757
-        },
-        "Max": {
-          "X": 1534,
-          "Y": 879
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 32,
-          "Y": 128
-        },
-        "Max": {
-          "X": 244,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 130,
-    "atlas": "dog-movement.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1552,
-        "Y": 676
-      },
-      "Max": {
-        "X": 1774,
-        "Y": 887
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1593,
-          "Y": 757
-        },
-        "Max": {
-          "X": 1745,
-          "Y": 878
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 64,
-          "Y": 132
-        },
-        "Max": {
-          "X": 228,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 131,
-    "atlas": "dog-actions.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 0,
-        "Y": 0
-      },
-      "Max": {
-        "X": 443,
+        "X": 848,
         "Y": 443
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 73,
-          "Y": 131
-        },
-        "Max": {
-          "X": 371,
-          "Y": 390
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 68,
-          "Y": 128
-        },
-        "Max": {
-          "X": 244,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 132,
-    "atlas": "dog-actions.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 443,
-        "Y": 0
-      },
-      "Max": {
-        "X": 887,
-        "Y": 443
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 507,
-          "Y": 104
-        },
-        "Max": {
-          "X": 857,
-          "Y": 391
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 48,
-          "Y": 100
-        },
-        "Max": {
-          "X": 244,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 133,
-    "atlas": "dog-actions.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 887,
-        "Y": 0
       },
       "Max": {
         "X": 1330,
-        "Y": 443
+        "Y": 887
       }
     },
     "sourceContent": [
       {
         "Min": {
-          "X": 928,
-          "Y": 168
+          "X": 848,
+          "Y": 513
         },
         "Max": {
-          "X": 1302,
-          "Y": 392
+          "X": 1295,
+          "Y": 827
         }
       }
     ],
@@ -1320,18 +2118,1082 @@
       {
         "Min": {
           "X": 24,
-          "Y": 128
+          "Y": 256
         },
         "Max": {
-          "X": 248,
+          "X": 432,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 106,
+    "atlas": "revision-2/atlases/dog-movement-0.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1330,
+        "Y": 443
+      },
+      "Max": {
+        "X": 1774,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1393,
+          "Y": 500
+        },
+        "Max": {
+          "X": 1713,
+          "Y": 826
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 104,
+          "Y": 248
+        },
+        "Max": {
+          "X": 376,
+          "Y": 488
+        }
+      }
+    ]
+  },
+  {
+    "shape": 107,
+    "atlas": "revision-2/atlases/dog-movement-1.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 0
+      },
+      "Max": {
+        "X": 443,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 126,
+          "Y": 45
+        },
+        "Max": {
+          "X": 255,
+          "Y": 410
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 208,
+          "Y": 248
+        },
+        "Max": {
+          "X": 320,
+          "Y": 480
+        }
+      }
+    ]
+  },
+  {
+    "shape": 108,
+    "atlas": "revision-2/atlases/dog-movement-1.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 443,
+        "Y": 0
+      },
+      "Max": {
+        "X": 887,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 453,
+          "Y": 56
+        },
+        "Max": {
+          "X": 864,
+          "Y": 395
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 128,
           "Y": 256
+        },
+        "Max": {
+          "X": 416,
+          "Y": 496
+        }
+      }
+    ]
+  },
+  {
+    "shape": 109,
+    "atlas": "revision-2/atlases/dog-movement-1.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 887,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1393,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 915,
+          "Y": 66
+        },
+        "Max": {
+          "X": 1393,
+          "Y": 398
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 80,
+          "Y": 256
+        },
+        "Max": {
+          "X": 480,
+          "Y": 504
+        }
+      }
+    ]
+  },
+  {
+    "shape": 110,
+    "atlas": "revision-2/atlases/dog-movement-1.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1393,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1774,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1420,
+          "Y": 55
+        },
+        "Max": {
+          "X": 1744,
+          "Y": 414
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 120,
+          "Y": 248
+        },
+        "Max": {
+          "X": 400,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 111,
+    "atlas": "revision-2/atlases/dog-movement-1.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 443
+      },
+      "Max": {
+        "X": 417,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 130,
+          "Y": 471
+        },
+        "Max": {
+          "X": 262,
+          "Y": 838
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 216,
+          "Y": 256
+        },
+        "Max": {
+          "X": 336,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 112,
+    "atlas": "revision-2/atlases/dog-movement-1.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 417,
+        "Y": 443
+      },
+      "Max": {
+        "X": 854,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 417,
+          "Y": 484
+        },
+        "Max": {
+          "X": 773,
+          "Y": 839
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 104,
+          "Y": 240
+        },
+        "Max": {
+          "X": 400,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 113,
+    "atlas": "revision-2/atlases/dog-movement-1.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 854,
+        "Y": 443
+      },
+      "Max": {
+        "X": 1342,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 854,
+          "Y": 503
+        },
+        "Max": {
+          "X": 1342,
+          "Y": 830
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 40,
+          "Y": 248
+        },
+        "Max": {
+          "X": 440,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 114,
+    "atlas": "revision-2/atlases/dog-movement-1.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1342,
+        "Y": 443
+      },
+      "Max": {
+        "X": 1774,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1403,
+          "Y": 479
+        },
+        "Max": {
+          "X": 1741,
+          "Y": 826
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 112,
+          "Y": 248
+        },
+        "Max": {
+          "X": 400,
+          "Y": 488
+        }
+      }
+    ]
+  },
+  {
+    "shape": 115,
+    "atlas": "revision-2/atlases/dog-movement-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 0
+      },
+      "Max": {
+        "X": 443,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 136,
+          "Y": 123
+        },
+        "Max": {
+          "X": 249,
+          "Y": 423
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 208,
+          "Y": 272
+        },
+        "Max": {
+          "X": 320,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 116,
+    "atlas": "revision-2/atlases/dog-movement-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 443,
+        "Y": 0
+      },
+      "Max": {
+        "X": 887,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 496,
+          "Y": 123
+        },
+        "Max": {
+          "X": 818,
+          "Y": 426
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 120,
+          "Y": 280
+        },
+        "Max": {
+          "X": 400,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 117,
+    "atlas": "revision-2/atlases/dog-movement-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 887,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1340,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 902,
+          "Y": 124
+        },
+        "Max": {
+          "X": 1340,
+          "Y": 420
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 80,
+          "Y": 272
+        },
+        "Max": {
+          "X": 480,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 118,
+    "atlas": "revision-2/atlases/dog-movement-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1340,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1774,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1418,
+          "Y": 126
+        },
+        "Max": {
+          "X": 1730,
+          "Y": 425
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 120,
+          "Y": 264
+        },
+        "Max": {
+          "X": 424,
+          "Y": 488
+        }
+      }
+    ]
+  },
+  {
+    "shape": 119,
+    "atlas": "revision-2/atlases/dog-movement-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 443
+      },
+      "Max": {
+        "X": 443,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 142,
+          "Y": 529
+        },
+        "Max": {
+          "X": 255,
+          "Y": 827
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 208,
+          "Y": 272
+        },
+        "Max": {
+          "X": 336,
+          "Y": 480
+        }
+      }
+    ]
+  },
+  {
+    "shape": 120,
+    "atlas": "revision-2/atlases/dog-movement-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 443,
+        "Y": 443
+      },
+      "Max": {
+        "X": 887,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 471,
+          "Y": 513
+        },
+        "Max": {
+          "X": 804,
+          "Y": 817
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 96,
+          "Y": 280
+        },
+        "Max": {
+          "X": 408,
+          "Y": 488
+        }
+      }
+    ]
+  },
+  {
+    "shape": 121,
+    "atlas": "revision-2/atlases/dog-movement-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 887,
+        "Y": 443
+      },
+      "Max": {
+        "X": 1330,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 891,
+          "Y": 522
+        },
+        "Max": {
+          "X": 1328,
+          "Y": 812
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 32,
+          "Y": 272
+        },
+        "Max": {
+          "X": 440,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 122,
+    "atlas": "revision-2/atlases/dog-movement-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1330,
+        "Y": 443
+      },
+      "Max": {
+        "X": 1774,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1389,
+          "Y": 524
+        },
+        "Max": {
+          "X": 1696,
+          "Y": 826
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 112,
+          "Y": 280
+        },
+        "Max": {
+          "X": 392,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 123,
+    "atlas": "revision-2/atlases/dog-movement-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 0
+      },
+      "Max": {
+        "X": 443,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 140,
+          "Y": 92
+        },
+        "Max": {
+          "X": 285,
+          "Y": 432
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 200,
+          "Y": 264
+        },
+        "Max": {
+          "X": 328,
+          "Y": 488
+        }
+      }
+    ]
+  },
+  {
+    "shape": 124,
+    "atlas": "revision-2/atlases/dog-movement-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 443,
+        "Y": 0
+      },
+      "Max": {
+        "X": 887,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 478,
+          "Y": 87
+        },
+        "Max": {
+          "X": 817,
+          "Y": 429
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 128,
+          "Y": 264
+        },
+        "Max": {
+          "X": 392,
+          "Y": 496
+        }
+      }
+    ]
+  },
+  {
+    "shape": 125,
+    "atlas": "revision-2/atlases/dog-movement-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 887,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1375,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 895,
+          "Y": 101
+        },
+        "Max": {
+          "X": 1375,
+          "Y": 422
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 72,
+          "Y": 280
+        },
+        "Max": {
+          "X": 480,
+          "Y": 496
+        }
+      }
+    ]
+  },
+  {
+    "shape": 126,
+    "atlas": "revision-2/atlases/dog-movement-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1375,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1774,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1428,
+          "Y": 93
+        },
+        "Max": {
+          "X": 1744,
+          "Y": 425
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 120,
+          "Y": 264
+        },
+        "Max": {
+          "X": 408,
+          "Y": 496
+        }
+      }
+    ]
+  },
+  {
+    "shape": 127,
+    "atlas": "revision-2/atlases/dog-movement-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 443
+      },
+      "Max": {
+        "X": 443,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 141,
+          "Y": 497
+        },
+        "Max": {
+          "X": 275,
+          "Y": 838
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 216,
+          "Y": 264
+        },
+        "Max": {
+          "X": 328,
+          "Y": 496
+        }
+      }
+    ]
+  },
+  {
+    "shape": 128,
+    "atlas": "revision-2/atlases/dog-movement-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 443,
+        "Y": 443
+      },
+      "Max": {
+        "X": 864,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 454,
+          "Y": 501
+        },
+        "Max": {
+          "X": 812,
+          "Y": 833
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 112,
+          "Y": 272
+        },
+        "Max": {
+          "X": 400,
+          "Y": 496
+        }
+      }
+    ]
+  },
+  {
+    "shape": 129,
+    "atlas": "revision-2/atlases/dog-movement-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 864,
+        "Y": 443
+      },
+      "Max": {
+        "X": 1330,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 864,
+          "Y": 501
+        },
+        "Max": {
+          "X": 1328,
+          "Y": 832
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 64,
+          "Y": 256
+        },
+        "Max": {
+          "X": 432,
+          "Y": 496
+        }
+      }
+    ]
+  },
+  {
+    "shape": 130,
+    "atlas": "revision-2/atlases/dog-movement-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1330,
+        "Y": 443
+      },
+      "Max": {
+        "X": 1774,
+        "Y": 887
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1406,
+          "Y": 491
+        },
+        "Max": {
+          "X": 1704,
+          "Y": 839
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 128,
+          "Y": 264
+        },
+        "Max": {
+          "X": 384,
+          "Y": 496
+        }
+      }
+    ]
+  },
+  {
+    "shape": 131,
+    "atlas": "revision-2/atlases/dog-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 0
+      },
+      "Max": {
+        "X": 443,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 53,
+          "Y": 123
+        },
+        "Max": {
+          "X": 373,
+          "Y": 394
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 136,
+          "Y": 256
+        },
+        "Max": {
+          "X": 440,
+          "Y": 496
+        }
+      }
+    ]
+  },
+  {
+    "shape": 132,
+    "atlas": "revision-2/atlases/dog-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 443,
+        "Y": 0
+      },
+      "Max": {
+        "X": 887,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 477,
+          "Y": 89
+        },
+        "Max": {
+          "X": 857,
+          "Y": 375
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 96,
+          "Y": 200
+        },
+        "Max": {
+          "X": 480,
+          "Y": 480
+        }
+      }
+    ]
+  },
+  {
+    "shape": 133,
+    "atlas": "revision-2/atlases/dog-actions.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 887,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1330,
+        "Y": 443
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 912,
+          "Y": 167
+        },
+        "Max": {
+          "X": 1303,
+          "Y": 396
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 48,
+          "Y": 256
+        },
+        "Max": {
+          "X": 496,
+          "Y": 504
         }
       }
     ]
   },
   {
     "shape": 134,
-    "atlas": "dog-actions.png",
+    "atlas": "revision-2/atlases/dog-actions.png",
     "sourceRegion": {
       "Min": {
         "X": 1330,
@@ -1345,31 +3207,31 @@
     "sourceContent": [
       {
         "Min": {
-          "X": 1355,
-          "Y": 300
+          "X": 1350,
+          "Y": 303
         },
         "Max": {
-          "X": 1738,
-          "Y": 401
+          "X": 1748,
+          "Y": 406
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 28,
-          "Y": 204
+          "X": 56,
+          "Y": 408
         },
         "Max": {
-          "X": 252,
-          "Y": 256
+          "X": 472,
+          "Y": 512
         }
       }
     ]
   },
   {
     "shape": 135,
-    "atlas": "dog-actions.png",
+    "atlas": "revision-2/atlases/dog-actions.png",
     "sourceRegion": {
       "Min": {
         "X": 0,
@@ -1383,31 +3245,31 @@
     "sourceContent": [
       {
         "Min": {
-          "X": 129,
-          "Y": 486
+          "X": 117,
+          "Y": 472
         },
         "Max": {
-          "X": 338,
-          "Y": 794
+          "X": 257,
+          "Y": 814
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 88,
-          "Y": 92
+          "X": 176,
+          "Y": 184
         },
         "Max": {
-          "X": 228,
-          "Y": 256
+          "X": 328,
+          "Y": 496
         }
       }
     ]
   },
   {
     "shape": 136,
-    "atlas": "dog-actions.png",
+    "atlas": "revision-2/atlases/dog-actions.png",
     "sourceRegion": {
       "Min": {
         "X": 443,
@@ -1421,31 +3283,31 @@
     "sourceContent": [
       {
         "Min": {
-          "X": 560,
-          "Y": 475
+          "X": 530,
+          "Y": 465
         },
         "Max": {
-          "X": 790,
-          "Y": 795
+          "X": 738,
+          "Y": 814
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 80,
-          "Y": 80
+          "X": 160,
+          "Y": 160
         },
         "Max": {
-          "X": 240,
-          "Y": 256
+          "X": 328,
+          "Y": 496
         }
       }
     ]
   },
   {
     "shape": 137,
-    "atlas": "dog-actions.png",
+    "atlas": "revision-2/atlases/dog-actions.png",
     "sourceRegion": {
       "Min": {
         "X": 887,
@@ -1459,88 +3321,50 @@
     "sourceContent": [
       {
         "Min": {
-          "X": 994,
-          "Y": 490
+          "X": 954,
+          "Y": 474
         },
         "Max": {
-          "X": 1231,
-          "Y": 798
+          "X": 1178,
+          "Y": 816
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 76,
-          "Y": 80
+          "X": 152,
+          "Y": 160
         },
         "Max": {
-          "X": 240,
-          "Y": 256
+          "X": 352,
+          "Y": 496
         }
       }
     ]
   },
   {
     "shape": 2,
-    "atlas": "scenery-1.png",
+    "atlas": "revision-2/atlases/scenery-1.png",
     "sourceRegion": {
       "Min": {
         "X": 0,
         "Y": 0
       },
       "Max": {
-        "X": 512,
-        "Y": 512
+        "X": 522,
+        "Y": 504
       }
     },
     "sourceContent": [
       {
         "Min": {
-          "X": 78,
-          "Y": 407
+          "X": 33,
+          "Y": 318
         },
         "Max": {
-          "X": 490,
-          "Y": 477
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 40,
-          "Y": 232
-        },
-        "Max": {
-          "X": 228,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 3,
-    "atlas": "scenery-1.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 512,
-        "Y": 0
-      },
-      "Max": {
-        "X": 1024,
-        "Y": 512
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 655,
-          "Y": 149
-        },
-        "Max": {
-          "X": 981,
-          "Y": 456
+          "X": 522,
+          "Y": 417
         }
       }
     ],
@@ -1548,36 +3372,74 @@
       {
         "Min": {
           "X": 80,
-          "Y": 128
+          "Y": 464
         },
         "Max": {
-          "X": 244,
+          "X": 456,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 3,
+    "atlas": "revision-2/atlases/scenery-1.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 522,
+        "Y": 0
+      },
+      "Max": {
+        "X": 976,
+        "Y": 504
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 592,
+          "Y": 61
+        },
+        "Max": {
+          "X": 873,
+          "Y": 457
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 160,
           "Y": 256
+        },
+        "Max": {
+          "X": 360,
+          "Y": 512
         }
       }
     ]
   },
   {
     "shape": 4,
-    "atlas": "scenery-1.png",
+    "atlas": "revision-2/atlases/scenery-1.png",
     "sourceRegion": {
       "Min": {
-        "X": 1024,
+        "X": 976,
         "Y": 0
       },
       "Max": {
         "X": 1536,
-        "Y": 512
+        "Y": 504
       }
     },
     "sourceContent": [
       {
         "Min": {
-          "X": 1070,
-          "Y": 174
+          "X": 976,
+          "Y": 66
         },
         "Max": {
-          "X": 1510,
+          "X": 1490,
           "Y": 483
         }
       }
@@ -1585,23 +3447,23 @@
     "renderBounds": [
       {
         "Min": {
-          "X": 28,
-          "Y": 124
+          "X": 56,
+          "Y": 248
         },
         "Max": {
-          "X": 248,
-          "Y": 256
+          "X": 448,
+          "Y": 512
         }
       }
     ]
   },
   {
     "shape": 5,
-    "atlas": "scenery-1.png",
+    "atlas": "revision-2/atlases/scenery-1.png",
     "sourceRegion": {
       "Min": {
         "X": 0,
-        "Y": 512
+        "Y": 504
       },
       "Max": {
         "X": 512,
@@ -1611,59 +3473,11 @@
     "sourceContent": [
       {
         "Min": {
-          "X": 122,
-          "Y": 607
+          "X": 127,
+          "Y": 504
         },
         "Max": {
-          "X": 406,
-          "Y": 973
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 56,
-          "Y": 92
-        },
-        "Max": {
-          "X": 204,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 6,
-    "atlas": "scenery-1.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 512,
-        "Y": 512
-      },
-      "Max": {
-        "X": 1024,
-        "Y": 1024
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 660,
-          "Y": 556
-        },
-        "Max": {
-          "X": 877,
-          "Y": 758
-        }
-      },
-      {
-        "Min": {
-          "X": 572,
-          "Y": 937
-        },
-        "Max": {
-          "X": 958,
+          "X": 416,
           "Y": 978
         }
       }
@@ -1671,679 +3485,23 @@
     "renderBounds": [
       {
         "Min": {
-          "X": 76,
-          "Y": 0
+          "X": 168,
+          "Y": 184
         },
         "Max": {
-          "X": 180,
-          "Y": 76
-        }
-      },
-      {
-        "Min": {
-          "X": 4,
-          "Y": 236
-        },
-        "Max": {
-          "X": 252,
-          "Y": 256
+          "X": 352,
+          "Y": 496
         }
       }
     ]
   },
   {
     "shape": 8,
-    "atlas": "scenery-1.png",
+    "atlas": "revision-2/atlases/scenery-1.png",
     "sourceRegion": {
       "Min": {
         "X": 1024,
-        "Y": 512
-      },
-      "Max": {
-        "X": 1536,
-        "Y": 1024
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1212,
-          "Y": 906
-        },
-        "Max": {
-          "X": 1390,
-          "Y": 979
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 88,
-          "Y": 224
-        },
-        "Max": {
-          "X": 152,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 10,
-    "atlas": "scenery-2.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 0,
-        "Y": 0
-      },
-      "Max": {
-        "X": 512,
-        "Y": 529
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 124,
-          "Y": 72
-        },
-        "Max": {
-          "X": 398,
-          "Y": 529
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 68,
-          "Y": 40
-        },
-        "Max": {
-          "X": 236,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 11,
-    "atlas": "scenery-2.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 512,
-        "Y": 0
-      },
-      "Max": {
-        "X": 1024,
-        "Y": 529
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 592,
-          "Y": 415
-        },
-        "Max": {
-          "X": 943,
-          "Y": 529
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 48,
-          "Y": 204
-        },
-        "Max": {
-          "X": 208,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 13,
-    "atlas": "scenery-2.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1024,
-        "Y": 0
-      },
-      "Max": {
-        "X": 1536,
-        "Y": 529
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1213,
-          "Y": 59
-        },
-        "Max": {
-          "X": 1418,
-          "Y": 529
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 96,
-          "Y": 36
-        },
-        "Max": {
-          "X": 252,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 14,
-    "atlas": "scenery-2.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 0,
-        "Y": 529
-      },
-      "Max": {
-        "X": 512,
-        "Y": 1024
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 153,
-          "Y": 707
-        },
-        "Max": {
-          "X": 373,
-          "Y": 979
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 96,
-          "Y": 132
-        },
-        "Max": {
-          "X": 244,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 15,
-    "atlas": "scenery-2.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 512,
-        "Y": 529
-      },
-      "Max": {
-        "X": 1024,
-        "Y": 1024
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 592,
-          "Y": 747
-        },
-        "Max": {
-          "X": 943,
-          "Y": 979
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 44,
-          "Y": 152
-        },
-        "Max": {
-          "X": 252,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 18,
-    "atlas": "scenery-3.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 0,
-        "Y": 0
-      },
-      "Max": {
-        "X": 512,
-        "Y": 624
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 83,
-          "Y": 39
-        },
-        "Max": {
-          "X": 464,
-          "Y": 618
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 60,
-          "Y": 4
-        },
-        "Max": {
-          "X": 252,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 21,
-    "atlas": "scenery-3.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 512,
-        "Y": 0
-      },
-      "Max": {
-        "X": 1041,
-        "Y": 624
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 545,
-          "Y": 480
-        },
-        "Max": {
-          "X": 1041,
-          "Y": 624
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 12,
-          "Y": 196
-        },
-        "Max": {
-          "X": 252,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 25,
-    "atlas": "scenery-3.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1041,
-        "Y": 0
-      },
-      "Max": {
-        "X": 1536,
-        "Y": 624
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1209,
-          "Y": 464
-        },
-        "Max": {
-          "X": 1436,
-          "Y": 616
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 84,
-          "Y": 192
-        },
-        "Max": {
-          "X": 180,
-          "Y": 252
-        }
-      }
-    ]
-  },
-  {
-    "shape": 26,
-    "atlas": "scenery-3.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 0,
-        "Y": 624
-      },
-      "Max": {
-        "X": 512,
-        "Y": 1024
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 120,
-          "Y": 822
-        },
-        "Max": {
-          "X": 453,
-          "Y": 937
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 64,
-          "Y": 220
-        },
-        "Max": {
-          "X": 188,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 27,
-    "atlas": "scenery-3.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 512,
-        "Y": 624
-      },
-      "Max": {
-        "X": 1024,
-        "Y": 1024
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 644,
-          "Y": 825
-        },
-        "Max": {
-          "X": 943,
-          "Y": 937
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 72,
-          "Y": 216
-        },
-        "Max": {
-          "X": 212,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 28,
-    "atlas": "scenery-3.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1024,
-        "Y": 624
-      },
-      "Max": {
-        "X": 1536,
-        "Y": 1024
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1251,
-          "Y": 826
-        },
-        "Max": {
-          "X": 1398,
-          "Y": 935
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 108,
-          "Y": 212
-        },
-        "Max": {
-          "X": 164,
-          "Y": 252
-        }
-      }
-    ]
-  },
-  {
-    "shape": 29,
-    "atlas": "scenery-4.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 0,
-        "Y": 0
-      },
-      "Max": {
-        "X": 512,
-        "Y": 512
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 85,
-          "Y": 361
-        },
-        "Max": {
-          "X": 481,
-          "Y": 507
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 48,
-          "Y": 188
-        },
-        "Max": {
-          "X": 228,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 31,
-    "atlas": "scenery-4.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 512,
-        "Y": 0
-      },
-      "Max": {
-        "X": 1024,
-        "Y": 512
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 701,
-          "Y": 335
-        },
-        "Max": {
-          "X": 864,
-          "Y": 512
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 100,
-          "Y": 180
-        },
-        "Max": {
-          "X": 176,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 32,
-    "atlas": "scenery-4.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1024,
-        "Y": 0
-      },
-      "Max": {
-        "X": 1536,
-        "Y": 512
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 1234,
-          "Y": 366
-        },
-        "Max": {
-          "X": 1414,
-          "Y": 512
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 108,
-          "Y": 192
-        },
-        "Max": {
-          "X": 184,
-          "Y": 252
-        }
-      }
-    ]
-  },
-  {
-    "shape": 33,
-    "atlas": "scenery-4.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 0,
-        "Y": 512
-      },
-      "Max": {
-        "X": 512,
-        "Y": 1024
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 125,
-          "Y": 809
-        },
-        "Max": {
-          "X": 415,
-          "Y": 944
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 68,
-          "Y": 200
-        },
-        "Max": {
-          "X": 184,
-          "Y": 256
-        }
-      }
-    ]
-  },
-  {
-    "shape": 35,
-    "atlas": "scenery-4.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 512,
-        "Y": 512
-      },
-      "Max": {
-        "X": 1024,
-        "Y": 1024
-      }
-    },
-    "sourceContent": [
-      {
-        "Min": {
-          "X": 658,
-          "Y": 697
-        },
-        "Max": {
-          "X": 878,
-          "Y": 918
-        }
-      }
-    ],
-    "renderBounds": [
-      {
-        "Min": {
-          "X": 80,
-          "Y": 136
-        },
-        "Max": {
-          "X": 164,
-          "Y": 220
-        }
-      }
-    ]
-  },
-  {
-    "shape": 37,
-    "atlas": "scenery-4.png",
-    "sourceRegion": {
-      "Min": {
-        "X": 1024,
-        "Y": 512
+        "Y": 504
       },
       "Max": {
         "X": 1536,
@@ -2354,30 +3512,676 @@
       {
         "Min": {
           "X": 1168,
-          "Y": 691
+          "Y": 823
         },
         "Max": {
-          "X": 1506,
-          "Y": 960
+          "X": 1383,
+          "Y": 950
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 68,
-          "Y": 124
+          "X": 176,
+          "Y": 448
         },
         "Max": {
-          "X": 252,
-          "Y": 256
+          "X": 304,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 10,
+    "atlas": "revision-2/atlases/scenery-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 0
+      },
+      "Max": {
+        "X": 512,
+        "Y": 547
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 105,
+          "Y": 52
+        },
+        "Max": {
+          "X": 413,
+          "Y": 543
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 136,
+          "Y": 80
+        },
+        "Max": {
+          "X": 392,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 11,
+    "atlas": "revision-2/atlases/scenery-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 512,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1024,
+        "Y": 547
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 566,
+          "Y": 395
+        },
+        "Max": {
+          "X": 985,
+          "Y": 542
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 96,
+          "Y": 408
+        },
+        "Max": {
+          "X": 416,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 13,
+    "atlas": "revision-2/atlases/scenery-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1024,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1536,
+        "Y": 547
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1198,
+          "Y": 51
+        },
+        "Max": {
+          "X": 1388,
+          "Y": 547
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 192,
+          "Y": 72
+        },
+        "Max": {
+          "X": 336,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 14,
+    "atlas": "revision-2/atlases/scenery-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 547
+      },
+      "Max": {
+        "X": 512,
+        "Y": 1024
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 154,
+          "Y": 655
+        },
+        "Max": {
+          "X": 359,
+          "Y": 968
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 192,
+          "Y": 264
+        },
+        "Max": {
+          "X": 344,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 15,
+    "atlas": "revision-2/atlases/scenery-2.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 512,
+        "Y": 547
+      },
+      "Max": {
+        "X": 1024,
+        "Y": 1024
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 555,
+          "Y": 680
+        },
+        "Max": {
+          "X": 983,
+          "Y": 969
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 88,
+          "Y": 304
+        },
+        "Max": {
+          "X": 432,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 18,
+    "atlas": "revision-2/atlases/scenery-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 0
+      },
+      "Max": {
+        "X": 512,
+        "Y": 641
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 96,
+          "Y": 10
+        },
+        "Max": {
+          "X": 493,
+          "Y": 633
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 120,
+          "Y": 8
+        },
+        "Max": {
+          "X": 440,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 21,
+    "atlas": "revision-2/atlases/scenery-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 512,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1067,
+        "Y": 641
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 531,
+          "Y": 466
+        },
+        "Max": {
+          "X": 1067,
+          "Y": 641
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 24,
+          "Y": 392
+        },
+        "Max": {
+          "X": 504,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 25,
+    "atlas": "revision-2/atlases/scenery-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1067,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1536,
+        "Y": 641
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1188,
+          "Y": 446
+        },
+        "Max": {
+          "X": 1423,
+          "Y": 627
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 168,
+          "Y": 384
+        },
+        "Max": {
+          "X": 336,
+          "Y": 504
+        }
+      }
+    ]
+  },
+  {
+    "shape": 26,
+    "atlas": "revision-2/atlases/scenery-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 641
+      },
+      "Max": {
+        "X": 512,
+        "Y": 1024
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 79,
+          "Y": 797
+        },
+        "Max": {
+          "X": 488,
+          "Y": 955
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 128,
+          "Y": 440
+        },
+        "Max": {
+          "X": 352,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 27,
+    "atlas": "revision-2/atlases/scenery-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 512,
+        "Y": 641
+      },
+      "Max": {
+        "X": 1024,
+        "Y": 1024
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 636,
+          "Y": 801
+        },
+        "Max": {
+          "X": 968,
+          "Y": 951
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 144,
+          "Y": 432
+        },
+        "Max": {
+          "X": 360,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 28,
+    "atlas": "revision-2/atlases/scenery-3.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1024,
+        "Y": 641
+      },
+      "Max": {
+        "X": 1536,
+        "Y": 1024
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1221,
+          "Y": 801
+        },
+        "Max": {
+          "X": 1371,
+          "Y": 955
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 216,
+          "Y": 424
+        },
+        "Max": {
+          "X": 296,
+          "Y": 504
+        }
+      }
+    ]
+  },
+  {
+    "shape": 29,
+    "atlas": "revision-2/atlases/scenery-4.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 0
+      },
+      "Max": {
+        "X": 665,
+        "Y": 512
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 19,
+          "Y": 237
+        },
+        "Max": {
+          "X": 665,
+          "Y": 471
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 96,
+          "Y": 376
+        },
+        "Max": {
+          "X": 408,
+          "Y": 472
+        }
+      }
+    ]
+  },
+  {
+    "shape": 31,
+    "atlas": "revision-2/atlases/scenery-4.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 665,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1024,
+        "Y": 512
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 742,
+          "Y": 169
+        },
+        "Max": {
+          "X": 1013,
+          "Y": 507
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 200,
+          "Y": 360
+        },
+        "Max": {
+          "X": 304,
+          "Y": 504
+        }
+      }
+    ]
+  },
+  {
+    "shape": 32,
+    "atlas": "revision-2/atlases/scenery-4.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1024,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1536,
+        "Y": 512
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1167,
+          "Y": 192
+        },
+        "Max": {
+          "X": 1457,
+          "Y": 504
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 216,
+          "Y": 384
+        },
+        "Max": {
+          "X": 312,
+          "Y": 504
+        }
+      }
+    ]
+  },
+  {
+    "shape": 33,
+    "atlas": "revision-2/atlases/scenery-4.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 512
+      },
+      "Max": {
+        "X": 569,
+        "Y": 1024
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 56,
+          "Y": 688
+        },
+        "Max": {
+          "X": 569,
+          "Y": 931
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 136,
+          "Y": 400
+        },
+        "Max": {
+          "X": 344,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 35,
+    "atlas": "revision-2/atlases/scenery-4.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 569,
+        "Y": 512
+      },
+      "Max": {
+        "X": 1024,
+        "Y": 1024
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 672,
+          "Y": 611
+        },
+        "Max": {
+          "X": 996,
+          "Y": 935
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 160,
+          "Y": 272
+        },
+        "Max": {
+          "X": 328,
+          "Y": 440
+        }
+      }
+    ]
+  },
+  {
+    "shape": 37,
+    "atlas": "revision-2/atlases/scenery-4.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 1024,
+        "Y": 512
+      },
+      "Max": {
+        "X": 1536,
+        "Y": 1024
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 1108,
+          "Y": 548
+        },
+        "Max": {
+          "X": 1489,
+          "Y": 969
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 136,
+          "Y": 248
+        },
+        "Max": {
+          "X": 384,
+          "Y": 488
         }
       }
     ]
   },
   {
     "shape": 38,
-    "atlas": "scenery-5.png",
+    "atlas": "revision-2/atlases/scenery-5.png",
     "sourceRegion": {
       "Min": {
         "X": 0,
@@ -2391,31 +4195,31 @@
     "sourceContent": [
       {
         "Min": {
-          "X": 105,
-          "Y": 431
+          "X": 114,
+          "Y": 392
         },
         "Max": {
-          "X": 700,
-          "Y": 701
+          "X": 628,
+          "Y": 694
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 36,
-          "Y": 156
+          "X": 72,
+          "Y": 312
         },
         "Max": {
-          "X": 252,
-          "Y": 256
+          "X": 408,
+          "Y": 512
         }
       }
     ]
   },
   {
     "shape": 39,
-    "atlas": "scenery-5.png",
+    "atlas": "revision-2/atlases/scenery-5.png",
     "sourceRegion": {
       "Min": {
         "X": 723,
@@ -2429,31 +4233,31 @@
     "sourceContent": [
       {
         "Min": {
-          "X": 828,
-          "Y": 431
+          "X": 837,
+          "Y": 392
         },
         "Max": {
-          "X": 1423,
-          "Y": 701
+          "X": 1346,
+          "Y": 696
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 36,
-          "Y": 156
+          "X": 72,
+          "Y": 312
         },
         "Max": {
-          "X": 252,
-          "Y": 256
+          "X": 408,
+          "Y": 512
         }
       }
     ]
   },
   {
     "shape": 41,
-    "atlas": "scenery-5.png",
+    "atlas": "revision-2/atlases/scenery-5.png",
     "sourceRegion": {
       "Min": {
         "X": 1446,
@@ -2467,11 +4271,11 @@
     "sourceContent": [
       {
         "Min": {
-          "X": 1721,
-          "Y": 22
+          "X": 1723,
+          "Y": 18
         },
         "Max": {
-          "X": 2053,
+          "X": 1908,
           "Y": 706
         }
       }
@@ -2479,19 +4283,19 @@
     "renderBounds": [
       {
         "Min": {
-          "X": 96,
-          "Y": 12
+          "X": 192,
+          "Y": 24
         },
         "Max": {
-          "X": 248,
-          "Y": 256
+          "X": 336,
+          "Y": 512
         }
       }
     ]
   },
   {
     "shape": 408,
-    "atlas": "player-marker.png",
+    "atlas": "revision-2/atlases/player-marker.png",
     "sourceRegion": {
       "Min": {
         "X": 0,
@@ -2505,24 +4309,100 @@
     "sourceContent": [
       {
         "Min": {
-          "X": 439,
-          "Y": 269
+          "X": 434,
+          "Y": 256
         },
         "Max": {
-          "X": 830,
-          "Y": 1165
+          "X": 835,
+          "Y": 1171
         }
       }
     ],
     "renderBounds": [
       {
         "Min": {
-          "X": 84,
-          "Y": 60
+          "X": 168,
+          "Y": 120
         },
         "Max": {
-          "X": 176,
-          "Y": 256
+          "X": 352,
+          "Y": 512
+        }
+      }
+    ]
+  },
+  {
+    "shape": 6,
+    "atlas": "edits/shape-006.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1254,
+        "Y": 1254
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 386,
+          "Y": 3
+        },
+        "Max": {
+          "X": 866,
+          "Y": 371
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 304,
+          "Y": 0
+        },
+        "Max": {
+          "X": 720,
+          "Y": 304
+        }
+      }
+    ]
+  },
+  {
+    "shape": 16,
+    "atlas": "edits/shape-016.png",
+    "sourceRegion": {
+      "Min": {
+        "X": 0,
+        "Y": 0
+      },
+      "Max": {
+        "X": 1254,
+        "Y": 1254
+      }
+    },
+    "sourceContent": [
+      {
+        "Min": {
+          "X": 448,
+          "Y": 0
+        },
+        "Max": {
+          "X": 806,
+          "Y": 279
+        }
+      }
+    ],
+    "renderBounds": [
+      {
+        "Min": {
+          "X": 409,
+          "Y": 0
+        },
+        "Max": {
+          "X": 624,
+          "Y": 174
         }
       }
     ]
