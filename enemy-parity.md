@@ -29,7 +29,7 @@ Out of scope for this pass:
 ## Progress Legend
 
 - `[done]` source-backed baseline with no known material gameplay divergence in the current target scope
-- `[partial]` some scaffolding exists, but gameplay parity is incomplete
+- `[partial]` implementation exists, but gameplay parity or its verification is incomplete
 - `[next]` intended near-term implementation target
 - `[later]` real Wolf3D enemy, but not first target for shareware Episode 1
 - `[n/a]` not present in shareware Episode 1 enemy progression
@@ -45,11 +45,11 @@ For this document, "material gameplay divergence" includes:
 ## Current Port Snapshot
 
 Implemented in gameplay:
-- `[done]` Guard — shared movement and locked-door gaps fixed and rechecked
-- `[done]` Dog — shared fallback/direction gaps fixed and rechecked
-- `[done]` Officer — shared movement and locked-door gaps fixed and rechecked
-- `[done]` SS — shared movement and locked-door gaps fixed and rechecked
-- `[done]` Hans Grosse — shared movement and locked-door gaps fixed and rechecked
+- `[partial]` Guard — tested movement decisions match; complete runtime parity unverified
+- `[partial]` Dog — tested movement decisions match; complete runtime parity unverified
+- `[partial]` Officer — tested movement decisions match; complete runtime parity unverified
+- `[partial]` SS — tested movement decisions match; complete runtime parity unverified
+- `[partial]` Hans Grosse — tested movement decisions match; complete runtime parity unverified
 - `[partial]` Mutant
 - `[done]` Dead guard corpse content
 
@@ -72,9 +72,12 @@ direction reset, locked-door decisions and `TryWalk(nodir)` rejection. The first
 fix pass corrected fallback ordering, direction reset and `nodir` rejection.
 The second pass corrected humanoid locked-door handling, matched all 815
 saved failures, and passed all 894,444 original C movement comparisons. These
-shared gaps are now closed, restoring the shareware enemy baselines below. The compiled comparison
-covers isolated movement decisions; full original-engine runtime and demo
-comparison remain outside its scope.
+shared gaps are now closed within the tested movement scope. The compiled
+comparison covers isolated movement decisions with actor classes normalized
+to humanoid or dog; full original-engine runtime and demo comparison remain
+outside its scope. Completed implementation items below do not establish
+complete enemy AI parity. Sight/hearing, state timing, combat and interactions
+between systems still need independent original-engine comparison.
 
 ### 1. Guard
 
@@ -87,7 +90,8 @@ Current status:
 - `[done]` Stand, patrol, chase, pain, shoot, and death flow exist in the port with source-backed shareware behavior coverage
 
 Remaining parity gaps:
-- none known in the current shareware Episode 1 target scope after the movement and locked-door fixes
+- no remaining differences in the tested movement decisions
+- complete runtime parity remains unverified against the original engine
 
 Notes:
 - Guard remains the reference baseline for later humanoid enemy work
@@ -107,7 +111,8 @@ Current status:
 - `[done]` `T_DogChase`/`T_Bite` edge cases now have direct regression coverage for live gameplay spacing, tic-scaled jump entry, bite sound-on-miss, and bite resolution after jump starts
 
 Remaining parity gaps:
-- none in the current shareware Episode 1 target scope after the movement fixes
+- no remaining differences in the tested movement decisions
+- complete runtime parity remains unverified against the original engine
 
 Notes:
 - Dog is currently the strongest "non-guard" parity baseline in the port
@@ -135,7 +140,8 @@ Reason to do this first:
 - useful as the first expansion of actor dispatch beyond guard and dog
 
 Remaining parity gaps:
-- none known in the current shareware Episode 1 target scope after the movement and locked-door fixes
+- no remaining differences in the tested movement decisions
+- complete runtime parity remains unverified against the original engine
 
 ### 4. SS
 
@@ -153,7 +159,8 @@ Reason to do this second:
 - adds a more interesting attack cadence without requiring the projectile system yet
 
 Remaining parity gaps:
-- none known in the current shareware Episode 1 target scope after the movement and locked-door fixes
+- no remaining differences in the tested movement decisions
+- complete runtime parity remains unverified against the original engine
 
 ### 5. Hans Grosse
 
@@ -170,7 +177,8 @@ Current status:
 - `[done]` Hans spawn/chase presentation now matches the source baseline more closely: `SpawnBoss()` always starts him facing south in ambush, and his stand/chase/shoot flow stays non-rotating like `s_bossstand` through `s_bossshoot8`
 
 Remaining parity gaps:
-- none known in the current shareware Episode 1 target scope after the movement and locked-door fixes
+- no remaining differences in the tested movement decisions
+- complete runtime parity remains unverified against the original engine
 
 Reason not to do this first:
 - requires more bespoke state flow than officer/SS
@@ -196,11 +204,11 @@ Notes:
 This is the active implementation ladder for the shareware pass.
 
 1. `[done]` Match original humanoid locked-door behavior and recheck
-2. `[done]` Guard baseline
-3. `[done]` Dog baseline
-4. `[done]` Officer finish pass
-5. `[done]` SS finish pass
-6. `[done]` Hans Grosse
+2. `[partial]` Guard runtime parity verification
+3. `[partial]` Dog runtime parity verification
+4. `[partial]` Officer runtime parity verification
+5. `[partial]` SS runtime parity verification
+6. `[partial]` Hans Grosse runtime parity verification
 
 ## Later Backlog
 
@@ -361,7 +369,8 @@ For an enemy to move from `[partial]` or `[next]` to `[done]`, it should have:
 - no remaining known material divergence from `WOLFSRC` in the current shareware target scope
 
 Current note:
-- the shared enemy AI shell for the shareware Episode 1 roster now has direct source-backed coverage for notice, chase, attack entry, door waiting, area-connectivity, and death/drop behavior
+- the shared enemy AI shell has Go regressions based on source behavior for notice, chase, attack entry, door waiting, area-connectivity, and death/drop behavior
+- independent compiled C coverage currently verifies isolated movement decisions only; complete runtime parity remains unverified
 
 This section is intentionally strict:
 - "looks close in playtesting" is not enough
@@ -372,4 +381,4 @@ This section is intentionally strict:
 
 When post-shareware work resumes, update this document by:
 - moving the next Wolf3D target from `[later]` to `[partial]` as code lands
-- keeping the shareware section stable unless a regression is found
+- expanding independent original-engine coverage and updating the shareware verification status as evidence lands

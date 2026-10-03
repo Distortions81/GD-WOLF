@@ -21,7 +21,27 @@ The project currently includes:
 - native stereo positional sound, with simplified wasm audio
 - actor collision and timing work updated to use Wolf-style tics instead of assuming a fixed render/update rate
 
-Implementation is still incomplete. Enemy parity work is tracked in [enemy-parity.md](enemy-parity.md).
+Implementation is still incomplete. Guards, dogs, officers, SS, Hans Grosse,
+and mutants are active in gameplay, but complete enemy AI parity has not been
+verified. Mutant support remains partial, and several later enemies are missing.
+Enemy implementation and verification work is tracked in
+[enemy-parity.md](enemy-parity.md).
+
+### Enemy AI Verification
+
+The 2026-10-03 original-source audit matched **894,444 isolated movement
+decisions**, with zero differences after fixing fallback direction selection,
+blocked movement and humanoid locked-door handling. The reference compiles
+the original C `TryWalk`, `SelectChaseDir`, `SelectDodgeDir`, and `SelectRunDir`
+routines and compares them with the port on map snapshots and local obstruction
+cases. Actor classes in this comparison are normalized to humanoid or dog.
+
+This result verifies the tested movement decisions. It does not establish
+complete AI parity over time: sight and hearing, state timing, attacks, damage,
+and interactions between systems still need independent original-engine
+comparison. Go regressions cover some of these behaviors, but the broader AI
+harness uses a Go reference adapter rather than the original engine. GD-WOLF
+does not yet support original gameplay demo playback or per-tic engine comparison.
 
 ## Project Additions Beyond Wolfenstein 3D
 
@@ -46,6 +66,7 @@ These are deliberate quality-of-life changes to make doors feel less cumbersome 
 ## Known Differences From Full Wolfenstein 3D Parity
 
 - The project does not yet implement the full original enemy roster and behaviors.
+- Complete enemy AI parity is unverified; the compiled original-source harness currently covers isolated movement decisions.
 - Some systems are Wolfenstein 3D-inspired rather than byte-faithful, especially presentation details around fades, flashes, and frontend behavior.
 
 ## Data
@@ -86,7 +107,8 @@ Compare movement decisions against compiled original Wolf3D C routines with:
 ```
 
 See [the original-source harness](docs/wolf-source-compare.md) for source setup,
-trace artifacts, replay, and its current coverage. The existing broader
+trace artifacts, replay, and its coverage limits. This command checks isolated
+movement decisions, not a full gameplay demo. The existing broader
 [AI harness](docs/enemy-ai-harness.md) uses a Go reference adapter.
 
 ## Browser Build
