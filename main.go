@@ -7059,6 +7059,15 @@ func (g *game) doorBlockedByPlayer(tileX, tileY int, door *wl6.Door) bool {
 	if door == nil {
 		return false
 	}
+	if g.demoPlayback != nil {
+		if int(g.playerX) == tileX && int(g.playerY) == tileY {
+			return true
+		}
+		if door.Vertical {
+			return int(g.playerY) == tileY && (int(math.Floor(g.playerX+playerRadius)) == tileX || int(math.Floor(g.playerX-playerRadius)) == tileX)
+		}
+		return int(g.playerX) == tileX && (int(math.Floor(g.playerY+playerRadius)) == tileY || int(math.Floor(g.playerY-playerRadius)) == tileY)
+	}
 	left, right, top, bottom := playerBounds(g.playerX, g.playerY)
 	if door.Vertical {
 		doorLeft := float64(tileX) + 0.5 - doorCollisionThickness/2
@@ -7129,7 +7138,13 @@ func (g *game) updateDoors(tics int) {
 			x := i % g.level.Width
 			y := i / g.level.Width
 			door := g.level.Tile(x, y).Door
-			if g.doorBlockedByPlayer(x, y, door) || g.doorBlockedByActors(x, y, door) || playerOverlapsTile(g.playerX, g.playerY, x, y) {
+			blocked := g.doorBlockedByPlayer(x, y, door) || g.doorBlockedByActors(x, y, door) || playerOverlapsTile(g.playerX, g.playerY, x, y)
+			if g.demoPlayback != nil {
+				// DoorClosing reopens on an occupied reservation or the
+				// player's center tile; CloseDoor checks the wider bounds.
+				blocked = g.blockingActorAt(nil, x, y) != nil || (int(g.playerX) == x && int(g.playerY) == y)
+			}
+			if blocked {
 				g.doorState[i] = 1
 				g.doorTimer[i] = 0
 				if g.demoPlayback == nil {
@@ -7182,6 +7197,19 @@ func (g *game) useDoorAhead() {
 		return
 	}
 	i := y*g.level.Width + x
+	if g.demoPlayback != nil {
+		switch g.doorState[i] {
+		case 1:
+			// CloseDoor rejects the tagged occupied tile while opening.
+			return
+		case 2:
+			if !g.doorBlockedByPlayer(x, y, tile.Door) && !g.doorBlockedByActors(x, y, tile.Door) {
+				g.doorState[i] = 3
+				g.playWorldSound(soundDoorClose, float64(x)+0.5, float64(y)+0.5)
+			}
+			return
+		}
+	}
 	switch g.doorState[i] {
 	case 2, 1:
 		g.doorState[i] = 2
@@ -7344,7 +7372,15 @@ func (g *game) startPushWall(x, y, dx, dy int) bool {
 		return false
 	}
 	tile.RawInfo = 0
-	g.setLevelTile(x, y, g.floorTileFor(x, y))
+	if g.demoPlayback != nil {
+		// PushWall leaves the origin blocked and reserves the leading tile.
+		g.setLevelTile(x, y, tile)
+		leading := tile
+		leading.Area = g.level.Tile(x+dx, y+dy).Area
+		g.setLevelTile(x+dx, y+dy, leading)
+	} else {
+		g.setLevelTile(x, y, g.floorTileFor(x, y))
+	}
 	g.secretCount++
 	g.pushWall = pushWallState{
 		active: true,
@@ -7374,6 +7410,10 @@ func (g *game) finishPushWall() {
 
 func (g *game) updatePushWall(tics int) {
 	if !g.pushWall.active || tics <= 0 {
+		return
+	}
+	if g.demoPlayback != nil {
+		g.updateDemoPushWall(tics)
 		return
 	}
 	g.pushWall.tics += tics
@@ -7686,8 +7726,14 @@ func (g *game) collectPickups() {
 		if !spr.alive || spr.pickup == pickupNone {
 			continue
 		}
-		if int(spr.x) != playerTileX || int(spr.y) != playerTileY {
-			continue
+		if g.demoPlayback != nil {
+			if !g.demoPickupInReach(int(spr.x), int(spr.y)) {
+				continue
+			}
+		} else {
+			if int(spr.x) != playerTileX || int(spr.y) != playerTileY {
+				continue
+			}
 		}
 		if !g.applyPickup(spr.pickup) {
 			continue

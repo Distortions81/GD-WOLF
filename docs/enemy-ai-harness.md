@@ -175,7 +175,7 @@ The soak reuses the same nearby-placement and circle-strafe scenario generator a
 
 ## Why This Is Not A Direct Runtime Compare
 
-Unlike `GD-DOOM`, this repo does not currently have a practical runnable reference binary harness for the original engine in the local environment.
+The [demo runtime harness](wolf-demo-compare.md) now compiles original C gameplay routines and carries independent state through a first-demo prefix. It still shares floor-visibility masks and use requests with the port; a complete independent original-engine replay remains unfinished.
 
 This Go-adapter harness uses:
 

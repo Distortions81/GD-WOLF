@@ -209,3 +209,78 @@ func TestDemoActorShootActionRunsOnExit(t *testing.T) {
 		t.Fatal("shoot action did not fire exactly once on state exit")
 	}
 }
+
+func TestDemoSuppressedAttackPressCanStartNextCommand(t *testing.T) {
+	g := demoMovementTestGame()
+	g.weapon, g.chosenWeapon, g.ammo = 1, 1, 8
+	g.startWeaponSequence()
+	g.weaponFrameIdx, g.weaponFrameTics = 3, 4
+	command := wl6.DemoCommand{Buttons: demoButtonAttack | demoButtonUse}
+	g.stepDemoCommand(command)
+	if g.attacking || g.demoPlayback.buttons&(demoButtonAttack|demoButtonUse) != 0 {
+		t.Fatal("T_Attack did not suppress the new presses before returning to player state")
+	}
+	g.stepDemoCommand(command)
+	if !g.attacking {
+		t.Fatal("suppressed attack press prevented the next command from starting an attack")
+	}
+}
+
+func TestDemoUseDoesNotSkipDoorOpening(t *testing.T) {
+	g := testGameWithLevel(blankLevel(5, 3))
+	setLevelTile(g.level, 2, 1, wl6.Tile{Door: &wl6.Door{Vertical: true}})
+	g.playerX, g.playerY = 1.5, 1.5
+	g.demoPlayback = &wolfDemoPlayback{}
+	g.doorState[7], g.doorOpen[7] = 1, 0.25
+	g.useDoorAhead()
+	if g.doorState[7] != 1 || g.doorOpen[7] != 0.25 {
+		t.Fatal("using an opening door skipped its remaining motion")
+	}
+	g.doorState[7], g.doorOpen[7] = 2, 1
+	g.useDoorAhead()
+	if g.doorState[7] != 3 {
+		t.Fatal("using an unoccupied open door did not start closing it")
+	}
+}
+
+func TestDemoPushwallReservesLeadingTile(t *testing.T) {
+	g := testGameWithLevel(blankLevel(7, 5))
+	g.playerX, g.playerY = 2.5, 2.5
+	g.demoPlayback = &wolfDemoPlayback{}
+	setLevelTile(g.level, 3, 2, wl6.Tile{RawWall: 10, RawInfo: pushableTile, Solid: true})
+	if !g.startPushWall(3, 2, 1, 0) {
+		t.Fatal("pushwall did not start")
+	}
+	if !g.isBlockingTile(3, 2) || !g.isBlockingTile(4, 2) {
+		t.Fatal("moving pushwall did not block its current and leading tiles")
+	}
+	g.updatePushWall(128)
+	if g.isBlockingTile(3, 2) || !g.isBlockingTile(4, 2) || !g.isBlockingTile(5, 2) {
+		t.Fatal("pushwall reservations did not advance after the first tile crossing")
+	}
+	g.updatePushWall(128)
+	if g.pushWall.active || g.isBlockingTile(4, 2) || !g.isBlockingTile(5, 2) {
+		t.Fatal("pushwall did not leave the final wall after two tile crossings")
+	}
+}
+
+func TestDemoRangeMissDiffersFromZeroDamageHit(t *testing.T) {
+	for _, tile := range []int{5, 2} {
+		g := demoMovementTestGame()
+		g.playerX, g.playerY = 1.5, 3.5
+		g.weapon = 1
+		g.rng = testRNGForPredicates(rngValueEquals(0))
+		g.actors = []actorInstance{{kind: actorKindGuard, x: float64(tile) + 0.5, y: 3.5, tileX: tile, tileY: 3, health: 25, alive: true, shootable: true}}
+		g.demoPlayback.projections = []demoActorProjection{{visible: true, viewX: demoViewWidth/2 - 1, transX: (tile - 1) * 65536}}
+		g.shootDemoAhead()
+		if g.actors[0].health != 25 {
+			t.Fatal("zero RNG roll changed target health")
+		}
+		if tile == 5 && (g.actors[0].alerted || len(g.demoPlayback.hits) != 0) {
+			t.Fatal("range miss alerted or damaged the target")
+		}
+		if tile == 2 && (!g.actors[0].alerted || len(g.demoPlayback.hits) != 1) {
+			t.Fatal("real zero-damage hit did not alert the target")
+		}
+	}
+}

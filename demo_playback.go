@@ -14,16 +14,19 @@ const (
 )
 
 type wolfDemoPlayback struct {
-	demo        *wl6.Demo
-	command     int
-	ticAccum    int
-	buttons     byte
-	angle       int // Original counterclockwise integer degrees.
-	angleFrac   int
-	faceCount   int
-	faceFrame   int
-	projections []demoActorProjection
-	hits        []demoActorHit
+	demo         *wl6.Demo
+	command      int
+	ticAccum     int
+	buttons      byte
+	inputButtons byte // T_Attack can suppress new use/attack presses this frame.
+	angle        int  // Original counterclockwise integer degrees.
+	angleFrac    int
+	faceCount    int
+	faceFrame    int
+	projections  []demoActorProjection
+	hits         []demoActorHit
+	shots        int
+	visibleTiles []bool
 }
 
 // WOLFSRC BuildTables accumulates a float (32-bit) angle and stores sine
@@ -135,6 +138,7 @@ func (g *game) stepDemoCommand(command wl6.DemoCommand) {
 func (g *game) prepareDemoCommand(command wl6.DemoCommand) bool {
 	d := g.demoPlayback
 	d.hits = nil
+	d.shots = 0
 	g.madeNoise = false
 	g.updateDoors(wl6.DemoTics)
 	g.updatePushWall(wl6.DemoTics)
@@ -142,6 +146,14 @@ func (g *game) prepareDemoCommand(command wl6.DemoCommand) bool {
 	g.updateScreenFlashes(wl6.DemoTics)
 	g.updateDemoFace(wl6.DemoTics, g.isSoundPlaying(soundPickupChaingun))
 	wasAttacking := g.attacking
+	d.inputButtons = command.Buttons
+	if wasAttacking {
+		for _, button := range []byte{demoButtonAttack, demoButtonUse} {
+			if command.Buttons&button != 0 && d.buttons&button == 0 {
+				d.inputButtons &^= button
+			}
+		}
+	}
 	if !wasAttacking {
 		if command.Buttons&demoButtonUse != 0 && d.buttons&demoButtonUse == 0 {
 			g.useDoorAhead()
@@ -164,12 +176,12 @@ func (g *game) prepareDemoCommand(command wl6.DemoCommand) bool {
 
 func (g *game) finishDemoCommand(command wl6.DemoCommand, wasAttacking bool) {
 	if wasAttacking {
-		g.updateWeaponAttackWithInput(wl6.DemoTics, command.Buttons&demoButtonAttack != 0)
+		g.updateWeaponAttackWithInput(wl6.DemoTics, g.demoPlayback.inputButtons&demoButtonAttack != 0)
 	}
 	g.updateDemoActors(wl6.DemoTics)
-	g.collectPickups()
 	g.refreshDemoActorProjections()
-	g.demoPlayback.buttons = command.Buttons
+	g.collectPickups()
+	g.demoPlayback.buttons = g.demoPlayback.inputButtons
 }
 
 func (g *game) moveDemoPlayer(command wl6.DemoCommand) {

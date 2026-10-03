@@ -41,8 +41,9 @@ complete AI parity over time: sight and hearing, state timing, attacks, damage,
 and interactions between systems still need independent original-engine
 comparison. Go regressions cover some of these behaviors, but the broader AI
 harness uses a Go reference adapter rather than the original engine. Recorded
-demo playback and a conditional player-movement comparison are now available;
-a full original-engine comparison of enemy and combat state is still missing.
+demo playback and a source runtime comparison are now available. The runtime
+reference carries first-demo gameplay independently through a tested prefix;
+original floor visibility and complete demo parity remain unverified.
 
 ## Project Additions Beyond Wolfenstein 3D
 
@@ -70,7 +71,7 @@ of this preference, and preserves the saved setting.
 ## Known Differences From Full Wolfenstein 3D Parity
 
 - The project does not yet implement the full original enemy roster and behaviors.
-- Complete enemy AI parity is unverified; the compiled original-source harness currently covers isolated movement decisions.
+- Complete enemy AI parity is unverified; the original-source harnesses cover isolated movement and a first-demo runtime prefix.
 - The demo player harness shares the port's world snapshots with its C reference. It does not independently simulate enemies, combat, doors or pickups.
 - Some systems are Wolfenstein 3D-inspired rather than byte-faithful, especially presentation details around fades, flashes, and frontend behavior.
 
@@ -131,14 +132,15 @@ the input finishes or the port reaches death/victory.
 Compare recorded player movement with compiled original C:
 
 ```bash
-./scripts/wolf_demo_player_compare.sh --stop-after-commands 907
+./scripts/wolf_demo_player_compare.sh --stop-after-commands 1055
 ```
 
-The first demo's first 907 commands (3,628 Wolf tics) match within this
+The first demo's first 1,055 commands (4,220 Wolf tics) match within this
 conditional player-movement comparison. The unrestricted run stops at port
-death before command 907. The actor runtime comparison currently matches
-through command 881, then differs at command 882. These references share
-external world/combat inputs; full demo parity remains unverified.
+death before command 1,055. The broader original-C runtime comparison also
+matches through command 1,054, including player health reaching zero. Its
+floor-visibility masks and use requests are still shared with the port, so
+full demo parity remains unverified.
 See [demo comparison coverage and artifacts](docs/wolf-demo-compare.md).
 
 Actor initialization on all four demo maps and conditional face-animation RNG
@@ -148,15 +150,15 @@ updates also match compiled original C:
 ./scripts/wolf_demo_start_compare.sh
 ```
 
-Compare actor state timing and first-demo AI with compiled original C:
+Compare actor state timing and the first-demo runtime with compiled original C:
 
 ```bash
 ./scripts/wolf_actor_states_compare.sh
-./scripts/wolf_demo_ai_compare.sh
+./scripts/wolf_demo_runtime_compare.sh
 ```
 
-The state timing comparison passes; the demo AI command currently exits
-nonzero at the known command 882 mismatch.
+The state timing comparison passes; the runtime command exits nonzero at the
+unsupported death boundary before command 1,055.
 
 ## Browser Build
 

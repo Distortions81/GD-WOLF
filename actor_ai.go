@@ -901,6 +901,14 @@ func (g *game) actorVisibleToPlayer(a *actorInstance) bool {
 	if a == nil {
 		return false
 	}
+	if g.demoPlayback != nil {
+		for i := range g.actors {
+			if a == &g.actors[i] {
+				return i < len(g.demoPlayback.projections) && g.demoPlayback.projections[i].visible
+			}
+		}
+		return false
+	}
 	dx := a.x - g.playerX
 	dy := a.y - g.playerY
 	if dx == 0 && dy == 0 {

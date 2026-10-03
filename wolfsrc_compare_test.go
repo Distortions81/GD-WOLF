@@ -50,8 +50,9 @@ type wolfSourceState struct {
 }
 
 type wolfSourceProcess struct {
-	in  *bufio.Writer
-	out *bufio.Scanner
+	in    *bufio.Writer
+	out   *bufio.Scanner
+	input io.Writer
 }
 
 func startWolfSource(t *testing.T) *wolfSourceProcess {
@@ -63,9 +64,9 @@ func startWolfSource(t *testing.T) *wolfSourceProcess {
 	return startWolfSourceBinary(t, path)
 }
 
-func startWolfSourceBinary(t *testing.T, path string) *wolfSourceProcess {
+func startWolfSourceBinary(t *testing.T, path string, args ...string) *wolfSourceProcess {
 	t.Helper()
-	cmd := exec.Command(path)
+	cmd := exec.Command(path, args...)
 	cmd.Stderr = os.Stderr
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -84,7 +85,7 @@ func startWolfSourceBinary(t *testing.T, path string) *wolfSourceProcess {
 			t.Errorf("original source reference exited: %v", err)
 		}
 	})
-	return &wolfSourceProcess{in: bufio.NewWriter(stdin), out: bufio.NewScanner(stdout)}
+	return &wolfSourceProcess{in: bufio.NewWriter(stdin), out: bufio.NewScanner(stdout), input: stdin}
 }
 
 func (p *wolfSourceProcess) decision(t *testing.T, c wolfSourceInput) wolfSourceState {

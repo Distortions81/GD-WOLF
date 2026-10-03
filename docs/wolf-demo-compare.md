@@ -57,7 +57,7 @@ are not independently verified by the player reference.
 
 ```bash
 ./scripts/wolf_demo_player_compare.sh
-./scripts/wolf_demo_player_compare.sh --stop-after-commands 907
+./scripts/wolf_demo_player_compare.sh --stop-after-commands 1055
 ./scripts/wolf_demo_player_compare.sh --demo-index 1 --out /tmp/wolf-demo-2
 ./scripts/wolf_demo_player_compare.sh --self-test
 ```
@@ -118,17 +118,33 @@ build/wolf-demo-player-compare/wolf-demo-player-reference \
    arrivals, retains reaction counters when damage alerts an actor, accepts
    zero-damage hits, and delays death-scream RNG until the state action.
 7. Demo shots now use cached previous-command projections with the original
-   fixed-point geometry and reserved-tile damage distance. Visibility is still
-   approximate and has not been compared to the original renderer.
+   fixed-point geometry and reserved-tile damage distance. Demo visibility
+   follows the original floor-ray traversal and nine-tile actor visibility
+   checks; the ray traversal has not yet been independently verified.
 8. Opening doors had an artificial 0.01 head start and connected areas before
    their first movement. Demo playback now starts opening at zero and connects
    areas once the door moves.
 
+9. Command 125: a fresh attack/use press during `T_Attack` must be suppressed
+   and remain unheld on the next command. Storing the raw button bits prevented
+   a later attack from starting. Playback now preserves the suppressed input.
+10. Range misses were calling `DamageActor(0)`, alerting and stunning enemies.
+    Playback now distinguishes a miss from a real hit that rolls zero damage.
+11. Command 757: using an opening door forced it fully open. Playback now follows
+    `OperateDoor`/`CloseDoor`, including original closing occupancy checks.
+12. Command 443: a moving pushwall did not reserve its leading tile. Demo
+    pushwalls now block both tiles and clear the trailing tile at each crossing.
+13. Demo pickups now use original `TransformTile` reach on visible floor tiles.
+    The default logical viewport is 240 pixels (`viewsize 15 * 16`), and cached
+    actor visibility survives the original too-close projection early return.
+
 The reference self-test matches all 360 movement angles plus strafing, reverse
-movement, speed clamps and fractional turns. The first 907 commands (3,628
-tics) now match conditional player movement, up from 371. The port dies before
-command 907 (zero-based), so the unrestricted 1,152-command run remains
-incomplete. The player reference does not independently simulate enemy damage.
+movement, speed clamps and fractional turns. The first 1,055 commands (4,220
+tics) now match conditional player movement, up from the previous 907-command
+checkpoint. The port dies before command 1,055 (zero-based), so the unrestricted
+1,152-command run remains incomplete. The broader runtime reference also
+matches through command 1,054 with independent health reaching zero; this is
+conditional on the shared visible-floor masks and use requests.
 
 ## Actor initialization and face RNG comparison
 
@@ -165,11 +181,11 @@ chaingun pickup's suppression and resets the face counter on that pickup.
 Original sound priority and timing are not independently reproduced, and
 headless comparisons do not simulate audio playback.
 
-## Actor state timing and first-demo AI
+## Actor timing and first-demo runtime
 
 ```bash
 ./scripts/wolf_actor_states_compare.sh
-./scripts/wolf_demo_ai_compare.sh
+./scripts/wolf_demo_runtime_compare.sh
 ```
 
 Both scripts accept `--source` and `--out`, verify original source hashes and
@@ -181,18 +197,45 @@ cumulative attack callbacks for 96 updates with varying tic counts, starting
 from full, zero and one remaining tic. Death sequences are not covered by
 this isolated test.
 
-The AI harness compiles original spawning, state transitions, sight/hearing,
-path/chase movement, damage/death, shooting and biting routines. It initializes
-from raw map planes and carries independent actor state, positions and tile
-reservations. Each command shares port player position, entry RNG, noise,
-running/weapon state, area connectivity, doors, visibility and exact
-player-inflicted damage. Enemy damage and outgoing RNG are compared along
-with all actor fields. OpenDoor requests are stubbed; door/pushwall simulation,
-renderer visibility, player targeting, pickups and scoring are not independent.
-Unsupported actor families fail explicitly.
+The runtime harness compiles original spawning, actor state transitions,
+sight/hearing, path/chase movement, damage/death, gun/knife targeting, weapon
+attack scheduling, player movement, door/area/pushwall updates, static spawns,
+dropped items, bonus collection, face updates and RNG tables. It initializes
+from raw map planes and carries independent player/actor positions, reservations,
+weapons, doors, walls, pickups, health and RNG across commands. Original
+`DrawScaleds` static/actor placement and `TransformActor`/`TransformTile` geometry
+are compiled; drawing, audio playback and scoring are stubbed; lives are not compared.
+DOS projection height assembly uses equivalent integer division, and tagged
+pointers/map words are adapted for host C. Unsupported actor families and
+victory behavior fail explicitly.
 
-Currently all 37 actors and enemy damage match through command 881 under
-these inputs. Command 882 first differs in actor 15's next tile and one RNG
-byte. The AI script exits nonzero at that mismatch; it does not certify the
-whole demo. Dynamic wall changes are not yet fed to this reference, so its
-world coverage must be checked before treating the mismatch as a port AI bug.
+The remaining shared inputs are visible-floor masks produced by the port's
+translation of `WL_DR_A.ASM`, and door/pushwall use requests selected by the
+port. The reference's original C then operates those doors/pushwalls itself.
+No independent original assembly raycaster or audio-priority simulation runs
+yet. The projection self-test matches original render tables and 2,160
+actor/pickup projection cases spanning every integer angle.
+
+All 37 actors, weapons, player movement, door/wall occupancy, outgoing RNG,
+enemy damage, cached projections and post-pickup health/ammo currently match
+through command 1,054. Both runtimes reach health zero there. The script exits
+nonzero at the next command's unsupported port death boundary; it does not
+certify the whole demo. Investigating original floor visibility is the next
+stage.
+
+Default runtime artifacts in `build/wolf-demo-runtime-compare`:
+
+| File | Contents |
+| --- | --- |
+| `build.log`, `compare.log` | Compiler and comparison output |
+| `reference-input.txt` | Raw map, commands, diagnostic snapshots and shared floor masks |
+| `reference.jsonl`, `port.jsonl` | Player, actor, weapon, RNG, doors and wall occupancy before rendering |
+| `reference-render.jsonl` | Original cached actor projections and post-pickup health/ammo |
+| `result.json` | Matched command/tic count and success, mismatch or unsupported-terminal status |
+
+Replay the original C runtime without Go or a display:
+
+```bash
+build/wolf-demo-runtime-compare/wolf-demo-runtime-reference \
+  < build/wolf-demo-runtime-compare/reference-input.txt
+```

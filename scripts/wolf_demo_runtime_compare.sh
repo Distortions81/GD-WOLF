@@ -3,17 +3,17 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SOURCE_DIR="$ROOT_DIR/build/wolfsrc-source"
-OUT_DIR="$ROOT_DIR/build/wolf-demo-ai-compare"
+OUT_DIR="$ROOT_DIR/build/wolf-demo-runtime-compare"
 usage() {
   cat <<'EOF'
-Compare independently evolving original actor states during the first demo.
-Player, doors, areas, visibility and player-inflicted damage are shared inputs.
+Compare first-demo movement, weapons, actors, RNG, doors, pushwalls and pickups
+with compiled original C. Visible-floor masks and use requests are shared inputs.
 Exits nonzero at the first mismatch or unsupported port death/victory.
 
-Usage: scripts/wolf_demo_ai_compare.sh [--source <dir>] [--out <dir>]
+Usage: scripts/wolf_demo_runtime_compare.sh [--source <dir>] [--out <dir>]
   --source <dir>  Existing pinned id-Software/wolf3d checkout
   --out <dir>     Compiler and comparison logs
-                 (default: build/wolf-demo-ai-compare)
+                 (default: build/wolf-demo-runtime-compare)
   -h, --help     Show this help
 
 Requirements: Go, Python 3, C99 compiler, Git for source download, and Xvfb
@@ -40,9 +40,10 @@ if [[ ! -d "$SOURCE_DIR" ]]; then
 fi
 mkdir -p "$OUT_DIR"
 cd "$ROOT_DIR"
-PYTHONDONTWRITEBYTECODE=1 python3 tools/wolfsrc-reference/build_demo_ai.py --source "$SOURCE_DIR" \
-  --output "$OUT_DIR/wolf-demo-ai-reference" --cc "${CC:-cc}" 2>&1 | tee "$OUT_DIR/build.log"
-export GDWOLF_DEMO_AI_REFERENCE="$OUT_DIR/wolf-demo-ai-reference"
+PYTHONDONTWRITEBYTECODE=1 python3 tools/wolfsrc-reference/build_demo_runtime.py --source "$SOURCE_DIR" \
+  --output "$OUT_DIR/wolf-demo-runtime-reference" --cc "${CC:-cc}" 2>&1 | tee "$OUT_DIR/build.log"
+export GDWOLF_DEMO_RUNTIME_REFERENCE="$OUT_DIR/wolf-demo-runtime-reference"
+export GDWOLF_DEMO_RUNTIME_OUT="$OUT_DIR"
 export GOMAXPROCS=1
 export GOMEMLIMIT="${GDWOLF_GO_MEM_LIMIT:-12GiB}"
 RUNNER=()
@@ -50,5 +51,5 @@ if [[ "$(uname -s)" == Linux && -z "${DISPLAY:-}" ]]; then
   command -v xvfb-run >/dev/null || { echo "Headless Ebiten tests require xvfb-run" >&2; exit 2; }
   RUNNER=(xvfb-run -a)
 fi
-"${RUNNER[@]}" go test -run '^TestWolfDemoAICompare$' -count=1 -parallel=1 \
+"${RUNNER[@]}" go test -run '^TestWolfDemo(Runtime|Projection)Compare$' -count=1 -parallel=1 \
   -timeout=5m -v . 2>&1 | tee "$OUT_DIR/compare.log"
