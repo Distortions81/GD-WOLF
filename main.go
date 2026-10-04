@@ -173,6 +173,7 @@ type game struct {
 	background32        []uint32
 	background          []byte
 	backgroundImage     *ebiten.Image
+	gpuRenderer         *wolfGPURenderer
 	cameraColumns       []float64
 	rayDirXColumns      []float64
 	rayDirYColumns      []float64
@@ -292,16 +293,17 @@ type game struct {
 	playerY float64
 	playerA float64
 
-	viewWidth            int
-	viewHeight           int
-	gameplayImage        *ebiten.Image
-	gameplayFrame32      []uint32
-	gameplayFrame        []byte
-	gameplayBackground32 []uint32
-	gameplayBackground   []byte
-	spriteVisBuf         []spriteVis
-	raycastJobs          chan raycastJob
-	raycastWorkerCount   int
+	viewWidth               int
+	viewHeight              int
+	gameplayImage           *ebiten.Image
+	gameplayBackgroundImage *ebiten.Image
+	gameplayFrame32         []uint32
+	gameplayFrame           []byte
+	gameplayBackground32    []uint32
+	gameplayBackground      []byte
+	spriteVisBuf            []spriteVis
+	raycastJobs             chan raycastJob
+	raycastWorkerCount      int
 
 	lastMouseX          int
 	lastMouseY          int
@@ -4610,14 +4612,19 @@ func (g *game) drawRaycastScaled(screen *ebiten.Image) {
 		return
 	}
 
-	g.renderGameplayFrame()
+	gameplayImage := g.renderGameplayFrameGPU()
+	if gameplayImage == nil {
+		g.renderGameplayFrame()
+		g.gameplayImage.WritePixels(g.gameplayFrame)
+		gameplayImage = g.gameplayImage
+	}
 
 	if g.backgroundImage != nil {
 		screen.DrawImage(g.backgroundImage, nil)
 	} else {
 		screen.WritePixels(g.background)
 	}
-	g.presentGameplayBuffer(screen)
+	g.presentGameplayImage(screen, gameplayImage)
 	g.drawStatusBar(screen)
 	if g.paused {
 		g.drawPausedOverlay(screen)
@@ -4643,16 +4650,15 @@ func (g *game) renderGameplayFrame() {
 	g.drawWeaponOverlayScaled()
 }
 
-func (g *game) presentGameplayBuffer(screen *ebiten.Image) {
-	if g.gameplayImage == nil || len(g.gameplayFrame) == 0 || g.layout.bufferWidth <= 0 || g.layout.bufferHeight <= 0 {
+func (g *game) presentGameplayImage(screen, gameplay *ebiten.Image) {
+	if gameplay == nil || g.layout.bufferWidth <= 0 || g.layout.bufferHeight <= 0 {
 		return
 	}
-	g.gameplayImage.WritePixels(g.gameplayFrame)
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Scale(float64(g.layout.renderWidth)/float64(g.layout.bufferWidth), float64(g.layout.renderHeight)/float64(g.layout.bufferHeight))
 	op.GeoM.Translate(float64(g.layout.renderLeft), float64(g.layout.renderTop))
 	op.Filter = ebiten.FilterNearest
-	screen.DrawImage(g.gameplayImage, op)
+	screen.DrawImage(gameplay, op)
 }
 
 func (g *game) renderRaycastColumns(scaled bool, startX, endX int, forwardX, forwardY, planeX, planeY, projPlaneDist float64) {
@@ -5210,6 +5216,7 @@ func (g *game) refreshRuntimeImageAssets() error {
 	g.pictureSizeCache = nil
 	g.textureCache = nil
 	g.spriteImageCache = nil
+	g.invalidateGPURenderer()
 	g.statusBarPic = nil
 	g.titlePic = nil
 	g.getPsychedPic = nil
@@ -8143,6 +8150,7 @@ func (g *game) ensureUltraRenderBuffers() {
 		g.gameplayBackground32 = nil
 		g.gameplayBackground = nil
 		g.gameplayImage = nil
+		g.gameplayBackgroundImage = nil
 		return
 	}
 	if len(g.zbuffer) != width {
@@ -8174,6 +8182,9 @@ func (g *game) ensureUltraRenderBuffers() {
 	}
 	if g.gameplayImage == nil || g.gameplayImage.Bounds().Dx() != width || g.gameplayImage.Bounds().Dy() != height {
 		g.gameplayImage = ebiten.NewImage(width, height)
+	}
+	if g.gameplayBackgroundImage == nil || g.gameplayBackgroundImage.Bounds().Dx() != width || g.gameplayBackgroundImage.Bounds().Dy() != height {
+		g.gameplayBackgroundImage = ebiten.NewImage(width, height)
 	}
 	g.rebuildGameplayBackground()
 }
@@ -8191,6 +8202,7 @@ func (g *game) ensureScaledRenderBuffers() {
 		g.gameplayBackground32 = nil
 		g.gameplayBackground = nil
 		g.gameplayImage = nil
+		g.gameplayBackgroundImage = nil
 		return
 	}
 	if len(g.zbuffer) != width {
@@ -8222,6 +8234,9 @@ func (g *game) ensureScaledRenderBuffers() {
 	}
 	if g.gameplayImage == nil || g.gameplayImage.Bounds().Dx() != width || g.gameplayImage.Bounds().Dy() != height {
 		g.gameplayImage = ebiten.NewImage(width, height)
+	}
+	if g.gameplayBackgroundImage == nil || g.gameplayBackgroundImage.Bounds().Dx() != width || g.gameplayBackgroundImage.Bounds().Dy() != height {
+		g.gameplayBackgroundImage = ebiten.NewImage(width, height)
 	}
 	g.rebuildGameplayBackground()
 }
@@ -8302,6 +8317,9 @@ func (g *game) rebuildGameplayBackground() {
 		}
 	}
 	copy(g.gameplayFrame, g.gameplayBackground)
+	if g.gameplayBackgroundImage != nil {
+		g.gameplayBackgroundImage.WritePixels(g.gameplayBackground)
+	}
 }
 
 func gradientDitherColor(base color.RGBA, patternX, patternY, index, span int, horizonShade float64, reverse bool) color.RGBA {

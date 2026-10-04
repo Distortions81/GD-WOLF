@@ -12,7 +12,7 @@
 
 The project currently includes:
 
-- Wolfenstein 3D-style software raycast rendering and HUD/status bar presentation
+- Wolfenstein 3D-style CPU ray casting with GPU-accelerated classic pixel rendering and a software fallback
 - native and wasm builds
 - native TOML config persistence for volume and input settings
 - weapon pickups and map/loadout flow aligned more closely with Wolfenstein 3D

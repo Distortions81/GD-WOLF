@@ -593,6 +593,7 @@ func (g *game) renderSaveThumbnailPNG() ([]byte, error) {
 	thumbGame.background32 = nil
 	thumbGame.background = nil
 	thumbGame.backgroundImage = nil
+	thumbGame.gpuRenderer = nil
 	thumbGame.cameraColumns = nil
 	thumbGame.rayDirXColumns = nil
 	thumbGame.rayDirYColumns = nil
@@ -600,6 +601,7 @@ func (g *game) renderSaveThumbnailPNG() ([]byte, error) {
 	thumbGame.prevWallBottoms = nil
 	thumbGame.zbuffer = nil
 	thumbGame.gameplayImage = nil
+	thumbGame.gameplayBackgroundImage = nil
 	thumbGame.gameplayFrame32 = nil
 	thumbGame.gameplayFrame = nil
 	thumbGame.gameplayBackground32 = nil

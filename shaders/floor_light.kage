@@ -1,0 +1,25 @@
+//kage:unit pixels
+package main
+
+var ViewSize vec2
+var Player vec2
+var Forward vec2
+var Plane vec2
+var Projection float
+var Light vec2
+var Radius float
+var Strength vec3
+
+func Fragment(dstPos vec4, srcPos vec2, color vec4) vec4 {
+	pos := floor(dstPos.xy) + vec2(0.5)
+	depth := Projection / (2.0 * (pos.y - ViewSize.y/2.0))
+	cameraX := 2.0*pos.x/ViewSize.x - 1.0
+	world := Player + (Forward + Plane*cameraX)*depth
+	delta := world - Light
+	falloff := 1.0 - dot(delta, delta)/(Radius*Radius)
+	if falloff <= 0.0 {
+		discard()
+	}
+	light := floor(Strength * falloff * falloff) / 255.0
+	return vec4(light, 0.0)
+}

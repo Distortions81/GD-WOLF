@@ -1,0 +1,16 @@
+//kage:unit pixels
+package main
+
+func fixedTexel(baseWhole, baseFraction, stepWhole, stepFraction float, delta int) int {
+	whole := int(baseWhole) + delta*int(stepWhole)
+	fraction := int(baseFraction) + delta*int(stepFraction)
+	return whole + fraction/65536
+}
+
+func Fragment(dstPos vec4, srcPos vec2, color vec4, custom vec4) vec4 {
+	anchor := ivec2(floor(srcPos - imageSrc0Origin()))
+	delta := ivec2(floor(dstPos.xy)) - anchor
+	u := fixedTexel(color.r, color.g, custom.x, custom.y, delta.x)
+	v := fixedTexel(color.b, color.a, custom.z, custom.w, delta.y)
+	return imageSrc0UnsafeAt(imageSrc0Origin() + vec2(float(u)+0.5, float(v)+0.5))
+}
