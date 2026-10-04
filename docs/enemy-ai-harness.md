@@ -78,6 +78,21 @@ For normal use, prefer the wrapper script:
 ./scripts/enemy_ai_harness_scan.sh /tmp/gd-wolf-enemy-ai-scan.jsonl
 ```
 
+The registered-map sampler runs the same Go reference adapter across all 60
+maps in a local WL6 data directory, sampling three nearby player placements
+per live enemy and comparing sight, attack entry, movement and one runtime
+update:
+
+```bash
+./scripts/wolf_enemy_behavior_compare.sh --data /path/to/WL6-files --out /tmp/wolf-enemy-behavior
+```
+
+On the local Apogee v1.4 data, it completed 30,036 checks at 7,509
+placements with no differences. This adapter translates source rules into Go;
+use the [compiled original-C movement comparison](wolf-source-compare.md) for
+an independent movement oracle. Both scans sample situations rather than
+replaying full level routes.
+
 The wrapper keeps the scan single-threaded and applies the same default Go heap cap as the soak harness:
 
 - `-parallel=1`

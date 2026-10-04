@@ -6,6 +6,8 @@ SOURCE_REVISION=05167784ef009d0d0daefe8d012b027f39dc8541
 SOURCE_DIR="${ROOT_DIR}/build/wolfsrc-source"
 OUT_DIR="${ROOT_DIR}/build/wolf-source-compare"
 INPUT_PATH=""
+DATA_DIR=""
+MAP_INDEX=""
 SELF_TEST=0
 MAX_MISMATCHES=1
 
@@ -16,6 +18,8 @@ Usage: scripts/wolf_source_compare.sh [options]
   --source <dir>  Existing id-Software/wolf3d checkout (must match pinned files)
   --out <dir>     Logs, inputs and JSONL traces (default: build/wolf-source-compare)
   --input <file>  Replay input JSONL (plain or gzip) instead of generating scenarios
+  --data <dir>    Compare enemy decisions on local WL1/WL6 maps
+  --map-index <n> Compare one map from --data (default: all maps)
   --self-test     Check the reference protocol and RNG without comparing the port
   --max-mismatches <n>  Collect up to n desyncs (default: stop at the first)
   -h, --help     Show this help
@@ -27,12 +31,14 @@ EOF
 }
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --source|--out|--input|--max-mismatches)
+    --source|--out|--input|--data|--map-index|--max-mismatches)
       [[ $# -ge 2 && -n "$2" ]] || { echo "Missing value for $1" >&2; exit 2; }
       case "$1" in
         --source) SOURCE_DIR="$2" ;;
         --out) OUT_DIR="$2" ;;
         --input) INPUT_PATH="$2" ;;
+        --data) DATA_DIR="$2" ;;
+        --map-index) MAP_INDEX="$2" ;;
         --max-mismatches) MAX_MISMATCHES="$2" ;;
       esac
       shift 2 ;;
@@ -41,6 +47,10 @@ while [[ $# -gt 0 ]]; do
     *) echo "Unknown option: $1" >&2; usage >&2; exit 2 ;;
   esac
 done
+[[ -z "$MAP_INDEX" || "$MAP_INDEX" =~ ^([0-9]|[1-5][0-9])$ ]] || { echo "Invalid map index: $MAP_INDEX" >&2; exit 2; }
+[[ -z "$MAP_INDEX" || -n "$DATA_DIR" ]] || { echo "--map-index requires --data" >&2; exit 2; }
+[[ -z "$DATA_DIR" || -d "$DATA_DIR" ]] || { echo "Missing data directory: $DATA_DIR" >&2; exit 2; }
+[[ -z "$DATA_DIR" || -z "$INPUT_PATH" ]] || { echo "--data and --input cannot be combined" >&2; exit 2; }
 
 # Resolve user paths before changing to the repository root.
 OUT_DIR="$(python3 -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).resolve())' "$OUT_DIR")"
@@ -51,6 +61,9 @@ if [[ -n "$INPUT_PATH" ]]; then
   [[ "$INPUT_PATH" != "$OUT_DIR/inputs.jsonl.gz" && "$INPUT_PATH" != "$OUT_DIR/mismatch-inputs.jsonl" ]] || {
     echo "Replay requires a different --out directory" >&2; exit 2;
   }
+fi
+if [[ -n "$DATA_DIR" ]]; then
+  DATA_DIR="$(python3 -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).resolve())' "$DATA_DIR")"
 fi
 if [[ ! -d "$SOURCE_DIR" ]]; then
   [[ "$SOURCE_DIR" == "$ROOT_DIR/build/wolfsrc-source" ]] || {
@@ -68,6 +81,8 @@ python3 tools/wolfsrc-reference/build.py --source "$SOURCE_DIR" \
 export GDWOLF_WOLFSRC_REFERENCE="$OUT_DIR/wolf-source-reference"
 export GDWOLF_WOLFSRC_OUT="$OUT_DIR"
 export GDWOLF_WOLFSRC_INPUT="$INPUT_PATH"
+export GDWOLF_WOLFSRC_DATA="$DATA_DIR"
+export GDWOLF_WOLFSRC_MAP_INDEX="$MAP_INDEX"
 export GDWOLF_WOLFSRC_MAX_MISMATCHES="$MAX_MISMATCHES"
 export GOMAXPROCS=1
 export GOMEMLIMIT="${GDWOLF_GO_MEM_LIMIT:-12GiB}"

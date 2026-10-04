@@ -35,6 +35,9 @@ blocked movement and humanoid locked-door handling. The reference compiles
 the original C `TryWalk`, `SelectChaseDir`, `SelectDodgeDir`, and `SelectRunDir`
 routines and compares them with the port on map snapshots and local obstruction
 cases. Actor classes in this comparison are normalized to humanoid or dog.
+An additional registered-data scan matched 15,024 isolated original-C decisions
+across all 60 maps. A broader Go source-rule adapter matched 30,036 sampled
+sight, attack-entry, movement and runtime checks on those maps.
 
 This result verifies the tested movement decisions. It does not establish
 complete AI parity over time: sight and hearing, state timing, attacks, damage,

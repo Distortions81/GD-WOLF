@@ -50,6 +50,20 @@ nearby player placements, chase/dodge/run decisions, and four RNG starting
 indices. The local obstruction scan covers 256 neighbor masks, all nine
 directions, all four routines, and humanoid/dog door behavior.
 
+To sample enemy decisions throughout the registered six-episode data, supply a
+local WL6 directory:
+
+```bash
+./scripts/wolf_source_compare.sh --data /path/to/WL6-files --out /tmp/wolf-registered-enemies
+./scripts/wolf_source_compare.sh --data /path/to/WL6-files --map-index 37 --out /tmp/wolf-map-37-enemies
+```
+
+The registered scan chooses one nearby valid player position per live enemy
+and compares chase, dodge and run with two RNG starting indices. On the local
+Apogee v1.4 data, 15,024 decisions covering 2,504 enemies across all 60 maps
+matched the pinned original C. This is sampled decision coverage, not a
+continuous playthrough or proof of full enemy behavior parity.
+
 The reference self-test separately checks RNG behavior at all 256 indices,
 door opening/wait behavior, dog blocking, and the original run fallback arc.
 
@@ -107,13 +121,8 @@ Rendering, sound playback, door animation, actor state timers, physical movement
 between tiles, combat and the player simulation are outside this C reference's
 coverage. The existing [AI harness](enemy-ai-harness.md) continues to provide
 broader scripted runtime and attack checks through its Go reference adapter.
-The [demo player comparison](wolf-demo-compare.md) now provides recorded input
-playback and conditional player movement checks. A full original-engine demo
-comparison still requires an independent simulation build for the remaining
-runtime systems.
-The original source does support recorded gameplay: `RecordDemo`/`PlayDemo` in
-`WL_GAME.C` and demo control input handling in `WL_PLAY.C` provide the starting
-point for that extension, including the built-in title-screen demos.
+The [recorded-demo runtime comparison](wolf-demo-compare.md) independently
+checks more systems along the eight tested demo routes.
 
 ## First verified desync
 

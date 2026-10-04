@@ -408,6 +408,58 @@ func TestWolfSourceCompare(t *testing.T) {
 		t.Logf("matched %d replayed decisions", count)
 		return
 	}
+	if dataDir := os.Getenv("GDWOLF_WOLFSRC_DATA"); dataDir != "" {
+		files, err := wl6.Open(dataDir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		maps, err := files.Maps()
+		if err != nil {
+			t.Fatal(err)
+		}
+		selected := -1
+		if raw := os.Getenv("GDWOLF_WOLFSRC_MAP_INDEX"); raw != "" {
+			selected, err = strconv.Atoi(raw)
+			if err != nil || selected < 0 || selected >= files.Variant.EpisodeCount*10 {
+				t.Fatalf("invalid map index %q", raw)
+			}
+		}
+		mapCount, actorCount := 0, 0
+		for _, summary := range maps {
+			if selected >= 0 && summary.Index != selected {
+				continue
+			}
+			base, err := buildEnemyAIFuzzBaseline(files, summary.Index)
+			if err != nil {
+				t.Fatalf("map %d: %v", summary.Index, err)
+			}
+			mapCount++
+			for _, actorIndex := range fuzzLiveEnemyIndices(base) {
+				positions := fuzzNearbyPlayerPositions(base, &base.actors[actorIndex])
+				if len(positions) == 0 {
+					continue
+				}
+				actorCount++
+				pos := positions[(summary.Index+actorIndex)%len(positions)]
+				for mode := 0; mode < 3; mode++ {
+					for _, seed := range []byte{0, 127} {
+						c := wolfSourceMapInput(base, actorIndex, pos, mode, seed)
+						c.ID = fmt.Sprintf("map=%d/actor=%d/mode=%d/seed=%d", summary.Index, actorIndex, mode, seed)
+						compare(c)
+					}
+				}
+			}
+			t.Logf("registered map %d: %d cumulative original C decisions", summary.Index, count)
+		}
+		if mapCount == 0 {
+			t.Fatalf("no maps selected (index %d)", selected)
+		}
+		if mismatches > 0 {
+			t.Fatalf("%d desyncs in %d original C decisions", mismatches, count)
+		}
+		t.Logf("matched %d original C enemy decisions across %d maps and %d actors", count, mapCount, actorCount)
+		return
+	}
 	// Real shareware snapshots preserve all blocking actors and scenery. Each
 	// decision is isolated; no Go reference routine computes the expected result.
 	for mapIndex := 0; mapIndex < 10; mapIndex++ {
