@@ -8361,7 +8361,7 @@ func (g *game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	if outsideHeight < wolfDisplayHeight {
 		outsideHeight = wolfDisplayHeight
 	}
-	if outsideWidth != g.viewWidth || outsideHeight != g.viewHeight {
+	if outsideWidth != g.viewWidth || outsideHeight != g.viewHeight || g.layout.bufferWidth <= 0 || g.layout.bufferHeight <= 0 {
 		g.ensureFrame(outsideWidth, outsideHeight)
 	}
 	return outsideWidth, outsideHeight

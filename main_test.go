@@ -538,6 +538,24 @@ func TestEnsureFrameRebuildsCameraColumnsWhenReusingSize(t *testing.T) {
 	}
 }
 
+func TestLayoutInitializesGameplayWithoutWindowResize(t *testing.T) {
+	for _, mode := range []renderMode{renderModeUltra, renderModeDOS, renderModeHQ} {
+		g := &game{
+			viewWidth: defaultScreenWidth, viewHeight: defaultScreenHeight,
+			renderMode: mode,
+			frame:      make([]byte, defaultScreenWidth*defaultScreenHeight*4),
+			background: make([]byte, defaultScreenWidth*defaultScreenHeight*4),
+		}
+		g.Layout(defaultScreenWidth, defaultScreenHeight)
+		if g.layout.bufferWidth <= 0 || g.layout.bufferHeight <= 0 || g.gameplayImage == nil {
+			t.Fatalf("render mode %d: initial layout left the gameplay viewport uninitialized", mode)
+		}
+		if len(g.gameplayFrame) != g.layout.bufferWidth*g.layout.bufferHeight*4 {
+			t.Fatalf("render mode %d: initial gameplay pixel buffer has the wrong size", mode)
+		}
+	}
+}
+
 func TestLookupStaticTable(t *testing.T) {
 	for info := uint16(23); info <= 74; info++ {
 		if info >= 71 && info <= 73 {
