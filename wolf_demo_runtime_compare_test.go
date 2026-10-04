@@ -8,6 +8,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"testing"
 
@@ -53,6 +54,32 @@ type wolfDemoRuntimeDoor struct {
 	Action   int `json:"action"`
 	Position int `json:"position"`
 	Timer    int `json:"timer"`
+}
+
+type wolfDemoRuntimeBonus struct {
+	X     int `json:"x"`
+	Y     int `json:"y"`
+	Shape int `json:"shape"`
+}
+
+func captureDemoRuntimeBonuses(g *game) []wolfDemoRuntimeBonus {
+	bonuses := []wolfDemoRuntimeBonus{}
+	for _, sprite := range g.staticSprites {
+		if sprite.alive && sprite.pickup != pickupNone {
+			bonuses = append(bonuses, wolfDemoRuntimeBonus{int(sprite.x), int(sprite.y), sprite.shapenum})
+		}
+	}
+	sort.Slice(bonuses, func(i, j int) bool {
+		a, b := bonuses[i], bonuses[j]
+		if a.Y != b.Y {
+			return a.Y < b.Y
+		}
+		if a.X != b.X {
+			return a.X < b.X
+		}
+		return a.Shape < b.Shape
+	})
+	return bonuses
 }
 
 func captureDemoRuntimeState(g *game) wolfDemoRuntimeState {
@@ -119,6 +146,21 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	extraFire := os.Getenv("GDWOLF_DEMO_EXTRA_FIRE") == "1"
+	if extraFire {
+		// Keep the opening route to reach its first fight, then preserve
+		// steering and use inputs while changing the attack schedule.
+		for i := range demo.Commands {
+			if i < 200 {
+				continue
+			}
+			if i%20 < 12 {
+				demo.Commands[i].Buttons |= demoButtonAttack
+			} else {
+				demo.Commands[i].Buttons &^= demoButtonAttack
+			}
+		}
+	}
 	data, err := files.LoadMap(demo.Map)
 	if err != nil {
 		t.Fatal(err)
@@ -156,9 +198,10 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 	renderTrace := json.NewEncoder(open("reference-render.jsonl"))
 	result := json.NewEncoder(open("result.json"))
 	matched, status := 0, "mismatch"
+	maxAlerted, kills := 0, 0
 	terminal := ""
 	defer func() {
-		if err := result.Encode(map[string]any{"demo_index": demoIndex, "map": demo.Map, "demo_commands": len(demo.Commands), "matched_commands": matched, "matched_tics": matched * wl6.DemoTics, "remaining_commands": len(demo.Commands) - matched, "status": status, "terminal": terminal}); err != nil {
+		if err := result.Encode(map[string]any{"demo_index": demoIndex, "map": demo.Map, "extra_fire": extraFire, "demo_commands": len(demo.Commands), "matched_commands": matched, "matched_tics": matched * wl6.DemoTics, "remaining_commands": len(demo.Commands) - matched, "max_simultaneous_alerted": maxAlerted, "kills": kills, "status": status, "terminal": terminal}); err != nil {
 			t.Error(err)
 		}
 	}()
@@ -330,6 +373,15 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 		beforeWeapon := captureDemoRuntimeState(g).Weapon
 		g.updateDemoActors(wl6.DemoTics)
 		got := captureDemoRuntimeState(g)
+		alerted := 0
+		for _, actor := range g.actors {
+			if actor.alive && actor.alerted {
+				alerted++
+			}
+		}
+		if alerted > maxAlerted {
+			maxAlerted = alerted
+		}
 		got.Weapon = beforeWeapon // Port death clears the weapon; compare before that terminal side effect.
 		compare(i, want, got)
 		if gotDamage := beforeHealth - g.health; gotDamage != minInt(beforeHealth, want.Damage) {
@@ -354,9 +406,12 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 			t.Fatal("original renderer returned no projections")
 		}
 		var rendered struct {
-			Health      int  `json:"health"`
-			Ammo        int  `json:"ammo"`
-			Died        bool `json:"died"`
+			Health      int                    `json:"health"`
+			Ammo        int                    `json:"ammo"`
+			Died        bool                   `json:"died"`
+			Score       int                    `json:"score"`
+			Kills       int                    `json:"kills"`
+			Bonuses     []wolfDemoRuntimeBonus `json:"bonuses"`
 			Projections []struct {
 				Visible bool `json:"visible"`
 				ViewX   int  `json:"view_x"`
@@ -379,6 +434,35 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 			}
 		}
 		g.collectPickups()
+		portKills := 0
+		for _, actor := range g.actors {
+			if !actor.alive {
+				portKills++
+			}
+		}
+		if rendered.Score != g.score || rendered.Kills != portKills {
+			t.Fatalf("command %d combat totals: original score/kills=%d/%d port=%d/%d", i, rendered.Score, rendered.Kills, g.score, portKills)
+		}
+		kills = rendered.Kills
+		sort.Slice(rendered.Bonuses, func(i, j int) bool {
+			a, b := rendered.Bonuses[i], rendered.Bonuses[j]
+			if a.Y != b.Y {
+				return a.Y < b.Y
+			}
+			if a.X != b.X {
+				return a.X < b.X
+			}
+			return a.Shape < b.Shape
+		})
+		portBonuses := captureDemoRuntimeBonuses(g)
+		if len(rendered.Bonuses) != len(portBonuses) {
+			t.Fatalf("command %d bonuses: original=%d port=%d", i, len(rendered.Bonuses), len(portBonuses))
+		}
+		for bonus := range rendered.Bonuses {
+			if rendered.Bonuses[bonus] != portBonuses[bonus] {
+				t.Fatalf("command %d bonus %d: original=%+v port=%+v", i, bonus, rendered.Bonuses[bonus], portBonuses[bonus])
+			}
+		}
 		if rendered.Died != g.playerDying {
 			t.Fatalf("command %d death: original=%v port=%v", i, rendered.Died, g.playerDying)
 		}
@@ -389,11 +473,17 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 		g.demoPlayback.command++
 		matched++
 		if rendered.Died {
+			if extraFire && (maxAlerted < 2 || kills < 1) {
+				t.Fatalf("extra-fire route did not exercise a multi-enemy fight: alerted=%d kills=%d", maxAlerted, kills)
+			}
 			status, terminal = "matched_terminal_state", "death"
 			t.Logf("matched original death after command %d, tic %d; original playback leaves %d recorded commands unread", i, matched*wl6.DemoTics, len(demo.Commands)-matched)
 			return
 		}
 	}
 	status = "success"
+	if extraFire && (maxAlerted < 2 || kills < 1) {
+		t.Fatalf("extra-fire route did not exercise a multi-enemy fight: alerted=%d kills=%d", maxAlerted, kills)
+	}
 	t.Logf("matched every demo %d runtime update with original C, sharing visible-floor masks", demoIndex)
 }

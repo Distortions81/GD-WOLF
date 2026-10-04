@@ -6,6 +6,7 @@ SOURCE_DIR="$ROOT_DIR/build/wolfsrc-source"
 OUT_DIR="$ROOT_DIR/build/wolf-demo-runtime-compare"
 DEMO_INDEX=0
 DATA_DIR=""
+EXTRA_FIRE=0
 usage() {
   cat <<'EOF'
 Compare recorded-demo movement, weapons, actors, RNG, doors, pushwalls and pickups
@@ -13,12 +14,13 @@ with compiled original C, then audit floor visibility with original x86 in QEMU.
 Matching original death is a supported endpoint. Mismatches and unsupported
 port terminal states exit nonzero.
 
-Usage: scripts/wolf_demo_runtime_compare.sh [--source <dir>] [--out <dir>] [--data <dir>] [--demo-index <0-3>]
+Usage: scripts/wolf_demo_runtime_compare.sh [--source <dir>] [--out <dir>] [--data <dir>] [--demo-index <0-3>] [--extra-fire]
   --source <dir>  Existing pinned id-Software/wolf3d checkout
   --out <dir>     Compiler and comparison logs
                  (default: build/wolf-demo-runtime-compare)
   --demo-index <0-3>  Built-in demo from selected data (default: 0)
   --data <dir>   Local Wolfenstein 3D data directory (default: embedded WL1)
+  --extra-fire   Replay recorded steering with a deterministic alternate attack schedule
   -h, --help     Show this help
 
 Requirements: Go, Python 3, C99 compiler, GNU as/ld, qemu-system-i386,
@@ -28,6 +30,7 @@ EOF
 }
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --extra-fire) EXTRA_FIRE=1; shift ;;
     --source|--out|--demo-index|--data)
       [[ $# -ge 2 && -n "$2" ]] || { echo "Missing value for $1" >&2; exit 2; }
       case "$1" in
@@ -62,9 +65,11 @@ export GDWOLF_DEMO_RUNTIME_REFERENCE="$OUT_DIR/wolf-demo-runtime-reference"
 export GDWOLF_DEMO_RUNTIME_OUT="$OUT_DIR"
 export GDWOLF_DEMO_INDEX="$DEMO_INDEX"
 export GDWOLF_DEMO_RUNTIME_DATA="$DATA_DIR"
+export GDWOLF_DEMO_EXTRA_FIRE="$EXTRA_FIRE"
 export GDWOLF_DEMO_RAYCAST_OUT="$OUT_DIR/raycast-input.jsonl"
 export GOMAXPROCS=1
 export GOMEMLIMIT="${GDWOLF_GO_MEM_LIMIT:-12GiB}"
+export GOCACHE="${GOCACHE:-/tmp/gd-wolf-go-cache}"
 RUNNER=()
 if [[ "$(uname -s)" == Linux && -z "${DISPLAY:-}" ]]; then
   command -v xvfb-run >/dev/null || { echo "Headless Ebiten tests require xvfb-run" >&2; exit 2; }

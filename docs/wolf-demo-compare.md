@@ -209,6 +209,7 @@ active and does not simulate rendering-based activation or player weapons.
 ./scripts/wolf_demo_runtime_compare.sh --demo-index 1 --out /tmp/wolf-demo-e1f3
 ./scripts/wolf_demo_runtime_compare.sh --demo-index 2 --out /tmp/wolf-demo-e1f5
 ./scripts/wolf_demo_runtime_compare.sh --demo-index 3 --out /tmp/wolf-demo-e1f7
+./scripts/wolf_demo_runtime_compare.sh --data /path/to/registered-data --demo-index 0 --extra-fire --out /tmp/wolf-combat-e1f1
 ```
 
 Both scripts accept `--source` and `--out`, verify original source hashes and
@@ -223,7 +224,9 @@ this isolated test.
 The runtime harness compiles original spawning, actor state transitions,
 sight/hearing, path/chase movement, damage/death, gun/knife targeting, weapon
 attack scheduling, player movement, door/area/pushwall updates, static spawns,
-dropped items, bonus collection, face updates and RNG tables. It initializes
+dropped items, bonus collection, face updates and RNG tables. It checks score,
+kill count and the remaining pickup/drop positions and shapes after each
+command, along with the existing actor, weapon, player and RNG comparisons. It initializes
 from raw map planes and carries independent player/actor positions, reservations,
 weapons, doors, walls, pickups, health and RNG across commands. Original
 `DrawScaleds` static/actor placement and `TransformActor`/`TransformTile` geometry
@@ -250,8 +253,18 @@ their original death endpoints. E1F1 plays 1,055 commands and leaves 97 recorded
 commands unread; E1F3, E1F5 and E1F7 play all 1,284, 671 and 633 commands.
 The script succeeds at a matching terminal state and fails if the terminal
 state differs. The original x86 floor-visibility audit also matches every
-played command in each demo. Unsupported enemy families, audio and scoring
+played command in each demo. Unsupported enemy families, audio and extra lives
 remain outside this comparison.
+
+`--extra-fire` preserves each recorded demo's first 200 commands, then uses
+the same steering with a deterministic alternate attack schedule. This takes
+different continuous combat paths while the C reference independently moves
+the player and enemies. All four registered demo maps match through their
+resulting death endpoints, with 1–6 kills and peaks of 8–23 simultaneously
+alerted enemies. The script also audits the supplied visibility masks against
+the original x86 raycaster; the map-37 alternate route matched 1,220,608 floor
+bits. These paths still use the recorded steering, so they do not cover every
+possible door use or firing angle.
 
 The additional maps exposed three runtime differences. Original `DoActor`
 suspends any inactive actor in a disconnected area, while `DrawScaleds`

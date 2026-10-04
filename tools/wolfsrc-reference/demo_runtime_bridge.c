@@ -85,7 +85,7 @@ struct object {
     objtype *next;
 };
 typedef struct { int tilex, tiley, vertical, lock, action, ticcount; } doorobj_t;
-static struct { int difficulty, killtotal, secrettotal, victoryflag, bestweapon, weapon, killcount, keys, ammo, chosenweapon, attackcount, attackframe, weaponframe, secretcount, health, treasuretotal, treasurecount, lives, faceframe; long killx, killy; } gamestate;
+static struct { int difficulty, killtotal, secrettotal, victoryflag, bestweapon, weapon, killcount, keys, ammo, chosenweapon, attackcount, attackframe, weaponframe, secretcount, health, treasuretotal, treasurecount, lives, faceframe, score; long killx, killy; } gamestate;
 static objtype objects[150], *new, *actorat[64][64], player_storage, *player = &player_storage;
 static int object_count, mapwidth, mapheight, loadedgame, rng_index, tics, madenoise;
 static unsigned short planes[2][4096], *mapsegs[] = {planes[0], planes[1]};
@@ -161,7 +161,7 @@ static int SD_SoundPlaying(void) { return -1; } /* No active sound matches the s
 static void VictoryTile(void) { Quit("victory tile unsupported"); }
 static void VictorySpin(void) { Quit("victory spin unsupported"); }
 static void PlaceItemType(int type, int x, int y);
-static void GivePoints(int points) { (void)points; }
+static void GivePoints(int points) { gamestate.score += points; }
 static void A_StartDeathCam(objtype *ob) { (void)ob; Quit("boss death camera unsupported"); }
 static void RemoveObj(objtype *ob) { ob->state = NULL; }
 static void SpawnPlayer(int x, int y, int dir) {
@@ -369,7 +369,11 @@ int main(int argc, char **argv) {
         viewy = player->y + FixedByFrac(0x5700, viewsin);
         record_raycast();
         RefreshActorVisibility();
-        printf("{\"health\":%d,\"ammo\":%d,\"died\":%s,\"projections\":[", gamestate.health, gamestate.ammo, playstate == ex_died ? "true" : "false"); int printed = 0;
+        printf("{\"health\":%d,\"ammo\":%d,\"died\":%s,\"score\":%d,\"kills\":%d,\"bonuses\":[", gamestate.health, gamestate.ammo, playstate == ex_died ? "true" : "false", gamestate.score, gamestate.killcount);
+        int printed = 0;
+        for (statobj_t *spot = statobjlist; spot < laststatobj; spot++) if (spot->shapenum >= 0 && (spot->flags & FL_BONUS))
+            printf("%s{\"x\":%d,\"y\":%d,\"shape\":%d}", printed++ ? "," : "", spot->tilex, spot->tiley, spot->shapenum);
+        printf("],\"projections\":["); printed = 0;
         for (int i = 0; i < object_count; i++) if (kind(&objects[i]) >= 0) {
             printf("%s{\"visible\":%s,\"view_x\":%d,\"trans_x\":%ld}", printed++ ? "," : "", objects[i].flags & FL_VISABLE ? "true" : "false", objects[i].viewx, objects[i].transx);
         }
