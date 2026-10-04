@@ -210,6 +210,20 @@ func TestDemoActorShootActionRunsOnExit(t *testing.T) {
 	}
 }
 
+func TestDemoDogCorpseKeepsOriginalTimedSelfLoop(t *testing.T) {
+	g := &game{}
+	a := actorInstance{kind: actorKindDog, aiState: actorStateDead}
+	g.startActorSequence(&a, seqActorDogDeath, false)
+	g.advanceDemoActorSequence(&a, 46, func(AnimAction) {})
+	if a.frameIndex != 3 || a.frameTimer != 1 {
+		t.Fatalf("dog corpse after 46 tics: frame=%d elapsed=%d", a.frameIndex, a.frameTimer)
+	}
+	g.advanceDemoActorSequence(&a, 14, func(AnimAction) {})
+	if a.frameIndex != 3 || a.frameTimer != 0 {
+		t.Fatalf("dog corpse self-loop: frame=%d elapsed=%d", a.frameIndex, a.frameTimer)
+	}
+}
+
 func TestDemoSuppressedAttackPressCanStartNextCommand(t *testing.T) {
 	g := demoMovementTestGame()
 	g.weapon, g.chosenWeapon, g.ammo = 1, 1, 8

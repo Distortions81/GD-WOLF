@@ -26,6 +26,9 @@ func (g *game) advanceDemoActorSequence(a *actorInstance, tics int, action func(
 		if a.frameIndex >= len(seq.Frames) {
 			if a.sequenceLoop {
 				a.frameIndex = 0
+			} else if a.kind == actorKindDog && a.aiState == actorStateDead {
+				// WL_ACT2.C links s_dogdead to itself with a 15-tic timer.
+				a.frameIndex = len(seq.Frames) - 1
 			} else {
 				// Pain, shooting and dog jump states link directly to chase.
 				// Preserve excess elapsed time, rather than running that chase

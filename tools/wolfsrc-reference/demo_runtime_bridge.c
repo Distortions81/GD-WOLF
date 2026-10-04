@@ -202,7 +202,7 @@ static void print_state(void) {
     for (int i = 0; i < doornum; i++) printf("%s{\"action\":%d,\"position\":%d,\"timer\":%d}", i ? "," : "", doorobjlist[i].action, doorposition[i], doorobjlist[i].action == dr_open ? doorobjlist[i].ticcount : 0);
     printf("],\"walls\":[");
     for (int y = 0; y < 64; y++) for (int x = 0; x < 64; x++) printf("%s%d", x || y ? "," : "", tilemap[x][y] && !(tilemap[x][y] >= 128 && tilemap[x][y] < 192));
-    printf("],\"weapon\":{\"attacking\":%s,\"frame\":%d,\"timer\":%d,\"ammo\":%d,\"shots\":%d},\"player\":{\"x\":%ld,\"y\":%ld,\"angle\":%d,\"angle_frac\":%d}}\n", player->state == &s_attack ? "true" : "false", gamestate.attackframe, player->state == &s_attack ? gamestate.attackcount : 0, gamestate.ammo, reference_shots, player->x, player->y, player->angle, anglefrac);
+    printf("],\"weapon\":{\"type\":%d,\"attacking\":%s,\"frame\":%d,\"timer\":%d,\"ammo\":%d,\"shots\":%d},\"player\":{\"x\":%ld,\"y\":%ld,\"angle\":%d,\"angle_frac\":%d}}\n", gamestate.weapon, player->state == &s_attack ? "true" : "false", gamestate.attackframe, player->state == &s_attack ? gamestate.attackcount : 0, gamestate.ammo, reference_shots, player->x, player->y, player->angle, anglefrac);
     fflush(stdout);
 }
 /* Exact raycaster inputs, separate from the gameplay comparison stream. */
@@ -277,12 +277,12 @@ int main(int argc, char **argv) {
     BuildTables();
     player->state = &s_player; gamestate.ammo = 8; gamestate.health = 100;
     InitAreas();
-    for (int y = 1; y < 63; y++) for (int x = 1; x < 63; x++) if (tilemap[x][y] == AMBUSHTILE) {
+    for (int y = 1; y < 63; y++) for (int x = 1; x < 63; x++) if (planes[0][y*64+x] == AMBUSHTILE) {
         tilemap[x][y] = 0;
         if ((uintptr_t)actorat[x][y] == AMBUSHTILE) actorat[x][y] = NULL;
     }
-    print_state();
     gamestate.weapon = gamestate.bestweapon = gamestate.chosenweapon = 1;
+    print_state();
     int header, fast, shots, use_door, buttons, push_x, push_y, push_dir, raw_x, raw_y, entry_rng, input_best, input_weapon, input_ammo, input_chosen;
     long px, py;
     while ((header = scanf("%ld %ld %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", &px, &py, &entry_rng, &madenoise, &fast, &input_best, &input_weapon, &shots, &use_door, &buttons, &input_ammo, &input_chosen, &push_x, &push_y, &push_dir, &raw_x, &raw_y)) != EOF) {

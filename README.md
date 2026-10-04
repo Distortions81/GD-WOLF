@@ -73,15 +73,15 @@ of this preference, and preserves the saved setting.
 ## Known Differences From Full Wolfenstein 3D Parity
 
 - The project does not yet implement the full original enemy roster and behaviors.
-- Complete enemy AI parity is unverified; the original-source harnesses cover isolated movement and a first-demo runtime prefix.
-- The demo player harness shares the port's world snapshots with its C reference. It does not independently simulate enemies, combat, doors or pickups.
+- Complete enemy AI parity is unverified; the original-source runtime harness matches all four recorded shareware demos and all four recorded Apogee registered demos, not every path through the six episodes.
+- The separate demo player movement harness shares the port's world snapshots with its C reference. The runtime harness independently evolves actors, combat, doors and pickups, with visible-floor masks audited against original x86 code.
 - Some systems are Wolfenstein 3D-inspired rather than byte-faithful, especially presentation details around fades, flashes, and frontend behavior.
 
 ## Data
 
 The project expects original Wolfenstein 3D v1.4-era data layouts. Older Wolf revisions are not supported.
 
-The repo already includes the canonical shareware `WL1` v1.4 data under [internal/wl6/shareware](/home/dist/github/GD-WOLF/internal/wl6/shareware). For registered/full data, use matching `WL6` v1.4 files.
+The repo already includes the canonical shareware `WL1` v1.4 data under [internal/wl6/shareware](/home/dist/github/GD-WOLF/internal/wl6/shareware). For registered/full data, use matching `WL6` v1.4 files. The Apogee six-episode release uses a different graphics chunk layout from the pinned registered source headers; the loader detects both layouts. Run it with `go run . -data /path/to/WL6-files`.
 
 When digitized sounds are present in the data files, they are preferred over synthesized fallback effects.
 

@@ -94,7 +94,7 @@ func openFromFS(fsys fs.FS, root string, spec VariantSpec) (*Files, error) {
 		return nil, fmt.Errorf("read AUDIOT.%s: %w", spec.Ext, err)
 	}
 
-	return &Files{
+	files := &Files{
 		MapHead:   mapHead,
 		GameMaps:  gameMaps,
 		VSwap:     vswap,
@@ -104,7 +104,33 @@ func openFromFS(fsys fs.FS, root string, spec VariantSpec) (*Files, error) {
 		AudioHead: audioHead,
 		AudioT:    audioT,
 		Variant:   spec,
-	}, nil
+	}
+	if spec.Ext == "WL6" {
+		files.selectRegisteredGraphicsLayout()
+	}
+	return files, nil
+}
+
+func (f *Files) selectRegisteredGraphicsLayout() {
+	offsets, err := parseVGAHead(f.VGAHead)
+	if err != nil {
+		return
+	}
+	nodes, err := parseVGADict(f.VGADict)
+	if err != nil {
+		return
+	}
+	validDemo := func(chunk int) bool {
+		data, err := loadGraphicChunk(f.VGAGraph, offsets, nodes, chunk)
+		if err != nil {
+			return false
+		}
+		_, err = ParseDemo(data)
+		return err == nil
+	}
+	if !validDemo(variantWL6.DemoStartChunk) && validDemo(variantWL6Apogee.DemoStartChunk) {
+		f.Variant = variantWL6Apogee
+	}
 }
 
 func detectVariant(fsys fs.FS, root string) (VariantSpec, bool) {

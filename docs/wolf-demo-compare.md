@@ -245,6 +245,23 @@ still treats that pointer as occupied. Finally, an SS chooses its dropped item
 at death, using the player's current best weapon, rather than choosing it at
 spawn. The port now follows these behaviors during recorded playback.
 
+Registered WL6 data can be compared with `--data` while keeping the game files
+outside the repository:
+
+```bash
+./scripts/wolf_demo_runtime_compare.sh --data /path/to/registered-data --demo-index 0 --out /tmp/wolf-registered-demo-0
+```
+
+The Apogee v1.4 six-episode data uses the WL1 graphics chunk layout under
+WL6 filenames. The loader detects that layout from its demo chunks; the
+registered layout defined in the pinned `GFXV_WL6.H` remains supported. All
+four demos in this Apogee data match original C runtime state through their
+recorded endpoints: 691, 1,899, 1,140 and 1,656 commands on maps 37, 43, 56
+and 31. The original x86 floor-visibility audit also passes every played
+command, covering 22,061,056 floor bits. These comparisons cover the recorded
+routes, not every room or enemy family across all six episodes. Registered
+game data is not bundled with the repository.
+
 Default runtime artifacts in `build/wolf-demo-runtime-compare`:
 
 | File | Contents |

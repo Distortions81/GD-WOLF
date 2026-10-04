@@ -98,6 +98,22 @@ func (m *MapData) Level() *Level {
 			level.Tiles[y*level.Width+x] = tile
 		}
 	}
+	// SpawnDoor replaces each door's map word with the area on its left
+	// (vertical) or above it (horizontal). Keep that effective area for
+	// actors crossing doors that are already open.
+	for y := 0; y < level.Height; y++ {
+		for x := 0; x < level.Width; x++ {
+			tile := &level.Tiles[y*level.Width+x]
+			if tile.Door == nil {
+				continue
+			}
+			if tile.Door.Vertical {
+				tile.Area = level.Tile(x-1, y).Area
+			} else {
+				tile.Area = level.Tile(x, y-1).Area
+			}
+		}
+	}
 
 	return level
 }

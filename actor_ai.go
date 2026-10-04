@@ -516,6 +516,7 @@ func (g *game) updateGuardChase(a *actorInstance, tics int) {
 				return
 			}
 		}
+		previousDistance := a.moveDistance
 		consumed, reachedGoal, blocked := g.moveActorTowardGoalStep(a, remaining)
 		if blocked || consumed <= 0 {
 			return
@@ -527,6 +528,7 @@ func (g *game) updateGuardChase(a *actorInstance, tics int) {
 		if g.demoPlayback != nil {
 			g.actorChooseChaseGoal(a, dodge)
 			if !a.hasGoal {
+				a.moveDistance = previousDistance
 				return
 			}
 		}
@@ -603,6 +605,7 @@ func (g *game) updateDogChase(a *actorInstance, tics int) {
 				return
 			}
 		}
+		previousDistance := a.moveDistance
 		consumed, reachedGoal, blocked := g.moveActorTowardGoalStep(a, remaining)
 		if blocked || consumed <= 0 {
 			return
@@ -614,6 +617,7 @@ func (g *game) updateDogChase(a *actorInstance, tics int) {
 		if g.demoPlayback != nil {
 			g.actorChooseChaseGoal(a, true)
 			if !a.hasGoal {
+				a.moveDistance = previousDistance
 				return
 			}
 		}
@@ -673,7 +677,7 @@ func (g *game) actorHasInitialSight(a *actorInstance) bool {
 		return true
 	}
 
-	switch a.dir & 7 {
+	switch a.dir {
 	case 2: // north
 		if dy > 0 {
 			return false
@@ -884,7 +888,9 @@ func (g *game) guardTryStartShoot(a *actorInstance, tics int) bool {
 	dy := absInt(a.tileY - int(g.playerY))
 	dist := maxInt(dx, dy)
 
-	pointBlank := dist == 0 || (dist == 1 && (a.moveDistance == 0 || (a.moveDistance > 0 && a.moveDistance < 0.25)))
+	// T_Chase compares the signed distance directly; a negative door-wait
+	// sentinel also qualifies when the actor is one tile away.
+	pointBlank := dist == 0 || (dist == 1 && a.moveDistance < 0.25)
 	chance := actorStartShootChance(dist, tics, pointBlank)
 	if g.rng == nil {
 		g.rng = defaultRNG()
@@ -1324,8 +1330,21 @@ func (g *game) actorReserveGoal(a *actorInstance, dir, targetX, targetY int, wai
 	a.moveDistance = 1
 	if waitDoor {
 		a.moveDistance = actorDoorWaitDistance
+		if g.demoPlayback != nil {
+			index := 0
+			for tileIndex, tile := range g.level.Tiles {
+				if tile.Door == nil {
+					continue
+				}
+				if tileIndex == targetY*g.levelWidth+targetX {
+					a.moveDistance = -float64(index + 1)
+					break
+				}
+				index++
+			}
+		}
 	}
-	if g.level == nil || g.level.Tile(targetX, targetY).Door == nil {
+	if g.level == nil || g.level.Tile(targetX, targetY).Door == nil || !waitDoor {
 		a.area = g.actorAreaAt(targetX, targetY)
 	}
 	return true
@@ -1492,9 +1511,13 @@ func (g *game) moveActorTowardGoalStep(a *actorInstance, speed float64) (consume
 	if a.moveDistance < 0 {
 		if g.level != nil {
 			tile := g.level.Tile(a.tileX, a.tileY)
-			if tile.Door != nil && !g.isDoorOpen(a.tileX, a.tileY) {
+			if tile.Door != nil {
+				// T_Chase calls OpenDoor even on the tick it becomes fully open,
+				// resetting that door's hold timer.
 				g.openDoorAt(a.tileX, a.tileY)
-				return 0, false, true
+				if !g.isDoorOpen(a.tileX, a.tileY) {
+					return 0, false, true
+				}
 			}
 		}
 		a.moveDistance = 1

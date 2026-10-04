@@ -41,6 +41,7 @@ type wolfDemoRuntimeState struct {
 }
 
 type wolfDemoRuntimeWeapon struct {
+	Type      int  `json:"type"`
 	Attacking bool `json:"attacking"`
 	Frame     int  `json:"frame"`
 	Timer     int  `json:"timer"`
@@ -57,7 +58,7 @@ type wolfDemoRuntimeDoor struct {
 func captureDemoRuntimeState(g *game) wolfDemoRuntimeState {
 	s := wolfDemoRuntimeState{RNGIndex: int(g.rng.index)}
 	s.Player = captureDemoPlayer(g)
-	s.Weapon = wolfDemoRuntimeWeapon{g.attacking, g.weaponFrameIdx, g.weaponFrameTics, g.ammo, g.demoPlayback.shots}
+	s.Weapon = wolfDemoRuntimeWeapon{g.weapon, g.attacking, g.weaponFrameIdx, g.weaponFrameTics, g.ammo, g.demoPlayback.shots}
 	for _, a := range g.actors {
 		flags := boolInt(a.shootable) | boolInt(a.alerted)*16 | boolInt(a.firstAttack)*32 | boolInt(a.ambush)*64
 		seq, _ := LookupAnimSequence(a.sequenceID)
@@ -67,17 +68,8 @@ func captureDemoRuntimeState(g *game) wolfDemoRuntimeState {
 		}
 		distance := int64(math.Round(a.moveDistance * 65536))
 		if a.moveDistance < 0 {
-			index := 0
-			for tileIndex, tile := range g.level.Tiles {
-				if tile.Door == nil {
-					continue
-				}
-				if tileIndex == a.tileY*g.levelWidth+a.tileX {
-					distance = -int64(index + 1)
-					break
-				}
-				index++
-			}
+			// Negative distance is a door-number sentinel, not fixed-point movement.
+			distance = int64(a.moveDistance)
 		}
 		s.Actors = append(s.Actors, wolfDemoRuntimeActor{int(a.kind), int64(math.Round(a.x * 65536)), int64(math.Round(a.y * 65536)), a.tileX, a.tileY, a.dir, a.area, distance, a.reactionTimer, a.health, flags, a.shapenum, count})
 	}
@@ -105,7 +97,14 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 	if path == "" {
 		t.Skip("run scripts/wolf_demo_runtime_compare.sh")
 	}
-	files, err := wl6.OpenEmbeddedShareware()
+	dataDir := os.Getenv("GDWOLF_DEMO_RUNTIME_DATA")
+	var files *wl6.Files
+	var err error
+	if dataDir == "" {
+		files, err = wl6.OpenEmbeddedShareware()
+	} else {
+		files, err = wl6.Open(dataDir)
+	}
 	if err != nil {
 		t.Fatal(err)
 	}

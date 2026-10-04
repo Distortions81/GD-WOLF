@@ -6009,7 +6009,6 @@ func (g *game) updateWeaponAttackWithInput(tics int, attackPressed bool) {
 		}
 		if g.weapon > 0 && g.ammo <= 0 {
 			g.weapon = 0
-			g.chosenWeapon = 0
 		}
 		if !g.startWeaponSequence() {
 			return
@@ -6079,6 +6078,9 @@ func (g *game) advanceWeaponSequence(attackPressed bool) bool {
 			g.playSound(soundForWeapon(g.weapon))
 			g.shootAhead()
 			g.ammo--
+		} else if g.weapon == 3 {
+			// T_Attack skips the next chain-gun frame when ammo is empty.
+			g.weaponFrameIdx++
 		}
 	case animActionFireKnife:
 		g.playSound(soundForWeapon(g.weapon))
@@ -6116,7 +6118,6 @@ func (g *game) finishWeaponSequence() {
 	g.weaponFrameTics = 0
 	if g.ammo <= 0 {
 		g.weapon = 0
-		g.chosenWeapon = 0
 	} else if g.weapon != g.chosenWeapon {
 		g.weapon = g.chosenWeapon
 	}
@@ -7095,6 +7096,10 @@ func (g *game) doorActorOccupantAt(x, y int) *actorInstance {
 	if g.demoPlayback != nil {
 		for i := range g.actors {
 			a := &g.actors[i]
+			// DoActor re-marks a corpse's physical tile when actorat is empty.
+			if a.aiState == actorStateDead && a.tileX == x && a.tileY == y {
+				return a
+			}
 			if a.demoHasDeathGoal && a.demoDeathGoalX == x && a.demoDeathGoalY == y {
 				return a
 			}
@@ -7143,6 +7148,15 @@ func (g *game) updateDoors(tics int) {
 				g.doorOpen[i] = 1
 				g.doorState[i] = 2
 				g.doorTimer[i] = 0
+				if g.demoPlayback != nil {
+					// DoorOpening clears actorat on the door tile when fully open.
+					for ai := range g.actors {
+						a := &g.actors[ai]
+						if a.demoHasDeathGoal && a.demoDeathGoalX == i%g.levelWidth && a.demoDeathGoalY == i/g.levelWidth {
+							a.demoHasDeathGoal = false
+						}
+					}
+				}
 			}
 		case 2: // open
 			g.doorTimer[i] += tics

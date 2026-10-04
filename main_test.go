@@ -1572,7 +1572,7 @@ func TestGuardChaseWaitsForDoorGoalToOpen(t *testing.T) {
 	setLevelTile(level, 2, 1, wl6.Tile{Area: 0, Door: &wl6.Door{Vertical: true}})
 	setLevelTile(level, 3, 1, wl6.Tile{Area: 0})
 	g := testGameWithLevel(level)
-	g.playerX = 3.5
+	g.playerX = 4.5
 	g.playerY = 1.5
 	actor := actorInstance{
 		kind:       actorKindGuard,

@@ -104,5 +104,12 @@ var (
 		Face8APicChunk:     142,
 		DemoStartChunk:     151,
 	}
+	variantWL6Apogee = func() VariantSpec {
+		spec := variantWL1
+		spec.Name = "registered WL6 (Apogee graphics layout)"
+		spec.Ext = "WL6"
+		spec.EpisodeCount = 6
+		return spec
+	}()
 	supportedVariants = []VariantSpec{variantWL6, variantWL1}
 )

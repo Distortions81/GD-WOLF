@@ -22,6 +22,23 @@ func TestEmbeddedSharewareDemos(t *testing.T) {
 	}
 }
 
+func TestRegisteredApogeeGraphicsLayoutDetection(t *testing.T) {
+	f, err := OpenEmbeddedShareware()
+	if err != nil {
+		t.Fatal(err)
+	}
+	// The Apogee WL6 release stores its graphics in the same chunk layout as
+	// this embedded WL1 fixture, despite the registered filename extension.
+	f.Variant = variantWL6
+	f.selectRegisteredGraphicsLayout()
+	if f.Variant != variantWL6Apogee {
+		t.Fatalf("graphics layout = %q, want Apogee", f.Variant.Name)
+	}
+	if d, err := f.LoadDemo(0); err != nil || len(d.Commands) != 1152 {
+		t.Fatalf("fallback demo: commands=%v err=%v", d, err)
+	}
+}
+
 func TestParseDemoRejectsMalformedInput(t *testing.T) {
 	for _, data := range [][]byte{nil, {0, 7, 0, 0}, {0, 8, 0, 0, 0, 0, 0}, {0, 8, 0, 0, 0, 0, 0, 0}, {60, 7, 0, 0, 0, 0, 0}} {
 		if _, err := ParseDemo(data); err == nil {

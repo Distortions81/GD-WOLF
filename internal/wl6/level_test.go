@@ -41,3 +41,23 @@ func TestLevelSemantics(t *testing.T) {
 		t.Fatal("expected at least one door tile")
 	}
 }
+
+func TestDoorUsesOriginalMapAreaSide(t *testing.T) {
+	m := &MapData{Header: MapHeader{Width: 5, Height: 5}}
+	m.Planes[0] = make([]uint16, 25)
+	m.Planes[1] = make([]uint16, 25)
+	for i := range m.Planes[0] {
+		m.Planes[0][i] = areaTile
+	}
+	m.Planes[0][2*5+1] = areaTile + 3 // left of vertical door
+	m.Planes[0][2*5+2] = 90           // vertical door
+	m.Planes[0][3*5+3] = areaTile + 5 // above horizontal door
+	m.Planes[0][4*5+3] = 91           // horizontal door
+	level := m.Level()
+	if got := level.Tile(2, 2).Area; got != 3 {
+		t.Fatalf("vertical door area = %d, want left area 3", got)
+	}
+	if got := level.Tile(3, 4).Area; got != 5 {
+		t.Fatalf("horizontal door area = %d, want above area 5", got)
+	}
+}
