@@ -7088,26 +7088,41 @@ func (g *game) doorBlockedByPlayer(tileX, tileY int, door *wl6.Door) bool {
 		bottom > doorTop && top < doorBottom
 }
 
+func (g *game) doorActorOccupantAt(x, y int) *actorInstance {
+	if a := g.blockingActorAt(nil, x, y); a != nil {
+		return a
+	}
+	if g.demoPlayback != nil {
+		for i := range g.actors {
+			a := &g.actors[i]
+			if a.demoHasDeathGoal && a.demoDeathGoalX == x && a.demoDeathGoalY == y {
+				return a
+			}
+		}
+	}
+	return nil
+}
+
 func (g *game) doorBlockedByActors(tileX, tileY int, door *wl6.Door) bool {
 	if door == nil {
 		return false
 	}
-	if g.blockingActorAt(nil, tileX, tileY) != nil {
+	if g.doorActorOccupantAt(tileX, tileY) != nil {
 		return true
 	}
 	if door.Vertical {
-		if actor := g.blockingActorAt(nil, tileX-1, tileY); actor != nil && int(math.Floor(actor.x+playerRadius)) == tileX {
+		if actor := g.doorActorOccupantAt(tileX-1, tileY); actor != nil && int(math.Floor(actor.x+playerRadius)) == tileX {
 			return true
 		}
-		if actor := g.blockingActorAt(nil, tileX+1, tileY); actor != nil && int(math.Floor(actor.x-playerRadius)) == tileX {
+		if actor := g.doorActorOccupantAt(tileX+1, tileY); actor != nil && int(math.Floor(actor.x-playerRadius)) == tileX {
 			return true
 		}
 		return false
 	}
-	if actor := g.blockingActorAt(nil, tileX, tileY-1); actor != nil && int(math.Floor(actor.y+playerRadius)) == tileY {
+	if actor := g.doorActorOccupantAt(tileX, tileY-1); actor != nil && int(math.Floor(actor.y+playerRadius)) == tileY {
 		return true
 	}
-	if actor := g.blockingActorAt(nil, tileX, tileY+1); actor != nil && int(math.Floor(actor.y-playerRadius)) == tileY {
+	if actor := g.doorActorOccupantAt(tileX, tileY+1); actor != nil && int(math.Floor(actor.y-playerRadius)) == tileY {
 		return true
 	}
 	return false
@@ -7149,7 +7164,7 @@ func (g *game) updateDoors(tics int) {
 			if g.demoPlayback != nil {
 				// DoorClosing reopens on an occupied reservation or the
 				// player's center tile; CloseDoor checks the wider bounds.
-				blocked = g.blockingActorAt(nil, x, y) != nil || (int(g.playerX) == x && int(g.playerY) == y)
+				blocked = g.doorActorOccupantAt(x, y) != nil || (int(g.playerX) == x && int(g.playerY) == y)
 			}
 			if blocked {
 				g.doorState[i] = 1

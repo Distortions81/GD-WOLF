@@ -3855,6 +3855,20 @@ func TestDamageSSActorDeathDropsMachineGun(t *testing.T) {
 	}
 }
 
+func TestDamageSSActorChoosesDropAtDeath(t *testing.T) {
+	g := &game{rng: testRNG(1), bestWeapon: 2}
+	a := actorInstance{
+		kind: actorKindSS, x: 2.5, y: 3.5, alive: true,
+		blocking: true, shootable: true, alerted: true, health: 4,
+		// This was selected before the player acquired a machine gun.
+		dropPickup: pickupMachineGun, deathSeq: seqActorSSDeath,
+	}
+	g.damageActor(&a, 4)
+	if len(g.staticSprites) != 1 || g.staticSprites[0].pickup != pickupClip2 {
+		t.Fatalf("SS drop after weapon upgrade = %+v, want one small clip", g.staticSprites)
+	}
+}
+
 func TestDamageBossActorDeathDropsGoldKey(t *testing.T) {
 	g := &game{rng: testRNG(1)}
 	actor := actorInstance{

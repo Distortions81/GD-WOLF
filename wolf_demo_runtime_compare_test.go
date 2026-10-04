@@ -8,6 +8,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"strconv"
 	"testing"
 
 	"gd-wolf/internal/wl6"
@@ -108,7 +109,14 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	demo, err := files.LoadDemo(0)
+	demoIndex := 0
+	if raw := os.Getenv("GDWOLF_DEMO_INDEX"); raw != "" {
+		demoIndex, err = strconv.Atoi(raw)
+		if err != nil || demoIndex < 0 || demoIndex > 3 {
+			t.Fatalf("invalid demo index %q: expected 0-3", raw)
+		}
+	}
+	demo, err := files.LoadDemo(demoIndex)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -151,7 +159,7 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 	matched, status := 0, "mismatch"
 	terminal := ""
 	defer func() {
-		if err := result.Encode(map[string]any{"demo_commands": len(demo.Commands), "matched_commands": matched, "matched_tics": matched * wl6.DemoTics, "remaining_commands": len(demo.Commands) - matched, "status": status, "terminal": terminal}); err != nil {
+		if err := result.Encode(map[string]any{"demo_index": demoIndex, "map": demo.Map, "demo_commands": len(demo.Commands), "matched_commands": matched, "matched_tics": matched * wl6.DemoTics, "remaining_commands": len(demo.Commands) - matched, "status": status, "terminal": terminal}); err != nil {
 			t.Error(err)
 		}
 	}()
@@ -388,5 +396,5 @@ func TestWolfDemoRuntimeCompare(t *testing.T) {
 		}
 	}
 	status = "success"
-	t.Log("matched every first-demo runtime update with original C, sharing visible-floor masks")
+	t.Logf("matched every demo %d runtime update with original C, sharing visible-floor masks", demoIndex)
 }

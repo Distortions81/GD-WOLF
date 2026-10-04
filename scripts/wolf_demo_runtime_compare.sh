@@ -4,17 +4,19 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SOURCE_DIR="$ROOT_DIR/build/wolfsrc-source"
 OUT_DIR="$ROOT_DIR/build/wolf-demo-runtime-compare"
+DEMO_INDEX=0
 usage() {
   cat <<'EOF'
-Compare first-demo movement, weapons, actors, RNG, doors, pushwalls and pickups
+Compare recorded-demo movement, weapons, actors, RNG, doors, pushwalls and pickups
 with compiled original C, then audit floor visibility with original x86 in QEMU.
 Matching original death is a supported endpoint. Mismatches and unsupported
 port terminal states exit nonzero.
 
-Usage: scripts/wolf_demo_runtime_compare.sh [--source <dir>] [--out <dir>]
+Usage: scripts/wolf_demo_runtime_compare.sh [--source <dir>] [--out <dir>] [--demo-index <0-3>]
   --source <dir>  Existing pinned id-Software/wolf3d checkout
   --out <dir>     Compiler and comparison logs
                  (default: build/wolf-demo-runtime-compare)
+  --demo-index <0-3>  Built-in shareware demo (default: 0, E1F1)
   -h, --help     Show this help
 
 Requirements: Go, Python 3, C99 compiler, GNU as/ld, qemu-system-i386,
@@ -24,14 +26,19 @@ EOF
 }
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --source|--out)
+    --source|--out|--demo-index)
       [[ $# -ge 2 && -n "$2" ]] || { echo "Missing value for $1" >&2; exit 2; }
-      if [[ "$1" == --source ]]; then SOURCE_DIR="$2"; else OUT_DIR="$2"; fi
+      case "$1" in
+        --source) SOURCE_DIR="$2" ;;
+        --out) OUT_DIR="$2" ;;
+        --demo-index) DEMO_INDEX="$2" ;;
+      esac
       shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown option: $1" >&2; usage >&2; exit 2 ;;
   esac
 done
+[[ "$DEMO_INDEX" =~ ^[0-3]$ ]] || { echo "Invalid demo index: expected 0-3" >&2; exit 2; }
 SOURCE_DIR="$(python3 -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).resolve())' "$SOURCE_DIR")"
 OUT_DIR="$(python3 -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).resolve())' "$OUT_DIR")"
 if [[ ! -d "$SOURCE_DIR" ]]; then
@@ -46,6 +53,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 tools/wolfsrc-reference/build_demo_runtime.py 
   --output "$OUT_DIR/wolf-demo-runtime-reference" --cc "${CC:-cc}" 2>&1 | tee "$OUT_DIR/build.log"
 export GDWOLF_DEMO_RUNTIME_REFERENCE="$OUT_DIR/wolf-demo-runtime-reference"
 export GDWOLF_DEMO_RUNTIME_OUT="$OUT_DIR"
+export GDWOLF_DEMO_INDEX="$DEMO_INDEX"
 export GDWOLF_DEMO_RAYCAST_OUT="$OUT_DIR/raycast-input.jsonl"
 export GOMAXPROCS=1
 export GOMEMLIMIT="${GDWOLF_GO_MEM_LIMIT:-12GiB}"

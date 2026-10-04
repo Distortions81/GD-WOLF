@@ -88,6 +88,10 @@ type actorInstance struct {
 	frameTimer           int
 	frameActionDone      bool
 	spawnAnimationFrozen bool
+	demoActive           bool
+	demoDeathGoalX       int
+	demoDeathGoalY       int
+	demoHasDeathGoal     bool
 	moveDistance         float64
 }
 
@@ -303,6 +307,7 @@ func (g *game) buildActors() []actorInstance {
 				jumpSeq:     def.JumpSequence,
 				deathSeq:    def.DeathSequence,
 				spawnMode:   def.SpawnMode,
+				demoActive:  def.SpawnMode == actorSpawnPatrol,
 			}
 			switch def.SpawnMode {
 			case actorSpawnPatrol:
@@ -1634,10 +1639,26 @@ func (g *game) damageActor(a *actorInstance, damage int) bool {
 		a.shootable = false
 		a.rotate = false
 		a.aiState = actorStateDead
+		if a.kind == actorKindSS {
+			// KillActor chooses the SS drop when it dies, using the
+			// player's current best weapon rather than its spawn-time one.
+			if g.bestWeapon < 2 {
+				a.dropPickup = pickupMachineGun
+			} else {
+				a.dropPickup = pickupClip2
+			}
+		}
 		if g.demoPlayback == nil {
 			g.playWorldSound(g.enemyDeathSound(a), a.x, a.y)
 		} else {
 			// KillActor reserves the physical death tile, not the former goal.
+			deathX, deathY := int(a.x), int(a.y)
+			if a.tileX != deathX || a.tileY != deathY {
+				// KillActor clears actorat at the physical tile. Its old
+				// reserved goal can retain a nonshootable actor pointer.
+				a.demoDeathGoalX, a.demoDeathGoalY = a.tileX, a.tileY
+				a.demoHasDeathGoal = true
+			}
 			a.tileX, a.tileY = int(a.x), int(a.y)
 			a.clearTileGoal()
 		}

@@ -83,7 +83,8 @@ The [demo comparison](docs/wolf-demo-compare.md) now replays recorded
 inputs through the actual port and records actor, door, RNG and combat state.
 The player C reference compares conditional movement. A separate C startup
 reference verifies actor initialization on all four demo maps and conditional
-face RNG updates. Subsequent enemy/combat parity remains unverified.
+face RNG updates. The independent runtime reference now matches all four
+built-in demo playbacks through their original death endpoints.
 
 ### 1. Guard
 
@@ -376,7 +377,7 @@ For an enemy to move from `[partial]` or `[next]` to `[done]`, it should have:
 
 Current note:
 - the shared enemy AI shell has Go regressions based on source behavior for notice, chase, attack entry, door waiting, area-connectivity, and death/drop behavior
-- independent compiled C coverage verifies isolated movement decisions, actor initialization on all four built-in demo maps, and all 1,055 played commands of the first demo through its matching original death; original x86 floor visibility and shipped-DOS health/ammo also match. Other demos and the complete enemy roster remain unverified
+- independent compiled C coverage verifies isolated movement decisions, actor initialization on all four built-in demo maps, and the played commands of all four demos through their matching original deaths; original x86 floor visibility matches all four, while shipped-DOS health/ammo has been checked for the first demo only. The complete enemy roster remains unverified
 
 This section is intentionally strict:
 - "looks close in playtesting" is not enough

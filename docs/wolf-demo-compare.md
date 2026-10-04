@@ -185,11 +185,14 @@ chaingun pickup's suppression and resets the face counter on that pickup.
 Original sound priority and timing are not independently reproduced, and
 headless comparisons do not simulate audio playback.
 
-## Actor timing and first-demo runtime
+## Actor timing and recorded-demo runtime
 
 ```bash
 ./scripts/wolf_actor_states_compare.sh
 ./scripts/wolf_demo_runtime_compare.sh
+./scripts/wolf_demo_runtime_compare.sh --demo-index 1 --out /tmp/wolf-demo-e1f3
+./scripts/wolf_demo_runtime_compare.sh --demo-index 2 --out /tmp/wolf-demo-e1f5
+./scripts/wolf_demo_runtime_compare.sh --demo-index 3 --out /tmp/wolf-demo-e1f7
 ```
 
 Both scripts accept `--source` and `--out`, verify original source hashes and
@@ -226,13 +229,21 @@ plus original render tables. Audio-priority simulation is still omitted. The
 projection self-test matches original render tables and 2,160 actor/pickup
 projection cases spanning every integer angle.
 
-All 37 actors, weapons, player movement, door/wall occupancy, outgoing RNG,
-enemy damage, cached projections and post-pickup health/ammo currently match
-through command 1,054, including the original death flag. The script succeeds
-at that matching terminal state. A terminal state that differs from the original
-fails. This verifies the first demo's actual playback to its endpoint, rather
-than requiring the port to consume commands the original never plays. It does
-not establish parity of other demos, unsupported enemy families, audio or scoring.
+The runtime comparison now matches all four embedded shareware demos through
+their original death endpoints. E1F1 plays 1,055 commands and leaves 97 recorded
+commands unread; E1F3, E1F5 and E1F7 play all 1,284, 671 and 633 commands.
+The script succeeds at a matching terminal state and fails if the terminal
+state differs. The original x86 floor-visibility audit also matches every
+played command in each demo. Unsupported enemy families, audio and scoring
+remain outside this comparison.
+
+The additional maps exposed three runtime differences. Original `DoActor`
+suspends any inactive actor in a disconnected area, while `DrawScaleds`
+permanently activates actors when their tile becomes visible. A dead actor can
+leave a nonshootable pointer at its former reserved goal tile; `CloseDoor`
+still treats that pointer as occupied. Finally, an SS chooses its dropped item
+at death, using the player's current best weapon, rather than choosing it at
+spawn. The port now follows these behaviors during recorded playback.
 
 Default runtime artifacts in `build/wolf-demo-runtime-compare`:
 

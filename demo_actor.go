@@ -87,9 +87,9 @@ func (g *game) updateDemoActors(tics int) {
 		if !a.alive && a.aiState != actorStateDead {
 			continue
 		}
-		// DoActor suspends inactive standing actors in disconnected areas.
-		// Patrol actors spawn active and continue updating outside the room.
-		if a.aiState == actorStateStand && !g.isAreaConnectedToPlayer(a.area) {
+		// DoActor suspends any inactive actor in a disconnected area.
+		// DrawScaleds permanently activates actors once their tile is visible.
+		if !a.demoActive && !g.isAreaConnectedToPlayer(a.area) {
 			continue
 		}
 		prevX, prevY := a.x, a.y

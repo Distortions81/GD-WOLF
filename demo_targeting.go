@@ -28,13 +28,15 @@ func (g *game) refreshDemoActorProjections() {
 	viewY := py + wolfDemoFixedByFrac(0x5700, sin)
 	visible := g.demoVisibleTiles(viewX, viewY)
 	d.visibleTiles = visible
-	for i, a := range g.actors {
+	for i := range g.actors {
+		a := &g.actors[i]
 		p := &d.projections[i]
-		if !g.demoActorTileVisible(&a, visible) {
+		if !g.demoActorTileVisible(a, visible) {
 			p.visible = false
 			continue
 		}
-		if transformDemoActor(&a, p, viewX, viewY, cos, sin) {
+		a.demoActive = true
+		if transformDemoActor(a, p, viewX, viewY, cos, sin) {
 			p.visible = true
 		}
 	}
