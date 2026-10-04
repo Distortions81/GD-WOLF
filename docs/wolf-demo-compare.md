@@ -187,6 +187,22 @@ headless comparisons do not simulate audio playback.
 
 ## Actor timing and recorded-demo runtime
 
+For independent multi-tick enemy encounters, run:
+
+```bash
+./scripts/wolf_enemy_runtime_compare.sh --data /path/to/registered-data --out /tmp/wolf-enemy-runtime
+```
+
+This compiles the pinned original C and compares the first available guard,
+dog, SS, Hans, mutant and officer across registered maps. Each scenario runs
+up to 80 actor updates with scripted nearby player positions, noise and varied
+tic counts. The comparison checks every actor's state, RNG, doors and player
+damage at each step; it stops at player death. Per-encounter JSONL files in
+`--out` retain inputs and both states for replay. These scenarios found that
+Hans and mutants were spawned with the wrong HP for the selected difficulty;
+the values now follow original `starthitpoints`. The probe forces one target
+active and does not simulate rendering-based activation or player weapons.
+
 ```bash
 ./scripts/wolf_actor_states_compare.sh
 ./scripts/wolf_demo_runtime_compare.sh

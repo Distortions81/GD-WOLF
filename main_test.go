@@ -710,9 +710,9 @@ func TestLookupActorSpawnBossDifficultySelection(t *testing.T) {
 		difficulty gameDifficulty
 		hp         int
 	}{
-		{difficulty: difficultyEasy, hp: 850},
-		{difficulty: difficultyMedium, hp: 950},
-		{difficulty: difficultyHard, hp: 1050},
+		{difficulty: difficultyEasy, hp: 950},
+		{difficulty: difficultyMedium, hp: 1050},
+		{difficulty: difficultyHard, hp: 1200},
 	}
 	for _, tt := range tests {
 		def, ok := LookupActorSpawn(214, tt.difficulty)
@@ -733,14 +733,16 @@ func TestLookupActorSpawnMutantDifficultySelection(t *testing.T) {
 		hp         int
 		ok         bool
 	}{
-		{info: 216, difficulty: difficultyEasy, mode: actorSpawnStand, hp: 45, ok: true},
-		{info: 220, difficulty: difficultyEasy, mode: actorSpawnPatrol, hp: 45, ok: true},
+		{info: 216, difficulty: difficultyEasy, mode: actorSpawnStand, hp: 55, ok: true},
+		{info: 220, difficulty: difficultyEasy, mode: actorSpawnPatrol, hp: 55, ok: true},
 		{info: 234, difficulty: difficultyEasy, ok: false},
 		{info: 234, difficulty: difficultyMedium, mode: actorSpawnStand, hp: 55, ok: true},
 		{info: 238, difficulty: difficultyMedium, mode: actorSpawnPatrol, hp: 55, ok: true},
 		{info: 252, difficulty: difficultyMedium, ok: false},
-		{info: 252, difficulty: difficultyHard, mode: actorSpawnStand, hp: 55, ok: true},
-		{info: 256, difficulty: difficultyHard, mode: actorSpawnPatrol, hp: 55, ok: true},
+		{info: 252, difficulty: difficultyHard, mode: actorSpawnStand, hp: 65, ok: true},
+		{info: 256, difficulty: difficultyHard, mode: actorSpawnPatrol, hp: 65, ok: true},
+		{info: 216, difficulty: difficultyHard, mode: actorSpawnStand, hp: 65, ok: true},
+		{info: 220, difficulty: difficultyHard, mode: actorSpawnPatrol, hp: 65, ok: true},
 	}
 	for _, tt := range tests {
 		def, ok := LookupActorSpawn(tt.info, tt.difficulty)
@@ -903,9 +905,9 @@ func TestBuildActorsIncludesBoss(t *testing.T) {
 		difficulty gameDifficulty
 		hp         int
 	}{
-		{difficulty: difficultyEasy, hp: 850},
-		{difficulty: difficultyMedium, hp: 950},
-		{difficulty: difficultyHard, hp: 1050},
+		{difficulty: difficultyEasy, hp: 950},
+		{difficulty: difficultyMedium, hp: 1050},
+		{difficulty: difficultyHard, hp: 1200},
 	}
 	for _, tt := range tests {
 		g := testGameWithLevel(level)

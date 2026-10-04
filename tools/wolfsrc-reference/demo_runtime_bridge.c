@@ -254,7 +254,8 @@ int main(int argc, char **argv) {
         }
         return ferror(stdin) || ferror(stdout) ? 2 : 0;
     }
-    if (argc != 1) return 2;
+    int enemy_probe = argc == 2 && !strcmp(argv[1], "--enemy-probe");
+    if (argc != 1 && !enemy_probe) return 2;
     if (scanf("%d %d %d", &mapwidth, &mapheight, &gamestate.difficulty) != 3 || mapwidth != 64 || mapheight != 64 || gamestate.difficulty != 3) return 2;
     for (int p = 0; p < 2; p++) for (int i = 0; i < 4096; i++) {
         unsigned value;
@@ -283,6 +284,31 @@ int main(int argc, char **argv) {
     }
     gamestate.weapon = gamestate.bestweapon = gamestate.chosenweapon = 1;
     print_state();
+    if (enemy_probe) {
+        int target, ordinal = 0, found = 0;
+        if (scanf("%d", &target) != 1 || target < 0) return 2;
+        for (int i = 0; i < object_count; i++) if (kind(&objects[i]) >= 0) {
+            if (ordinal++ == target) { objects[i].active = true; found = 1; break; }
+        }
+        if (!found) return 2;
+        long probe_x, probe_y;
+        int probe_noise, probe_tics;
+        while (scanf("%ld %ld %d %d", &probe_x, &probe_y, &probe_noise, &probe_tics) == 4) {
+            if (probe_x < 65536 || probe_x >= 63L*65536 || probe_y < 65536 || probe_y >= 63L*65536 ||
+                (probe_noise != 0 && probe_noise != 1) || probe_tics < 1 || probe_tics > 70) return 2;
+            tics = probe_tics;
+            MoveDoors();
+            player->x = probe_x; player->y = probe_y;
+            player->tilex = probe_x >> 16; player->tiley = probe_y >> 16;
+            player->areanumber = planes[0][player->tiley*64+player->tilex]-AREATILE;
+            plux = player->x >> 8; pluy = player->y >> 8;
+            ConnectAreas();
+            madenoise = probe_noise; player_damage = 0;
+            for (int i = 0; i < object_count; i++) if (kind(&objects[i]) >= 0) DoActor(&objects[i]);
+            print_state();
+        }
+        return ferror(stdin) || ferror(stdout) ? 2 : 0;
+    }
     int header, fast, shots, use_door, buttons, push_x, push_y, push_dir, raw_x, raw_y, entry_rng, input_best, input_weapon, input_ammo, input_chosen;
     long px, py;
     while ((header = scanf("%ld %ld %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", &px, &py, &entry_rng, &madenoise, &fast, &input_best, &input_weapon, &shots, &use_door, &buttons, &input_ammo, &input_chosen, &push_x, &push_y, &push_dir, &raw_x, &raw_y)) != EOF) {
