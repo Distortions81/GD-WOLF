@@ -48,7 +48,7 @@ func TestWolfEnemyRuntimeCompare(t *testing.T) {
 	}
 	seen := map[ActorKind]bool{}
 	count := 0
-	for mapIndex := 0; mapIndex < files.Variant.EpisodeCount*10 && len(seen) < 6; mapIndex++ {
+	for mapIndex := 0; mapIndex < files.Variant.EpisodeCount*10 && len(seen) < 13; mapIndex++ {
 		data, err := files.LoadMap(mapIndex)
 		if err != nil {
 			continue
@@ -62,7 +62,7 @@ func TestWolfEnemyRuntimeCompare(t *testing.T) {
 		}
 		for i := range g.actors {
 			a := &g.actors[i]
-			if seen[a.kind] || !a.alive || !a.shootable {
+			if seen[a.kind] || !a.alive || !isEnemyActorKind(a.kind) {
 				continue
 			}
 			positions := fuzzNearbyPlayerPositions(g, a)
@@ -79,8 +79,13 @@ func TestWolfEnemyRuntimeCompare(t *testing.T) {
 	if count == 0 {
 		t.Fatal("no supported encounters found")
 	}
-	if files.Variant.EpisodeCount > 1 && count != 6 {
-		t.Fatalf("registered data covered %d enemy kinds, want 6", count)
+	if files.Variant.EpisodeCount > 1 && count != 13 {
+		t.Fatalf("registered data covered %d map-spawned enemy kinds, want 13", count)
+	}
+	if seen[actorKindGretel] {
+		t.Run("gretel_open_room", func(t *testing.T) {
+			runGretelOpenRoomRuntime(t, path, out)
+		})
 	}
 	t.Logf("compared %d enemy kinds", count)
 }
@@ -181,6 +186,8 @@ func runEnemyRuntimeEncounter(t *testing.T, path, out string, data *wl6.MapData,
 
 func compareEnemyRuntimeStep(t *testing.T, step, beforeHealth int, want, got wolfDemoRuntimeState) {
 	t.Helper()
+	compareDemoActorGrid(t, step, want.ActorAt, got.ActorAt)
+	compareDemoAreaPlane(t, step, want.AreaPlane, got.AreaPlane)
 	// Original TakeDamage records the full hit; the port's health stops at zero.
 	if want.RNGIndex != got.RNGIndex || minInt(want.Damage, beforeHealth) != got.Damage {
 		t.Fatalf("step %d RNG/damage: original=%d/%d port=%d/%d", step, want.RNGIndex, want.Damage, got.RNGIndex, got.Damage)

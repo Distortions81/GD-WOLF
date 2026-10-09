@@ -100,17 +100,19 @@ func TestDemoCollisionUsesOriginalDoorsAndStaticTiles(t *testing.T) {
 	if g.demoPlayerPositionClear(3.7, 3.5) {
 		t.Fatal("demo crossed closed door tile")
 	}
-	g.doorState[3*7+4] = 2
-	g.doorOpen[3*7+4] = 1
+	g.doorState[3*7+4] = 1
+	g.updateDoors(64)
 	if !g.demoPlayerPositionClear(3.7, 3.5) {
 		t.Fatal("open door blocked demo movement")
 	}
 	g.staticSprites = []staticSprite{{x: 4.5, y: 3.5, alive: true, blocking: true}}
+	g.initializeDemoActorPool()
 	if g.demoPlayerPositionClear(3.7, 3.5) {
 		t.Fatal("blocking static tile did not block demo player")
 	}
 	g.staticSprites = nil
 	g.actors = []actorInstance{{x: 4.5, y: 3.5, tileX: 4, tileY: 3, alive: true, blocking: true, shootable: true}}
+	g.initializeDemoActorPool()
 	if g.demoPlayerPositionClear(3.5, 3.5) {
 		t.Fatal("original inclusive actor distance did not block player")
 	}
@@ -131,6 +133,15 @@ func TestDemoConsumesFourTicsPerCommand(t *testing.T) {
 	g.updateDemoPlayback(0)
 	if g.playerX != x {
 		t.Fatal("demo advanced without tics")
+	}
+}
+
+func TestDemoFinalCommandStillMovesAndCompletes(t *testing.T) {
+	g := demoMovementTestGame()
+	g.demoPlayback.demo = &wl6.Demo{Commands: []wl6.DemoCommand{{ControlY: -10}}}
+	g.updateDemoPlayback(wl6.DemoTics)
+	if g.demoPlayback.command != 1 || g.demoPlayback.levelExit != 1 || g.playerX <= 3.5 || g.demoPlayback.timeCount != wl6.DemoTics {
+		t.Fatalf("final command was skipped or failed to complete: command=%d exit=%d x=%f time=%d", g.demoPlayback.command, g.demoPlayback.levelExit, g.playerX, g.demoPlayback.timeCount)
 	}
 }
 
@@ -250,7 +261,7 @@ func TestDemoUseDoesNotSkipDoorOpening(t *testing.T) {
 	if g.doorState[7] != 1 || g.doorOpen[7] != 0.25 {
 		t.Fatal("using an opening door skipped its remaining motion")
 	}
-	g.doorState[7], g.doorOpen[7] = 2, 1
+	g.updateDoors(64)
 	g.useDoorAhead()
 	if g.doorState[7] != 3 {
 		t.Fatal("using an unoccupied open door did not start closing it")

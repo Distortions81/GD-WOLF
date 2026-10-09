@@ -1,6 +1,8 @@
 # Enemy Parity Checklist
 
-This document tracks enemy parity work against `WOLFSRC`, with the current focus narrowed to the Wolf3D shareware release and especially Episode 1.
+This document tracks enemy parity work against `WOLFSRC`, including all six
+Wolf3D episodes. Implemented support and bounded comparison coverage do not
+establish complete gameplay parity.
 
 Source references:
 - Spawn roster and map object IDs: `WOLFSRC/WL_GAME.C`
@@ -8,6 +10,7 @@ Source references:
 - Core actor logic for regular enemies and bosses: `WOLFSRC/WL_ACT2.C`
 - Current port actor implementation: `actor_ai.go`
 - Current port actor definitions and sequences: `sprite_catalog.go`
+- Registered bosses and projectiles: `registered_actor.go`, `registered_actor_catalog.go`, `actor_projectile.go`
 
 ## Scope
 
@@ -24,7 +27,6 @@ Parity standard for this document:
 
 Out of scope for this pass:
 - Spear of Destiny-only enemies
-- Later-episode Wolf3D bosses until Episode 1 coverage is in better shape
 
 ## Progress Legend
 
@@ -51,16 +53,21 @@ Implemented in gameplay:
 - `[partial]` SS — tested movement decisions match; complete runtime parity unverified
 - `[partial]` Hans Grosse — tested movement decisions match; complete runtime parity unverified
 - `[partial]` Mutant
+- `[partial]` Gretel Grosse — registered encounter and synthetic chase match original C; complete runtime parity unverified
 - `[done]` Dead guard corpse content
 
-Missing from gameplay:
-- `[later]` Gretel Grosse
-- `[later]` Dr. Schabbs
-- `[later]` Giftmacher
-- `[later]` Fatface
-- `[later]` Fake Hitler
-- `[later]` Mecha-Hitler / Hitler
-- `[later]` Ghosts: Blinky, Clyde, Pinky, Inky
+Registered gameplay support:
+- `[partial]` Dr. Schabbs, Giftmacher and Fatface — chase, projectile attacks, death and death cameras
+- `[partial]` Fake Hitler — dodge movement, flame attacks and death
+- `[partial]` Mecha-Hitler / Hitler — two-stage transformation and death camera
+- `[partial]` Ghosts: Blinky, Clyde, Pinky, Inky — original movement and contact damage
+
+All spawnable families have original-C encounter coverage. Fourteen additional
+registered scenarios exercise movement, damage, projectiles, transformation
+and death in all three sound modes. The demo runtime also checks original actor
+pool slots and tile occupancy when `GDWOLF_DEMO_OCCUPANCY=1` is set. Broader
+generated routes remain necessary to find interactions absent from those
+encounters; see [the runtime coverage](docs/wolf-demo-compare.md).
 
 ## Shareware Episode 1 Track
 
@@ -239,65 +246,71 @@ Nothing here is removed from parity planning. It is only deferred.
 - `[done]` handled in the shareware pass
 
 #### Ghosts
-- `[later]` require special movement/collision assumptions
-- not useful to start with while humanoid roster is still incomplete
+- `[partial]` all four ghosts use original chase states, movement and contact damage
+- Original-C synthetic encounters cover each ghost; original map spawns with an
+  out-of-range area byte require separate DOS memory validation
 
 ### Later Wolf3D Bosses
 
-These stay visible here so we do not lose sequencing after the Episode 1-first pass.
+Each family is implemented and has bounded original-C runtime checks.
 
 #### Gretel Grosse
-- `[later]` same broad family as Hans, but not Episode 1-first work
+- `[partial]` active gameplay support for map object `197`, north-facing ambush spawn, difficulty HP, non-rotating stand/chase/shoot/death sequences, and six-shot bursts
+- `[partial]` attack accuracy and firing sound follow the ordinary guard branch of `T_Shoot`; Gretel does not receive Hans's accuracy adjustment. Alert/death sounds use `KEINSND` / `MEINSND`; death drops the gold key and awards 5,000 points
+- [Source-derived Go regressions](gretel_test.go) cover spawn HP (950/1,050/1,200), burst exit-action timing, accuracy, no-pain damage response, death timing, sounds, key drop and score. Death/drop behavior has not yet been checked through an independent C kill encounter
+- [Original-C enemy comparisons](wolf_enemy_runtime_compare_test.go) cover thirteen spawnable families with registered data. Gretel's E5M9 encounter matches for 19 commands through player death; a separate [synthetic open room](gretel_runtime_test.go) matches for 95 commands and requires both chase movement and damage. These two Gretel probes use hard difficulty and sound off, comparing actor state, RNG, damage and doors; they do not establish complete interactive, rendering or audible sound parity
 
 #### Dr. Schabbs
-- `[later]` depends on projectile support
+- `[partial]` needle attacks, chase/run selection, death timing and death camera
 
 #### Giftmacher
-- `[later]` depends on projectile support
+- `[partial]` rocket attacks, chase/run selection, death timing and death camera
 
 #### Fatface
-- `[later]` later boss pass
+- `[partial]` rocket plus gun attack sequence, chase and death camera
 
 #### Fake Hitler
-- `[later]` requires special attack/transform handling
+- `[partial]` dodge movement, flame sequence and original alert/death sounds
 
 #### Hitler / Mecha-Hitler
-- `[later]` requires two-stage boss handling and strong death/event parity
+- `[partial]` Mecha gun bursts and footsteps, Hitler spawn on death, subsequent
+  Hitler attacks and death camera; dynamic actor order is checked against C
 
 ## Cross-Cutting Engine Gaps
 
-These are the codebase constraints that currently block moving from guard/dog to the rest of the roster.
+These checks span the complete Wolf3D roster.
 
 ### 1. Actor instantiation and dispatch
 
-Current gap:
-- active gameplay now covers guard, officer, SS, dog, and Hans
-- later roster entries still stop at definition-only coverage
+Current coverage:
+- all Wolf3D families are instantiated and dispatched
+- recorded playback uses original slot allocation, reuse and occupancy tags
 
-Needed:
-- broaden spawn/update support again when mutant and later bosses move into scope
+Remaining verification:
+- unusual interactions between dynamic spawns, stale reservations and doors
 
 Episode 1 value:
 - this blocker is cleared for the full shareware Episode 1 roster
 
 ### 2. Per-enemy sequences
 
-Current gap:
-- shareware humanoids now have sequence coverage, but later enemies still do not
+Current coverage:
+- registered bosses, ghosts, projectiles and effects have original state sequences
+- comparisons check shape, remaining timer, actions and frozen zero-tic spawns
 
-Needed:
-- complete stand, patrol, chase, pain, shoot, and death coverage for later roster entries when they come into scope
+Remaining verification:
+- encounters and timings not reached by the current runtime corpus
 
 Episode 1 value:
 - this blocker is cleared for the shareware Episode 1 roster
 
 ### 3. Per-enemy combat logic
 
-Current gap:
-- shareware ranged combat now has distinct officer, SS, and Hans coverage
+Current coverage:
+- gun, knife, contact, needle, rocket and flame damage paths have source-backed checks
 
-Needed:
-- extend the same combat treatment to later roster entries when they come into scope
+Remaining verification:
+- broaden recorded routes and collision boundary cases across registered maps
 
 Episode 1 value:
 - this is the main differentiator after spawn support
@@ -323,7 +336,7 @@ Latest shareware audit adjustments:
 - one-tile point-blank shot entry now uses remaining tile distance in the same broad shape as `T_Chase`
 - ranged hit chance now includes the `T_Shoot` visible-vs-not-visible split instead of treating all line-of-sight shots the same
 - guard, officer, and SS pain now choose exactly one source-style 10-tic pain frame based on post-hit HP parity instead of playing both pain frames back-to-back
-- guard death now uses the broader `A_DeathScream` scream pool instead of a single fixed sound, and the Episode 1 boss-map special scream override now applies to guard/officer/SS/dog deaths
+- demo guard deaths now select the original two-sound shareware pool or eight-sound registered pool. The special map-9 scream override is registered-only; mutant deaths use `AHHHGSND`
 - the shareware exit tile now starts a BJ run/jump victory sequence instead of ending the level abruptly with no source-style presentation
 
 ## Repeatable Enemy Pass
@@ -350,19 +363,21 @@ The goal is repeatable parity work:
 
 ### 4. Sound coverage
 
-Current gap:
-- only a subset of enemy-specific sounds exist in the current port
+Current coverage:
+- all Wolf3D enemy families have source sound IDs and deterministic channel timing
+- registered encounter probes pass with effects off, synthesized effects and mixed digitized routing
 
-Needed:
-- later bosses and non-shareware enemies still need their own sound hooks
+Remaining verification:
+- physical DOS interrupt timing, audible output and mixing
 
 ### 5. Boss death and progression hooks
 
-Current gap:
-- current actor pipeline does not yet model boss-specific progression outcomes
+Current coverage:
+- recorded playback includes original key drops, Mecha transformation, boss
+  death cameras and BJ victory; player/actor state and terminal results are compared
 
-Needed:
-- later bosses that require special progression hooks should integrate with level-complete or scripted outcomes when their turn comes
+Remaining verification:
+- display fades, acknowledgement waits, audio presentation and interactive progression
 
 ## Practical Milestone Definition
 

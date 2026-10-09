@@ -23,6 +23,18 @@ const (
 	actorKindDog
 	actorKindBoss
 	actorKindMutant
+	actorKindGretel
+	actorKindSchabbs
+	actorKindGift
+	actorKindFat
+	actorKindFake
+	actorKindMecha
+	actorKindHitler
+	actorKindGhost
+	actorKindNeedle
+	actorKindRocket
+	actorKindFire
+	actorKindSmoke
 )
 
 type ActorSpawnMode int
@@ -42,6 +54,8 @@ const (
 	actorStateJump
 	actorStatePain
 	actorStateDead
+	actorStateProjectile
+	actorStateEffect
 )
 
 type actorInstance struct {
@@ -89,10 +103,13 @@ type actorInstance struct {
 	frameActionDone      bool
 	spawnAnimationFrozen bool
 	demoActive           bool
-	demoDeathGoalX       int
-	demoDeathGoalY       int
-	demoHasDeathGoal     bool
 	moveDistance         float64
+	angle                int
+	projectileSpeed      int
+	removed              bool
+	actionTics           int
+	markFlags            int
+	poolSlot             int
 }
 
 const actorDoorWaitDistance = -1.0
@@ -243,7 +260,8 @@ func wolfSpeedToUnits(speed int) float64 {
 
 func isActiveGameplayActorKind(kind ActorKind) bool {
 	switch kind {
-	case actorKindGuard, actorKindOfficer, actorKindSS, actorKindDog, actorKindBoss, actorKindMutant:
+	case actorKindGuard, actorKindOfficer, actorKindSS, actorKindDog, actorKindBoss, actorKindMutant, actorKindGretel,
+		actorKindSchabbs, actorKindGift, actorKindFat, actorKindFake, actorKindMecha, actorKindHitler, actorKindGhost:
 		return true
 	default:
 		return false
@@ -251,7 +269,7 @@ func isActiveGameplayActorKind(kind ActorKind) bool {
 }
 
 func actorUsesDirectionalRotation(kind ActorKind) bool {
-	return kind != actorKindBoss
+	return kind <= actorKindMutant && kind != actorKindBoss
 }
 
 func (g *game) buildActors() []actorInstance {
@@ -274,6 +292,10 @@ func (g *game) buildActors() []actorInstance {
 			if def.Kind == actorKindBoss {
 				// WOLFSRC SpawnBoss always starts Hans facing south and in ambush.
 				dir = 6
+				ambush = true
+			} else if def.Kind == actorKindGretel {
+				// SpawnGretel uses the same ambush flag, but faces north.
+				dir = 2
 				ambush = true
 			}
 
@@ -318,6 +340,12 @@ func (g *game) buildActors() []actorInstance {
 				actor.aiState = actorStateStand
 				g.startActorSequence(&actor, actor.standSequence(), true)
 			}
+			g.initializeRegisteredActor(&actor)
+			if g.level.Tile(x, y).Ambush && (def.Kind == actorKindBoss || def.Kind >= actorKindGretel) {
+				// Only SpawnStand resolves AMBUSHTILE to a neighboring area.
+				// Boss and ghost spawns retain the byte-wrapped 106-107 value.
+				actor.area = 255
+			}
 			actors = append(actors, actor)
 		}
 	}
@@ -327,9 +355,17 @@ func (g *game) buildActors() []actorInstance {
 
 func (g *game) updateActors(tics int) {
 	g.rebuildPlayerAreas()
-	for i := range g.actors {
+	for i := 0; i < len(g.actors); i++ {
 		a := &g.actors[i]
-		if !a.alive && a.aiState != actorStateDead {
+		if a.removed || (!a.alive && a.aiState != actorStateDead) {
+			continue
+		}
+		if a.kind >= actorKindSchabbs && a.kind <= actorKindSmoke {
+			a.actionTics = tics
+			if g.advanceDemoActorSequence(a, tics, func(action AnimAction) { g.actorSequenceActionFrame(a, action) }) {
+				g.updateRegisteredActor(a, tics)
+			}
+			g.drainActorSpawns()
 			continue
 		}
 
@@ -344,7 +380,7 @@ func (g *game) updateActors(tics int) {
 				g.updateGuardActor(a, tics)
 			case actorKindSS:
 				g.updateGuardActor(a, tics)
-			case actorKindBoss:
+			case actorKindBoss, actorKindGretel:
 				g.updateGuardActor(a, tics)
 			case actorKindMutant:
 				g.updateGuardActor(a, tics)
@@ -368,7 +404,7 @@ func (g *game) updateActors(tics int) {
 			g.updateGuardActor(a, tics)
 		case actorKindSS:
 			g.updateGuardActor(a, tics)
-		case actorKindBoss:
+		case actorKindBoss, actorKindGretel:
 			g.updateGuardActor(a, tics)
 		case actorKindMutant:
 			g.updateGuardActor(a, tics)
@@ -377,6 +413,7 @@ func (g *game) updateActors(tics int) {
 		}
 		g.fatalIfActorExceededSpeedBudget(a, prevX, prevY, tics)
 	}
+	g.pruneRemovedActors()
 }
 
 func (g *game) fatalIfActorExceededSpeedBudget(a *actorInstance, prevX, prevY float64, tics int) {
@@ -504,6 +541,9 @@ func (g *game) updateGuardPatrol(a *actorInstance, tics int) {
 }
 
 func (g *game) updateGuardChase(a *actorInstance, tics int) {
+	if g.victoryActive {
+		return
+	}
 	dodge := g.actorCanSeePlayer(a)
 	if g.guardTryStartShoot(a, tics) {
 		return
@@ -709,7 +749,7 @@ func (g *game) actorReactionTics(a *actorInstance) int {
 		return g.ssReactionTics()
 	case actorKindDog:
 		return g.dogReactionTics()
-	case actorKindBoss:
+	case actorKindBoss, actorKindGretel, actorKindSchabbs, actorKindGift, actorKindFat, actorKindFake, actorKindMecha, actorKindHitler:
 		return 1
 	default:
 		return g.guardReactionTics()
@@ -747,6 +787,18 @@ func enemyAlertSound(kind ActorKind) soundID {
 		return soundEnemyAlertSS
 	case actorKindBoss:
 		return soundEnemyAlertBoss
+	case actorKindGretel:
+		return soundEnemyAlertGretel
+	case actorKindSchabbs:
+		return soundEnemyAlertSchabbs
+	case actorKindGift:
+		return soundEnemyAlertGift
+	case actorKindFat:
+		return soundEnemyAlertFat
+	case actorKindFake:
+		return soundEnemyAlertFake
+	case actorKindMecha, actorKindHitler:
+		return soundEnemyAlertMecha
 	case actorKindDog:
 		return soundEnemyAlertDog
 	default:
@@ -756,8 +808,10 @@ func enemyAlertSound(kind ActorKind) soundID {
 
 func enemyAttackSound(kind ActorKind) soundID {
 	switch kind {
-	case actorKindBoss:
+	case actorKindBoss, actorKindMecha, actorKindHitler:
 		return soundEnemyAttackBoss
+	case actorKindGift, actorKindFat:
+		return soundProjectileRocket
 	case actorKindSS:
 		return soundEnemyAttackSS
 	case actorKindDog:
@@ -771,7 +825,8 @@ func (g *game) enemyDeathSound(a *actorInstance) soundID {
 	if a == nil {
 		return soundEnemyDeathGuard
 	}
-	if g.mapIndex == 9 {
+	sharewareDemo := g.demoPlayback != nil && g.files != nil && g.files.Variant.Ext == "WL1"
+	if g.mapIndex == 9 && !sharewareDemo {
 		if g.rng == nil {
 			g.rng = defaultRNG()
 		}
@@ -787,7 +842,11 @@ func (g *game) enemyDeathSound(a *actorInstance) soundID {
 		if g.rng == nil {
 			g.rng = defaultRNG()
 		}
-		switch g.rng.Intn(8) {
+		deathSounds := 8
+		if sharewareDemo {
+			deathSounds = 2
+		}
+		switch g.rng.Intn(deathSounds) {
 		case 0:
 			return soundEnemyDeathGuard
 		case 1:
@@ -807,8 +866,22 @@ func (g *game) enemyDeathSound(a *actorInstance) soundID {
 		}
 	case actorKindBoss:
 		return soundEnemyDeathBoss
+	case actorKindGretel:
+		return soundEnemyDeathGretel
+	case actorKindSchabbs:
+		return soundEnemyDeathSchabbs
+	case actorKindGift:
+		return soundEnemyDeathGift
+	case actorKindFat:
+		return soundEnemyDeathFat
+	case actorKindFake:
+		return soundEnemyDeathFake
+	case actorKindMecha:
+		return soundEnemyDeathMecha
+	case actorKindHitler:
+		return soundEnemyDeathHitler
 	case actorKindMutant:
-		return soundEnemyDeathGuard8
+		return soundEnemyDeathMutant
 	case actorKindOfficer:
 		return soundEnemyDeathOfficer
 	case actorKindSS:
@@ -1029,14 +1102,18 @@ func (g *game) takePlayerDamage(damage int) {
 }
 
 func (g *game) takePlayerDamageAt(damage int, attackerX, attackerY float64, hasAttacker bool) {
-	if damage <= 0 || g.health <= 0 {
+	if damage <= 0 || g.health <= 0 || g.victoryActive {
 		return
 	}
 	if g.godMode {
 		g.setNotice("God mode")
 		return
 	}
-	g.playSound(soundPlayerHurt)
+	if g.demoPlayback == nil {
+		// Original TakeDamage changes the face and palette without playing
+		// TAKEDAMAGESND; a demo must not interrupt the recorded sound timing.
+		g.playSound(soundPlayerHurt)
+	}
 	g.startDamageFlash(damage)
 	g.health -= damage
 	if g.health <= 0 {
@@ -1331,20 +1408,10 @@ func (g *game) actorReserveGoal(a *actorInstance, dir, targetX, targetY int, wai
 	if waitDoor {
 		a.moveDistance = actorDoorWaitDistance
 		if g.demoPlayback != nil {
-			index := 0
-			for tileIndex, tile := range g.level.Tiles {
-				if tile.Door == nil {
-					continue
-				}
-				if tileIndex == targetY*g.levelWidth+targetX {
-					a.moveDistance = -float64(index + 1)
-					break
-				}
-				index++
-			}
+			a.moveDistance = -float64((g.demoActorTagAt(targetX, targetY) & 63) + 1)
 		}
 	}
-	if g.level == nil || g.level.Tile(targetX, targetY).Door == nil || !waitDoor {
+	if !waitDoor || (g.demoPlayback == nil && (g.level == nil || g.level.Tile(targetX, targetY).Door == nil)) {
 		a.area = g.actorAreaAt(targetX, targetY)
 	}
 	return true
@@ -1354,6 +1421,21 @@ func (g *game) actorCardinalTilePassable(a *actorInstance, x, y int) (passable b
 	if a == nil || g.level == nil || x < 0 || y < 0 || x >= g.levelWidth || y >= g.levelHeight {
 		return false, false
 	}
+	if g.demoPlayback != nil {
+		tag := g.demoActorTagAt(x, y)
+		if tag == 0 {
+			return true, false
+		}
+		if tag >= 256 {
+			return !g.demoActorForSlot(tag - 256).shootable, false
+		}
+		if tag < 128 || a.kind == actorKindDog || a.kind == actorKindFake {
+			return false, false
+		}
+		door := g.demoDoorByIndex(tag & 63)
+		g.openDoorAt(door.x, door.y)
+		return true, true
+	}
 	if !g.actorGoalTileClear(a, x, y) {
 		return false, false
 	}
@@ -1362,7 +1444,7 @@ func (g *game) actorCardinalTilePassable(a *actorInstance, x, y int) (passable b
 		if g.isDoorOpen(x, y) {
 			return true, false
 		}
-		if a.kind == actorKindDog {
+		if a.kind == actorKindDog || a.kind == actorKindFake {
 			return false, false
 		}
 		g.openDoorAt(x, y)
@@ -1377,6 +1459,10 @@ func (g *game) actorCardinalTilePassable(a *actorInstance, x, y int) (passable b
 func (g *game) actorDiagTilePassable(a *actorInstance, x, y int) bool {
 	if g.level == nil || x < 0 || y < 0 || x >= g.levelWidth || y >= g.levelHeight {
 		return false
+	}
+	if g.demoPlayback != nil {
+		tag := g.demoActorTagAt(x, y)
+		return tag == 0 || (tag >= 256 && !g.demoActorForSlot(tag-256).shootable)
 	}
 	tile := g.level.Tile(x, y)
 	if tile.Door != nil {
@@ -1423,8 +1509,8 @@ func (g *game) openDoorAt(x, y int) {
 	if g.level == nil || x < 0 || y < 0 || x >= g.levelWidth || y >= g.levelHeight {
 		return
 	}
-	tile := g.level.Tile(x, y)
-	if tile.Door == nil {
+	door := g.doorDefinitionAt(x, y)
+	if door == nil {
 		return
 	}
 	i := y*g.levelWidth + x
@@ -1435,8 +1521,10 @@ func (g *game) openDoorAt(x, y int) {
 		g.doorState[i] = 1
 		if g.demoPlayback == nil {
 			g.doorOpen[i] = max(g.doorOpen[i], 0.01)
+			g.playWorldSound(soundDoorOpen, float64(x)+0.5, float64(y)+0.5)
 		}
-		g.playWorldSound(soundDoorOpen, float64(x)+0.5, float64(y)+0.5)
+		// Original OpenDoor only changes the action; DoorOpening emits sound
+		// on the following MoveDoors pass if the door starts fully closed.
 	}
 	g.doorTimer[i] = 0
 }
@@ -1505,6 +1593,9 @@ func (g *game) actorPathBlocked(a *actorInstance, fromX, fromY, toX, toY float64
 func (g *game) moveActorTowardGoalStep(a *actorInstance, speed float64) (consumed float64, reachedGoal bool, blocked bool) {
 	if !a.hasGoal {
 		return 0, false, true
+	}
+	if g.demoPlayback != nil {
+		return g.moveDemoActorTowardGoalStep(a, speed)
 	}
 	targetX := float64(a.tileX) + 0.5
 	targetY := float64(a.tileY) + 0.5
@@ -1636,6 +1727,8 @@ func (g *game) actorSequenceActionFrame(a *actorInstance, action AnimAction) {
 		g.dogTryBite(a)
 	case animActionDeathScream:
 		g.playWorldSound(g.enemyDeathSound(a), a.x, a.y)
+	default:
+		g.registeredActorAction(a, action)
 	}
 }
 
@@ -1651,6 +1744,8 @@ func (g *game) damageActor(a *actorInstance, damage int) bool {
 	if !a.alive || !a.shootable || damage < 0 || (damage == 0 && g.demoPlayback == nil) {
 		return false
 	}
+	// DamageActor alerts connected enemies even for a zero-damage knife hit.
+	g.madeNoise = true
 	if !a.alerted {
 		damage <<= 1
 	}
@@ -1662,6 +1757,7 @@ func (g *game) damageActor(a *actorInstance, damage int) bool {
 		a.shootable = false
 		a.rotate = false
 		a.aiState = actorStateDead
+		a.markFlags |= 128 // KillActor sets FL_NONMARK.
 		if a.kind == actorKindSS {
 			// KillActor chooses the SS drop when it dies, using the
 			// player's current best weapon rather than its spawn-time one.
@@ -1674,19 +1770,20 @@ func (g *game) damageActor(a *actorInstance, damage int) bool {
 		if g.demoPlayback == nil {
 			g.playWorldSound(g.enemyDeathSound(a), a.x, a.y)
 		} else {
-			// KillActor reserves the physical death tile, not the former goal.
-			deathX, deathY := int(a.x), int(a.y)
-			if a.tileX != deathX || a.tileY != deathY {
-				// KillActor clears actorat at the physical tile. Its old
-				// reserved goal can retain a nonshootable actor pointer.
-				a.demoDeathGoalX, a.demoDeathGoalY = a.tileX, a.tileY
-				a.demoHasDeathGoal = true
-			}
+			// KillActor clears only the physical tile. An older reservation
+			// remains a pointer to this now non-shootable pool slot.
 			a.tileX, a.tileY = int(a.x), int(a.y)
+			g.setDemoActorTag(a.tileX, a.tileY, 0)
 			a.clearTileGoal()
 		}
 		g.startActorSequence(a, a.deathSequence(), false)
-		g.score += a.scoreValue
+		g.givePoints(a.scoreValue)
+		if actorHasDeathCamera(a.kind) {
+			g.recordDemoBossKill()
+		}
+		if g.demoPlayback != nil && (a.kind == actorKindSchabbs || a.kind == actorKindHitler) {
+			g.playWorldSound(g.enemyDeathSound(a), a.x, a.y)
+		}
 		if a.dropPickup != pickupNone {
 			g.spawnDroppedPickup(a.x, a.y, a.dropPickup)
 			a.dropPickup = pickupNone
@@ -1720,6 +1817,9 @@ func (g *game) playerArea() int {
 }
 
 func (g *game) isAreaConnectedToPlayer(area int) bool {
+	if g.demoPlayback != nil && area == 255 && g.demoMemory().profile == wolfDemoRegisteredMemoryProfile {
+		return g.demoMemory().area255Word() != 0
+	}
 	if area < 0 {
 		return false
 	}
@@ -1827,6 +1927,10 @@ func (g *game) sightTileBlocked(x, y int, steppingX bool, intercept int) bool {
 func (g *game) actorAreaAt(x, y int) int {
 	if g.level == nil || x < 0 || y < 0 || x >= g.levelWidth || y >= g.levelHeight {
 		return -1
+	}
+	if g.demoPlayback != nil {
+		g.initializeDemoActorAreas()
+		return int(byte(g.demoPlayback.areaPlane[y*g.levelWidth+x] - 107))
 	}
 	tile := g.level.Tile(x, y)
 	if tile.Area >= 0 {

@@ -138,14 +138,26 @@ func (f *Files) LoadMap(index int) (*MapData, error) {
 
 func parseMapHead(data []byte) (uint16, [headerCount]uint32, error) {
 	var offsets [headerCount]uint32
-	needed := 2 + 4*headerCount
-	if len(data) < needed {
-		return 0, offsets, fmt.Errorf("%w: need at least %d bytes for MAPHEAD", errShortBuffer, needed)
+	if len(data) < 6 {
+		return 0, offsets, fmt.Errorf("%w: MAPHEAD needs an RLEW tag and at least one map offset", errShortBuffer)
+	}
+	// Some mapsets store only the offsets they use (for example, 60 instead
+	// of the editor's 100 slots). Missing slots are sparse, not offset zero.
+	// Full editor headers may also have trailing tileinfo bytes after slot 99.
+	count := headerCount
+	if len(data) < 2+4*headerCount {
+		if (len(data)-2)%4 != 0 {
+			return 0, offsets, fmt.Errorf("%w: MAPHEAD ends in a partial map offset", errShortBuffer)
+		}
+		count = (len(data) - 2) / 4
+	}
+	for i := range offsets {
+		offsets[i] = 0xffffffff
 	}
 
 	rlewTag := binary.LittleEndian.Uint16(data[:2])
 	pos := 2
-	for i := 0; i < headerCount; i++ {
+	for i := 0; i < count; i++ {
 		offsets[i] = binary.LittleEndian.Uint32(data[pos : pos+4])
 		pos += 4
 	}

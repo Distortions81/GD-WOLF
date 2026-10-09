@@ -15,19 +15,60 @@ type demoActorHit struct {
 	damage int
 }
 
+// CalcRotate uses the projected column, not the true angle to the actor.
+// Its two-view pain frames select offsets 0/4; rockets use their launch angle.
+func wolfSpriteRotation(viewAngle, viewX, objectAngle, rotations int) int {
+	angle := viewAngle + (demoViewWidth/2-1-viewX)/8 - 180 - objectAngle + 360/16
+	angle = ((angle % 360) + 360) % 360
+	if rotations == 2 {
+		return 4 * (angle / 180)
+	}
+	return angle / 45
+}
+
+func (g *game) demoActorRenderShape(a *actorInstance, viewX int) int {
+	if !a.rotate && a.aiState != actorStatePain {
+		return a.shapenum
+	}
+	direction := (a.dir & 7) * 45
+	if a.kind == actorKindRocket {
+		direction = a.angle
+	}
+	rotations := 8
+	if a.aiState == actorStatePain {
+		rotations = 2
+	}
+	angle := wolfDemoAngle(g.playerA)
+	if g.demoPlayback != nil {
+		angle = g.demoPlayback.angle
+	}
+	return a.shapenum + wolfSpriteRotation(angle, viewX, direction, rotations)
+}
+
 // The original player attacks using the projection from the previous refresh.
 // Keep it independent of the desktop viewport and port's wider/adjustable view.
 func (g *game) refreshDemoActorProjections() {
+	g.refreshDemoActorProjectionsWithVisibility(nil)
+}
+
+// The optional floor mask also supports isolated original-source probes.
+// Normal playback always obtains it from the port's ray traversal.
+func (g *game) refreshDemoActorProjectionsWithVisibility(visible []bool) {
 	d := g.demoPlayback
 	if len(d.projections) != len(g.actors) {
+		previous := d.projections
 		d.projections = make([]demoActorProjection, len(g.actors))
+		copy(d.projections, previous)
 	}
 	cos, sin := wolfDemoTrigTable[d.angle+90], wolfDemoTrigTable[d.angle]
 	px, py := int(math.Round(g.playerX*65536)), int(math.Round(g.playerY*65536))
 	viewX := px - wolfDemoFixedByFrac(0x5700, cos)
 	viewY := py + wolfDemoFixedByFrac(0x5700, sin)
-	visible := g.demoVisibleTiles(viewX, viewY)
+	if visible == nil {
+		visible = g.demoVisibleTiles(viewX, viewY)
+	}
 	d.visibleTiles = visible
+	g.activateVisibleDemoInertActors(visible)
 	for i := range g.actors {
 		a := &g.actors[i]
 		p := &d.projections[i]
@@ -73,6 +114,11 @@ func (g *game) demoPickupInReach(x, y int) bool {
 	if index < 0 || index >= len(d.visibleTiles) || !d.visibleTiles[index] {
 		return false
 	}
+	return g.demoPickupTransformInReach(x, y)
+}
+
+func (g *game) demoPickupTransformInReach(x, y int) bool {
+	d := g.demoPlayback
 	cos, sin := wolfDemoTrigTable[d.angle+90], wolfDemoTrigTable[d.angle]
 	viewX := int(math.Round(g.playerX*65536)) - wolfDemoFixedByFrac(0x5700, cos)
 	viewY := int(math.Round(g.playerY*65536)) + wolfDemoFixedByFrac(0x5700, sin)

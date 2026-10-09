@@ -34,6 +34,7 @@ func TestCaptureSaveGameRoundTrip(t *testing.T) {
 	g.lives = 2
 	g.keys = 3
 	g.score = 4400
+	g.nextExtra = 80000
 	g.secretTotal = 2
 	g.secretCount = 1
 	g.treasureTotal = 4
@@ -82,41 +83,45 @@ func TestCaptureSaveGameRoundTrip(t *testing.T) {
 		frameTimer: 9,
 	}}
 	g.actors = []actorInstance{{
-		kind:            actorKindGuard,
-		shapenum:        11,
-		x:               2.5,
-		y:               1.5,
-		tileX:           2,
-		tileY:           1,
-		goalX:           3,
-		goalY:           1,
-		hasGoal:         true,
-		dir:             1,
-		facingDir:       1,
-		rotate:          true,
-		blocking:        true,
-		shootable:       true,
-		alive:           true,
-		alerted:         true,
-		health:          25,
-		patrolSpeed:     0.1,
-		chaseSpeed:      0.2,
-		scoreValue:      100,
-		dropPickup:      pickupClip2,
-		standSeq:        seqActorGuardStand,
-		patrolSeq:       seqActorGuardPatrol,
-		chaseSeq:        seqActorGuardChase,
-		painSeq:         seqActorGuardPain,
-		shootSeq:        seqActorGuardShoot,
-		deathSeq:        seqActorGuardDeath,
-		aiState:         actorStateChase,
-		spawnMode:       actorSpawnPatrol,
-		reactionTimer:   7,
-		sequenceID:      seqActorGuardChase,
-		sequenceLoop:    true,
-		frameIndex:      1,
-		frameTimer:      4,
-		frameActionDone: true,
+		angle:                123,
+		projectileSpeed:      0x2000,
+		markFlags:            128,
+		spawnAnimationFrozen: true,
+		kind:                 actorKindGuard,
+		shapenum:             11,
+		x:                    2.5,
+		y:                    1.5,
+		tileX:                2,
+		tileY:                1,
+		goalX:                3,
+		goalY:                1,
+		hasGoal:              true,
+		dir:                  1,
+		facingDir:            1,
+		rotate:               true,
+		blocking:             true,
+		shootable:            true,
+		alive:                true,
+		alerted:              true,
+		health:               25,
+		patrolSpeed:          0.1,
+		chaseSpeed:           0.2,
+		scoreValue:           100,
+		dropPickup:           pickupClip2,
+		standSeq:             seqActorGuardStand,
+		patrolSeq:            seqActorGuardPatrol,
+		chaseSeq:             seqActorGuardChase,
+		painSeq:              seqActorGuardPain,
+		shootSeq:             seqActorGuardShoot,
+		deathSeq:             seqActorGuardDeath,
+		aiState:              actorStateChase,
+		spawnMode:            actorSpawnPatrol,
+		reactionTimer:        7,
+		sequenceID:           seqActorGuardChase,
+		sequenceLoop:         true,
+		frameIndex:           1,
+		frameTimer:           4,
+		frameActionDone:      true,
 	}}
 
 	save := g.captureSaveGame("Test Slot")
@@ -131,6 +136,9 @@ func TestCaptureSaveGameRoundTrip(t *testing.T) {
 
 	if parsed.Name != "Test Slot" || parsed.MapIndex != 7 {
 		t.Fatalf("parsed summary = (%q,%d), want (%q,%d)", parsed.Name, parsed.MapIndex, "Test Slot", 7)
+	}
+	if parsed.NextExtra != 80000 {
+		t.Fatalf("saved next extra-life threshold = %d, want 80000", parsed.NextExtra)
 	}
 	if json.Valid(data) {
 		t.Fatal("save payload is still JSON, want binary save format")
@@ -509,6 +517,7 @@ func TestApplySaveGameRestoresEquivalentState(t *testing.T) {
 	src.lives = 2
 	src.keys = 3
 	src.score = 4400
+	src.nextExtra = 80000
 	src.secretCount = 1
 	src.treasureCount = 2
 	src.attacking = true

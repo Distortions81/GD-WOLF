@@ -21,10 +21,9 @@ The project currently includes:
 - native stereo positional sound, with simplified wasm audio
 - actor collision and timing work updated to use Wolf-style tics instead of assuming a fixed render/update rate
 
-Implementation is still incomplete. Guards, dogs, officers, SS, Hans Grosse,
-and mutants are active in gameplay, but complete enemy AI parity has not been
-verified. Mutant support remains partial, and several later enemies are missing.
-Enemy implementation and verification work is tracked in
+All Wolf3D enemy families are implemented, with bounded original-source checks.
+Complete gameplay and presentation parity remains unverified.
+Implementation and verification coverage is tracked in
 [enemy-parity.md](enemy-parity.md).
 
 ### Enemy AI Verification
@@ -45,10 +44,39 @@ and interactions across the full roster and map set still need independent
 original-engine comparison. Go regressions cover some of these behaviors, but the broader AI
 harness uses a Go reference adapter rather than the original engine. Recorded
 demo playback and a source runtime comparison are now available. The runtime
-reference matches the first built-in demo through its original death endpoint.
-Original x86 raycasting matches every floor mask, and the shipped DOS executable
-confirms health/ammo after every command and the same endpoint. Other demos and
-the full enemy roster remain unverified.
+reference matches all four shareware and all four Apogee registered demos,
+including inventory, lives, level counters, actor state and terminal death.
+Original x86 raycasting audits the floor masks. The shipped DOS executable
+separately confirms health/ammo and the death endpoint for the first shareware
+demo. A 152-case original-C pickup probe covers inventory limits, score rewards
+and weapon changes during attacks. A deterministic sound scheduler now matches
+original-C priority, expiry and face RNG, including a registered demo where
+omitted sound suppression changed a 51-kill death into a 23-kill survival.
+Four native third-party recordings from The Way ID Did also pass with their
+matching maps. Together with eight alternate-fire routes, the 20-run corpus
+matches 19,091 commands and 78,196,736 original-x86 floor bits.
+All Wolf3D enemy families and projectiles now have gameplay implementations and
+bounded original-C encounter checks. BJ victory, boss death cameras and actor
+occupancy are also compared. The expanded 432-case corpus passes with zero
+observed desyncs under the verified registered DOS memory profile: 172,560 input
+commands and 706,805,760 original-x86 floor bits, including generated routes
+across all 60 maps and three sound modes for the stock/third-party corpus.
+Physical audio timing, audible mixing and untested input sequences remain
+unverified.
+See [demo comparison coverage](docs/wolf-demo-compare.md).
+
+Run the four built-in recordings plus four alternate-fire routes with local
+registered data:
+
+```bash
+python3 scripts/wolf_demo_corpus_compare.py --data /path/to/WL6-files --sound-mode adlib-digi
+```
+
+The default sound mode is `adlib-digi`; `off` and `adlib` are also supported.
+The corpus runner accepts a checksummed manifest of external recordings;
+individual recordings use `scripts/wolf_demo_runtime_compare.sh --data /path/to/WL6-files --demo-file /path/to/demo.wl6`.
+See the [third-party corpus guide](docs/wolf-third-party-demos.md) for the
+verified four-demo TWIId corpus, exact asset hashes and importer commands.
 
 ## Project Additions Beyond Wolfenstein 3D
 
@@ -76,8 +104,9 @@ of this preference, and preserves the saved setting.
 ## Known Differences From Full Wolfenstein 3D Parity
 
 - The project does not yet implement the full original enemy roster and behaviors.
-- Complete enemy AI parity is unverified; the original-source runtime harness matches all four recorded shareware demos and all four recorded Apogee registered demos, not every path through the six episodes.
-- The separate demo player movement harness shares the port's world snapshots with its C reference. The runtime harness independently evolves actors, combat, doors and pickups, with visible-floor masks audited against original x86 code.
+- Complete enemy AI parity is unverified; the original-source runtime harness matches all four recorded shareware demos, all four recorded Apogee registered demos and four TWIId mod recordings. These routes do not cover every path through the six episodes.
+- The separate demo player movement harness shares the port's world snapshots with its C reference. The runtime harness independently evolves actors, combat, doors, pickups and gameplay sound state, with visible-floor masks audited against original x86 code.
+- Demo sound comparisons use two service steps per Wolf tic. Physical DOS interrupt phase, digitized playback duration and audible sample mixing remain unverified.
 - Some systems are Wolfenstein 3D-inspired rather than byte-faithful, especially presentation details around fades, flashes, and frontend behavior.
 
 ## Data
@@ -132,7 +161,9 @@ go run . -data internal/wl6/shareware -demo-index 0
 
 Indices 0–3 select the four built-in demos. To play a recorded demo file using
 the selected game data, use `-demo-file /path/to/demo.wl1`. Playback ends when
-the input finishes or the port reaches death/victory.
+the input finishes or the port reaches death, victory or an elevator exit.
+`-demo-sound-mode adlib-digi` is the default; `off` and `adlib` select the other
+supported sound routes. Sound mode can affect face RNG and the resulting demo.
 
 Compare recorded player movement with compiled original C:
 
@@ -164,8 +195,12 @@ Compare actor state timing and the first-demo runtime with compiled original C:
 ```
 
 The state timing and first-demo runtime comparisons pass. The runtime script
-also executes the original 16-bit raycaster under QEMU. Matching original death
-is a supported playback endpoint; a differing terminal state fails.
+also runs original-C projection, pickup, elevator and sound probes, and executes
+the original 16-bit raycaster under QEMU. `--sound-mode off|adlib|adlib-digi`
+selects the reference sound mode (default `adlib-digi`). Matching original death
+or elevator exit is a supported endpoint; a differing terminal state fails.
+Original sound routines and C service models verify gameplay sound state;
+audio assembly and physical audio hardware are not executed.
 
 Optionally repeat the shipped DOS executable check (Linux, DOSBox, about two minutes):
 

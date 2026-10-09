@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	saveGameVersion   = 4
+	saveGameVersion   = 6
 	maxSaveNameLen    = 31
 	saveFileMagic     = "GWLF"
 	saveFileExtension = ".sav"
@@ -84,6 +84,7 @@ type saveGameData struct {
 	Lives        int  `json:"lives"`
 	Keys         byte `json:"keys"`
 	Score        int  `json:"score"`
+	NextExtra    int  `json:"next_extra"`
 
 	SecretTotal   int `json:"secret_total"`
 	SecretCount   int `json:"secret_count"`
@@ -161,18 +162,22 @@ type saveStaticSprite struct {
 }
 
 type saveActor struct {
-	Kind      ActorKind `json:"kind"`
-	ShapeNum  int       `json:"shape_num"`
-	X         float64   `json:"x"`
-	Y         float64   `json:"y"`
-	TileX     int       `json:"tile_x"`
-	TileY     int       `json:"tile_y"`
-	GoalX     int       `json:"goal_x"`
-	GoalY     int       `json:"goal_y"`
-	HasGoal   bool      `json:"has_goal"`
-	Dir       int       `json:"dir"`
-	FacingDir int       `json:"facing_dir"`
-	Rotate    bool      `json:"rotate"`
+	Angle                int       `json:"angle"`
+	ProjectileSpeed      int       `json:"projectile_speed"`
+	MarkFlags            int       `json:"mark_flags"`
+	SpawnAnimationFrozen bool      `json:"spawn_animation_frozen"`
+	Kind                 ActorKind `json:"kind"`
+	ShapeNum             int       `json:"shape_num"`
+	X                    float64   `json:"x"`
+	Y                    float64   `json:"y"`
+	TileX                int       `json:"tile_x"`
+	TileY                int       `json:"tile_y"`
+	GoalX                int       `json:"goal_x"`
+	GoalY                int       `json:"goal_y"`
+	HasGoal              bool      `json:"has_goal"`
+	Dir                  int       `json:"dir"`
+	FacingDir            int       `json:"facing_dir"`
+	Rotate               bool      `json:"rotate"`
 
 	Blocking    bool `json:"blocking"`
 	Shootable   bool `json:"shootable"`
@@ -182,19 +187,19 @@ type saveActor struct {
 	FirstAttack bool `json:"first_attack"`
 	Area        int  `json:"area"`
 
-	Health      int            `json:"health"`
-	PatrolSpeed float64        `json:"patrol_speed"`
-	ChaseSpeed  float64        `json:"chase_speed"`
-	MoveDistance float64       `json:"move_distance"`
-	ScoreValue  int            `json:"score_value"`
-	DropPickup  pickupType     `json:"drop_pickup"`
-	StandSeq    AnimSequenceID `json:"stand_seq"`
-	PatrolSeq   AnimSequenceID `json:"patrol_seq"`
-	ChaseSeq    AnimSequenceID `json:"chase_seq"`
-	PainSeq     AnimSequenceID `json:"pain_seq"`
-	ShootSeq    AnimSequenceID `json:"shoot_seq"`
-	JumpSeq     AnimSequenceID `json:"jump_seq"`
-	DeathSeq    AnimSequenceID `json:"death_seq"`
+	Health       int            `json:"health"`
+	PatrolSpeed  float64        `json:"patrol_speed"`
+	ChaseSpeed   float64        `json:"chase_speed"`
+	MoveDistance float64        `json:"move_distance"`
+	ScoreValue   int            `json:"score_value"`
+	DropPickup   pickupType     `json:"drop_pickup"`
+	StandSeq     AnimSequenceID `json:"stand_seq"`
+	PatrolSeq    AnimSequenceID `json:"patrol_seq"`
+	ChaseSeq     AnimSequenceID `json:"chase_seq"`
+	PainSeq      AnimSequenceID `json:"pain_seq"`
+	ShootSeq     AnimSequenceID `json:"shoot_seq"`
+	JumpSeq      AnimSequenceID `json:"jump_seq"`
+	DeathSeq     AnimSequenceID `json:"death_seq"`
 
 	AIState         ActorAIState   `json:"ai_state"`
 	SpawnMode       ActorSpawnMode `json:"spawn_mode"`
@@ -353,6 +358,7 @@ func staticSpriteFromSave(s saveStaticSprite) staticSprite {
 
 func saveActorFromGame(a actorInstance) saveActor {
 	return saveActor{
+		Angle: a.angle, ProjectileSpeed: a.projectileSpeed, MarkFlags: a.markFlags, SpawnAnimationFrozen: a.spawnAnimationFrozen,
 		Kind:            a.kind,
 		ShapeNum:        a.shapenum,
 		X:               a.x,
@@ -398,6 +404,7 @@ func saveActorFromGame(a actorInstance) saveActor {
 
 func actorFromSave(a saveActor) actorInstance {
 	actor := actorInstance{
+		angle: a.Angle, projectileSpeed: a.ProjectileSpeed, markFlags: a.MarkFlags, spawnAnimationFrozen: a.SpawnAnimationFrozen,
 		kind:            a.Kind,
 		shapenum:        a.ShapeNum,
 		x:               a.X,
@@ -521,6 +528,7 @@ func (g *game) captureSaveGame(name string) saveGameData {
 		Lives:              g.lives,
 		Keys:               g.keys,
 		Score:              g.score,
+		NextExtra:          g.nextExtra,
 		SecretTotal:        g.secretTotal,
 		SecretCount:        g.secretCount,
 		TreasureTotal:      g.treasureTotal,
@@ -887,6 +895,10 @@ func (r *saveBinaryReader) readStaticSprite() saveStaticSprite {
 }
 
 func (w *saveBinaryWriter) writeActor(a saveActor) {
+	w.writeInt32(a.Angle)
+	w.writeInt32(a.ProjectileSpeed)
+	w.writeInt32(a.MarkFlags)
+	w.writeBool(a.SpawnAnimationFrozen)
 	w.writeInt32(int(a.Kind))
 	w.writeInt32(a.ShapeNum)
 	w.writeFloat64(a.X)
@@ -931,6 +943,7 @@ func (w *saveBinaryWriter) writeActor(a saveActor) {
 
 func (r *saveBinaryReader) readActor() saveActor {
 	return saveActor{
+		Angle: r.readInt32(), ProjectileSpeed: r.readInt32(), MarkFlags: r.readInt32(), SpawnAnimationFrozen: r.readBool(),
 		Kind:            ActorKind(r.readInt32()),
 		ShapeNum:        r.readInt32(),
 		X:               r.readFloat64(),
@@ -1010,6 +1023,7 @@ func writeSaveGamePayload(data saveGameData) ([]byte, error) {
 	w.writeInt32(data.Lives)
 	w.writeUint8(data.Keys)
 	w.writeInt32(data.Score)
+	w.writeInt32(data.NextExtra)
 	w.writeInt32(data.SecretTotal)
 	w.writeInt32(data.SecretCount)
 	w.writeInt32(data.TreasureTotal)
@@ -1092,6 +1106,7 @@ func readSaveGamePayload(payload []byte) (saveGameData, error) {
 	save.Lives = r.readInt32()
 	save.Keys = r.readUint8()
 	save.Score = r.readInt32()
+	save.NextExtra = r.readInt32()
 	save.SecretTotal = r.readInt32()
 	save.SecretCount = r.readInt32()
 	save.TreasureTotal = r.readInt32()
@@ -1285,6 +1300,7 @@ func (g *game) applySaveGame(save saveGameData) error {
 	g.lives = save.Lives
 	g.keys = save.Keys
 	g.score = save.Score
+	g.nextExtra = save.NextExtra
 	g.secretTotal = save.SecretTotal
 	g.secretCount = save.SecretCount
 	g.treasureTotal = save.TreasureTotal

@@ -85,7 +85,10 @@ func startWolfSourceBinary(t *testing.T, path string, args ...string) *wolfSourc
 			t.Errorf("original source reference exited: %v", err)
 		}
 	})
-	return &wolfSourceProcess{in: bufio.NewWriter(stdin), out: bufio.NewScanner(stdout), input: stdin}
+	scanner := bufio.NewScanner(stdout)
+	// Full actor, static-object and world-grid snapshots can exceed 64 KiB.
+	scanner.Buffer(make([]byte, 64*1024), 2*1024*1024)
+	return &wolfSourceProcess{in: bufio.NewWriter(stdin), out: scanner, input: stdin}
 }
 
 func (p *wolfSourceProcess) decision(t *testing.T, c wolfSourceInput) wolfSourceState {

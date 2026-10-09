@@ -1,11 +1,12 @@
 # Recorded demo comparison
 
-This is the first gameplay replay stage after the isolated
-[original C movement audit](wolf-source-compare.md). It feeds recorded inputs
-to the actual port, including its doors, weapons, actors and pickups, and
-compares player movement to compiled original C routines.
+These harnesses replay recorded inputs through the port and pinned original C.
+They cover player movement, actors, combat, inventory, doors, pickups, gameplay
+sound state and RNG. The runtime comparison also audits floor visibility with
+original 16-bit x86 code. They build on the isolated
+[original C movement audit](wolf-source-compare.md).
 
-## Current scope
+## Player-only comparison scope
 
 The reference compiles `ControlMovement`, `Thrust`, `ClipMove` and `TryMove`
 from the pinned original `WL_AGENT.C`. It also uses the original sine-table
@@ -30,6 +31,7 @@ visibility/targeting effects are not independently reproduced.
 ```bash
 go run . -data internal/wl6/shareware -demo-index 0
 go run . -data internal/wl6/shareware -demo-file /path/to/demo.wl1
+go run . -data /path/to/registered-data -demo-index 1 -demo-sound-mode adlib-digi
 ```
 
 The four embedded demos use E1F1, E1F3, E1F5 and E1F7, with 1,152, 1,284, 671
@@ -50,8 +52,13 @@ select the original rules with:
 modern_doors = false
 ```
 
-Playback ends at demo completion or port death/victory. These terminal outcomes
-are not independently verified by the player reference.
+Playback defaults to `adlib-digi`: synthesized sound with original digitized
+sound routing. `-demo-sound-mode off` and `-demo-sound-mode adlib` select the
+other supported modes. The selected mode affects face RNG and can change the
+recorded route; see [deterministic demo sound](#deterministic-demo-sound-and-rng).
+
+Playback ends at demo completion, an elevator exit, or port death/victory. These
+terminal outcomes are not independently verified by the player-only reference.
 
 ## Compare and replay
 
@@ -179,11 +186,10 @@ initialization parity on these maps, without validating subsequent AI updates.
 
 The same reference checks 4,096 face updates, sharing each call's entry RNG
 index and sound-suppression flag while carrying independent face counters.
-This isolates the original `UpdateFace` behavior; actor/combat RNG consumption
-is still unverified. Native playback uses the port audio state for the
-chaingun pickup's suppression and resets the face counter on that pickup.
-Original sound priority and timing are not independently reproduced, and
-headless comparisons do not simulate audio playback.
+This isolates the original `UpdateFace` behavior and does not independently
+verify actor/combat RNG consumption. The broader runtime harness below now
+evolves sound priority, expiry and face suppression independently, including
+in headless runs.
 
 ## Actor timing and recorded-demo runtime
 
@@ -193,8 +199,9 @@ For independent multi-tick enemy encounters, run:
 ./scripts/wolf_enemy_runtime_compare.sh --data /path/to/registered-data --out /tmp/wolf-enemy-runtime
 ```
 
-This compiles the pinned original C and compares the first available guard,
-dog, SS, Hans, mutant and officer across registered maps. Each scenario runs
+This compiles the pinned original C and compares the first available encounter
+for each of the thirteen spawnable Wolf3D actor families across registered maps.
+Dynamic Hitler is covered by the separate Mecha transformation probe. Each scenario runs
 up to 80 actor updates with scripted nearby player positions, noise and varied
 tic counts. The comparison checks every actor's state, RNG, doors and player
 damage at each step; it stops at player death. Per-encounter JSONL files in
@@ -202,11 +209,19 @@ damage at each step; it stops at player death. Per-encounter JSONL files in
 Hans and mutants were spawned with the wrong HP for the selected difficulty;
 the values now follow original `starthitpoints`. The probe forces one target
 active and does not simulate rendering-based activation or player weapons.
+The registered Gretel encounter matches 19 actor updates through player death.
+A separate open-room encounter matches 95 updates, requiring both chase movement
+and player damage. These probes run with sound off and compare every actor's
+state, RNG, damage and doors. Gretel now has her original spawn stats,
+nonrotating state sequences, six-shot burst, guard-style accuracy, sounds and
+gold-key drop. Source-derived Go regressions cover her damage/death, score and
+key drop; those are not original-C death probes. The encounters do not establish
+coverage of every boss interaction.
 
 ```bash
 ./scripts/wolf_actor_states_compare.sh
 ./scripts/wolf_demo_runtime_compare.sh
-./scripts/wolf_demo_runtime_compare.sh --demo-index 1 --out /tmp/wolf-demo-e1f3
+./scripts/wolf_demo_runtime_compare.sh --demo-index 1 --sound-mode adlib --out /tmp/wolf-demo-e1f3
 ./scripts/wolf_demo_runtime_compare.sh --demo-index 2 --out /tmp/wolf-demo-e1f5
 ./scripts/wolf_demo_runtime_compare.sh --demo-index 3 --out /tmp/wolf-demo-e1f7
 ./scripts/wolf_demo_runtime_compare.sh --data /path/to/registered-data --demo-index 0 --extra-fire --out /tmp/wolf-combat-e1f1
@@ -230,10 +245,15 @@ command, along with the existing actor, weapon, player and RNG comparisons. It i
 from raw map planes and carries independent player/actor positions, reservations,
 weapons, doors, walls, pickups, health and RNG across commands. Original
 `DrawScaleds` static/actor placement and `TransformActor`/`TransformTile` geometry
-are compiled; drawing, audio playback and scoring are stubbed; lives are not compared.
+are compiled. Drawing and hardware audio output are omitted; original sound
+priority and synthesized-effect expiry are compiled as described below.
+Original `GivePoints` and
+`GiveExtraMan` now handle scoring, the 40,000-point extra-life threshold and the
+nine-life cap independently of the port.
 DOS projection height assembly uses equivalent integer division, and tagged
-pointers/map words are adapted for host C. Unsupported actor families and
-victory behavior fail explicitly.
+pointers/map words are adapted for host C. The runtime includes every Wolf3D
+enemy family, projectiles, BJ's victory run and boss death cameras. Spear-only
+actors are outside this reference.
 
 The runtime now compiles original `T_Player`, `Cmd_Use` and `TakeDamage`, so
 use requests and the death flag evolve independently. Its remaining shared input
@@ -244,8 +264,8 @@ syntax, test-owned segment placement and drawing callbacks are adapted; the
 original arithmetic and self-modifying quadrant branches execute unchanged.
 Every one of the first demo's 4,321,280 floor bits matches. This audit uses
 original-C tile bytes, door positions, pushwall position and view coordinates,
-plus original render tables. Audio-priority simulation is still omitted. The
-projection self-test matches original render tables and 2,160 actor/pickup
+plus original render tables. The projection self-test matches original render
+tables and 2,160 actor/pickup
 projection cases spanning every integer angle.
 
 The runtime comparison now matches all four embedded shareware demos through
@@ -253,8 +273,8 @@ their original death endpoints. E1F1 plays 1,055 commands and leaves 97 recorded
 commands unread; E1F3, E1F5 and E1F7 play all 1,284, 671 and 633 commands.
 The script succeeds at a matching terminal state and fails if the terminal
 state differs. The original x86 floor-visibility audit also matches every
-played command in each demo. Unsupported enemy families, audio and extra lives
-remain outside this comparison.
+played command in each demo. These recordings cover only the enemies they
+encounter; hardware audio limitations are described below.
 
 `--extra-fire` preserves each recorded demo's first 200 commands, then uses
 the same steering with a deterministic alternate attack schedule. This takes
@@ -291,21 +311,240 @@ command, covering 22,061,056 floor bits. These comparisons cover the recorded
 routes, not every room or enemy family across all six episodes. Registered
 game data is not bundled with the repository.
 
+Four publicly distributed native recordings from **Wolfenstein 3D: The Way ID
+Did** also pass with their matching mod maps and `adlib-digi`: 6,675 commands,
+26,700 Wolf tics and 27,340,800 original-x86 floor bits. All four end at matching
+deaths; one leaves 20 recorded commands unread. Importing the unchanged mod
+revealed a valid 60-offset `MAPHEAD` that the loader incorrectly required to
+have 100 offsets. The loader now accepts complete compact headers and rejects
+truncated offsets. These recordings are distinct from the stock demos and
+require the author's matching map data.
+
+For batch commands, the checksummed importer, provenance and all four third-party
+results, see [Demo corpus and third-party recordings](wolf-third-party-demos.md).
+
+## Deterministic demo sound and RNG
+
+The runtime script and corpus runner default to `--sound-mode adlib-digi`.
+`--sound-mode adlib` keeps effects on the synthesized channel; `--sound-mode off`
+disables effects. Native playback uses the equivalent `-demo-sound-mode` option.
+The mode is part of the comparison input and is recorded in each result.
+
+The reference compiles original `SD_PlaySound`, `SD_SoundPlaying`,
+`SDL_PCPlaySound`, `SDL_PCStopSound`, `SDL_PCService`, `SDL_ALPlaySound`,
+`SDL_ALStopSound` and `SDL_ALSoundService` from `ID_SD.C`. Sound IDs and the
+shareware/registered `wolfdigimap` come from the pinned source. Hardware writes
+and interrupt masking are omitted. The original C service models, disabled in
+the shipping source, preserve the counters used by the active `DOFX` assembly.
+The harness verifies the `ID_SD_A.ASM` hash and counter semantics; it does not
+execute that audio assembly. PC service code is included in the oracle, but
+PC speaker mode is not exposed or covered by the port comparisons.
+
+Both sides advance two 140 Hz sound-service steps per 70 Hz Wolf tic, grouped
+at command entry. They use the selected game's raw sound lengths and priorities,
+not host playback time. The reference independently checks the synthesized
+channel's sound ID, priority and remaining duration. `adlib-digi` routes mapped
+effects to the separate digitized channel, as in original `SD_PlaySound`.
+A 4,176-state original-C probe covers all 87 sound IDs, priority interruption,
+expiry and face-RNG suppression in all three supported modes. The runtime
+script runs it automatically. All eight stock recordings also pass in both
+`adlib` and `adlib-digi`, with 9,029 played commands per mode.
+
+This exposed a real registered-demo desync that a sound-free reference missed.
+In registered demo 1 (map 43), the chaingun pickup suppresses face updates while
+`GETGATLINGSND` occupies the synthesized channel. The old reference first
+consumed an extra RNG byte at command 1,110 (zero-based): index 189 instead of
+188. It eventually finished alive with 23 kills, 100 health and 6,300 points.
+The sound-aware original C and port instead match a death at command 1,898,
+with 51 kills, 0 health, 28 ammo and 13,600 points. Pure AdLib testing also caught
+a door sound starting one command early: opening sound now begins on the first
+`MoveDoors` update and opening/closing sounds obey original area connectivity.
+
+This verifies gameplay sound state under the stated deterministic schedule.
+The physical DOS interrupt phase, digitized playback duration and channel
+expiry, audible PCM output, panning and sample mixing remain unverified. The
+native PCM mixer can still layer effect voices even when the deterministic
+synthesized channel rejects one by priority. This harness does not establish
+hardware-timed audio or audible mixing parity.
+
+## Expanded attribute checks (2026-10-09)
+
+The runtime now checks health, ammo, score, lives, the next extra-life threshold,
+all key bits, current/best/chosen weapons, secret and treasure counts/totals, kill
+counts/totals, face frame/timer, actor activation and state family/frame duration,
+moving pushwall phase and position, all area-reachability flags, and synthesized
+sound ID/priority/remaining duration. Persistent
+inventory and face state are checked both before rendering and after pickups.
+Actor position, reservations, health, animation, reaction, flags, doors, player
+movement, weapon attacks, RNG, remaining pickups and floor visibility retain
+their existing comparisons.
+
+All eight built-in demos pass these additional checks: 9,029 played commands
+(36,116 Wolf tics). The registered routes use maps 37, 43, 56 and 31; the
+shareware routes use maps 0, 2, 4 and 6. A separate original-C pickup probe
+covers 152 boundary cases across every supported pickup type, score thresholds,
+full inventories, all key bits, the life cap, weapon upgrades and knife attacks.
+The runtime comparison script runs this probe automatically.
+A second original-C probe checks 1,440 elevator uses: every integer angle,
+normal/secret exit floors and fresh/held use buttons.
+The final `adlib-digi` batch passes all sixteen stock/alternate-fire routes:
+12,416 commands and 50,855,936 original-x86 floor bits. Adding the four TWIId
+recordings brings the verified corpus to 20 runs, 19,091 commands, 76,364 Wolf
+tics and 78,196,736 floor bits. Results are saved under
+`build/demo-attributes-final/{shareware,registered}` and
+`build/demo-corpus-twiid-final`; each corpus `summary.json` reports `passed`.
+An exported stock shareware demo separately passes through the external-file
+manifest path; this validates ingestion and is not a third-party recording.
+
+These checks and source inspection found and fixed:
+
+- Score awards omitted extra lives, and full-heal pickups omitted their life.
+  Full-heal now uses the original +99 health behavior even on a lethal frame.
+- Ammo collected during frame zero of a knife attack must restore the selected
+  gun. Weapon pickups during an attack must also switch the active attack
+  sequence without resetting its frame or timer.
+- Demo movement omitted exit-tile checks. Each thrust now checks the tile,
+  including the intermediate strafe leg; victory prevents further firing and
+  player damage. The subsequent run/jump and boss death-camera states are now
+  compared with original C in separate probes.
+- Elevator use now ends a demo on the matching normal or secret exit command,
+  without saving or loading the next level. Integer direction boundaries match
+  original `Cmd_Use`; the runtime reports the terminal type and unread tail.
+
+Save format version 6 preserves the next extra-life threshold and the new
+projectile angle/speed, marking flags and frozen initial animation state. Older
+prototype saves are rejected by the existing version check.
+
+This is coverage of recorded paths and explicit boundary scenarios. Physical
+audio timing and mixing, palette and HUD drawing, and the display/wait portions
+of victory presentation remain unverified. The runtime now compares original
+`gamestate.TimeCount` after each command; hardware interrupt phase and time
+spent in display waits are outside that check. Unsupported reference routines
+and out-of-bounds original memory accesses fail the run rather than certify it.
+
+## Full-roster and generated-route expansion
+
+Registered support now includes Schabbs, Giftmacher, Fatface, Fake Hitler,
+Mecha-Hitler, Hitler, all four ghosts, needles, rockets, flames and smoke.
+The original-C encounter suite covers every spawnable family. Fourteen
+additional scenarios require actual movement and attacks, then exercise lethal
+damage, projectile removal, Mecha's transformation and boss death cameras in
+each sound mode. A separate `MoveObj` probe compares 3,528 boundary vectors.
+Four projectile wall-impact scenarios additionally require transient removal,
+slot reuse and rocket explosion states. A death-camera probe compares player
+coordinates, angle and state for all 360 angles, with and without an obstruction
+that forces the camera farther from the boss (720 cases).
+A static-object probe checks all 50 defined map entries, pickup ordering after
+slot reuse, the 399-object setup limit and 400-object runtime limit. Map entries
+71 and 72 now preserve the original nonbonus clip-shaped object and free slot;
+73/74 read beyond the non-Spear source table and are explicitly unsupported.
+
+The BJ probe compares 2,160 combinations of all 360 player angles, normal versus
+attacking player states, and three sound modes through the victory endpoint.
+Another 48 cases enter the exit tile through real movement, including a strafe
+and forward move that spawn two BJ actors in one command. These probes use a
+shared fully visible floor mask to isolate the state machines; ordinary demo
+runs retain the separate x86 raycast audit.
+
+The broader routes exposed additional differences now addressed in playback:
+
+- Knife hits call the original noise path, including accepted zero-damage hits.
+- Pain sprites use the original two-direction `CalcRotate` result.
+- Door-jamb bits remain in the raycaster's tile bytes even on floor cells.
+- Player death preserves the current weapon animation state in demos.
+- The final input sets original `ex_completed` before gameplay; that command
+  still runs completely and can replace completion with death or another exit.
+- Actor movement checks the inclusive one-tile player boundary only where
+  original `MoveObj` does; exact tile arrival follows the source snap behavior.
+- Ambush floor areas follow the original neighbor precedence and spawn order;
+  the mutable floor-area plane is compared separately from walls and collision.
+- Dropped items reuse the first free original static-object slot and respect
+  its 400-slot limit. Optional static comparisons retain the original order,
+  raw flags/item numbers and visibility pointers, including removed items.
+- Collision and doors use the original 150-slot actor pool and `actorat` grid,
+  including nonshootable bodies, stale pointers, slot reuse and door clearing.
+- Doors keep their original registry entry when a pushwall overwrites their
+  map cell; later doors retain their original indices.
+
+Set `GDWOLF_DEMO_OCCUPANCY=1` to compare all 4,096 occupancy tags and actor pool
+slots alongside the usual runtime state. `GDWOLF_DEMO_AREA_PLANE=1` adds the
+4,096 mutable floor words; `GDWOLF_DEMO_STATICS=1` adds allocated static slots,
+including collected items. See the
+[generated-route commands](wolf-third-party-demos.md#generate-routes-across-all-six-episodes)
+for reproducible broader coverage. Passing stock recordings does not establish
+zero desyncs on untested routes.
+
+The optional `--memory-profile registered-apogee-v1.4-2a969a97` selects the
+verified registered DOS executable layout. It resolves area-255 reads and
+moving-wall false-door accesses using independent DOS memory evidence, including
+an actual write to a static object's shape. `strict-source` remains the default
+and rejects such out-of-bounds accesses. Unknown memory regions still fail
+explicitly in both the port and oracle. See the
+[DOS memory profile](wolf-dos-memory-profile.md) for executable hashes, exact
+offsets, source-enum correction and reproduction commands. Native playback uses
+the same name with `-demo-memory-profile`.
+Each replay starts a fresh game. Static bytes retained across prior levels or
+successive attract-loop demos are outside these comparisons.
+Living actor health is exact; dead actor health is normalized to zero on both
+sides, so the traces do not verify the original negative overkill remainder.
+
+The final frozen run is `build/demo-final-expanded/summary.json`. All **432
+cases pass**, with zero observed desyncs under the registered DOS profile:
+
+| Corpus | Cases | Matched commands | Original-x86 floor bits |
+| --- | ---: | ---: | ---: |
+| All 60 maps, three 192-command patterns, seed 0 | 180 | 29,627 | 121,352,192 |
+| All 60 maps, three 768-command patterns, seed 1 | 180 | 78,911 | 323,219,456 |
+| Stock, alternate-fire and four TWIId recordings, sound off | 20 | 19,091 | 78,196,736 |
+| Same recordings, AdLib | 20 | 19,091 | 78,196,736 |
+| Same recordings, AdLib plus digitized routing | 20 | 19,091 | 78,196,736 |
+| Map-guided boss recordings | 12 | 6,749 | 27,643,904 |
+| **Total** | **432** | **172,560** | **706,805,760** |
+
+These commands cover 690,240 Wolf tics. Every route enables actor occupancy,
+area-plane and static-slot comparisons, plus the x86 floor-mask audit. All six
+batches use identical frozen C/Go binaries and source fingerprints. The aggregate
+checks raw results, input hashes, terminal states, unread tails, actual trace
+fields and binary hashes before reporting `passed`. All six standalone probe
+batches also pass. The separate complete Go suite, original-C enemy/static/DOS
+alias suite, seven Python tool tests and wasm build pass.
+
+The earlier strict-source sweeps stopped at explicit memory guards on moving
+walls and area 255. Those cases pass with the independently verified DOS profile;
+strict-source still reports unsupported access rather than inventing behavior.
+
+Natural boss routes exercise Hans, Gift and Gretel chase/attack states. Schabbs
+becomes active but remains standing; Mecha/Hitler and Fat are not activated by
+these attempts. Their combat and projectile evidence comes from the controlled
+original-C probes. Passing the finite corpus does not establish parity for every
+possible input sequence or the presentation/audio timing excluded above.
+
 Default runtime artifacts in `build/wolf-demo-runtime-compare`:
 
 | File | Contents |
 | --- | --- |
 | `build.log`, `compare.log` | Compiler and comparison output |
 | `reference-input.txt` | Raw map, commands, diagnostic snapshots and shared floor masks |
-| `reference.jsonl`, `port.jsonl` | Player, actor, weapon, RNG, doors and wall occupancy before rendering |
+| `reference.jsonl`, `port.jsonl` | Player, actor, weapon, RNG, sound, doors and wall occupancy before rendering |
 | `reference-render.jsonl` | Original cached actor projections, post-pickup health/ammo and death flag |
+| `port-render.jsonl` | Port post-pickup inventory, counters and face state |
+| `reference-AUDIOHED.bin`, `reference-AUDIOT.bin` | Raw selected sound bank files used by the original C scheduler |
+| `input-manifest.json` | Selected data and external recording SHA-256 fingerprints, source revision, sound mode and replay options |
 | `raycast-input.jsonl` | Original view coordinates, exact tile bytes, door/pushwall positions and port floor masks |
 | `raycast/`, `raycast.log` | Generated original x86 assembly/boot image, visibility bytes and audit result |
-| `result.json` | Matched count, unread commands, and success, matched-terminal, mismatch or unsupported-terminal status |
+| `result.json` | Matched count, unread commands, sound mode/data variant, and success, matched-terminal, mismatch or unsupported-terminal status |
 
-Replay the original C runtime without Go or a display:
+Replay the original C runtime without Go or a display. This example uses the
+default shareware demo 0; use `sound_mode`, `registered` (0/1) and `map` from
+`result.json` for another run:
 
 ```bash
+GDWOLF_DEMO_SOUND_MODE=adlib-digi \
+GDWOLF_DEMO_REGISTERED=0 \
+GDWOLF_DEMO_MAP_INDEX=0 \
+GDWOLF_DEMO_COMMAND_COUNT=1152 \
+GDWOLF_DEMO_AUDIO_HEAD=build/wolf-demo-runtime-compare/reference-AUDIOHED.bin \
+GDWOLF_DEMO_AUDIO_DATA=build/wolf-demo-runtime-compare/reference-AUDIOT.bin \
 build/wolf-demo-runtime-compare/wolf-demo-runtime-reference \
   < build/wolf-demo-runtime-compare/reference-input.txt
 ```

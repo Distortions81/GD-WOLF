@@ -16,6 +16,15 @@ const (
 	animActionLoopFireIfPressed
 	animActionEnd
 	animActionDeathScream
+	animActionThrowNeedle
+	animActionThrowRocket
+	animActionThrowFire
+	animActionMoveProjectile
+	animActionSmoke
+	animActionHitlerMorph
+	animActionBossDeathCam
+	animActionMechaStep
+	animActionSlurpie
 )
 
 type AnimFrame struct {
@@ -138,6 +147,7 @@ const (
 	shapeOfficerBase = 238
 	shapeBossBase    = 296
 	shapeSchabbBase  = 307
+	shapeGretelBase  = 385
 
 	shapeGuardPain1 = 90
 	shapeGuardDie1  = 91
@@ -179,37 +189,44 @@ const (
 	shapeOfficerShoot2 = 286
 	shapeOfficerShoot3 = 287
 
-	shapeBossShoot1 = 300
-	shapeBossShoot2 = 301
-	shapeBossShoot3 = 302
-	shapeBossDead   = 303
-	shapeBossDie1   = 304
-	shapeBossDie2   = 305
-	shapeBossDie3   = 306
-	shapeBJWalk1    = 395
-	shapeBJWalk2    = 396
-	shapeBJWalk3    = 397
-	shapeBJWalk4    = 398
-	shapeBJJump1    = 399
-	shapeBJJump2    = 400
-	shapeBJJump3    = 401
-	shapeBJJump4    = 402
+	shapeBossShoot1   = 300
+	shapeBossShoot2   = 301
+	shapeBossShoot3   = 302
+	shapeBossDead     = 303
+	shapeBossDie1     = 304
+	shapeBossDie2     = 305
+	shapeBossDie3     = 306
+	shapeGretelShoot1 = 389
+	shapeGretelShoot2 = 390
+	shapeGretelShoot3 = 391
+	shapeGretelDead   = 392
+	shapeGretelDie1   = 393
+	shapeGretelDie2   = 394
+	shapeGretelDie3   = 395
+	shapeBJWalk1      = 408
+	shapeBJWalk2      = 409
+	shapeBJWalk3      = 410
+	shapeBJWalk4      = 411
+	shapeBJJump1      = 412
+	shapeBJJump2      = 413
+	shapeBJJump3      = 414
+	shapeBJJump4      = 415
 
-	shapeSPR_ROCKET_1 = 357
-	shapeSPR_ROCKET_2 = 358
-	shapeSPR_ROCKET_3 = 359
-	shapeSPR_ROCKET_4 = 360
-	shapeSPR_ROCKET_5 = 361
-	shapeSPR_ROCKET_6 = 362
-	shapeSPR_ROCKET_7 = 363
-	shapeSPR_ROCKET_8 = 364
-	shapeSPR_SMOKE_1  = 365
-	shapeSPR_SMOKE_2  = 366
-	shapeSPR_SMOKE_3  = 367
-	shapeSPR_SMOKE_4  = 368
-	shapeSPR_BOOM_1   = 369
-	shapeSPR_BOOM_2   = 370
-	shapeSPR_BOOM_3   = 371
+	shapeSPR_ROCKET_1 = 370
+	shapeSPR_ROCKET_2 = 371
+	shapeSPR_ROCKET_3 = 372
+	shapeSPR_ROCKET_4 = 373
+	shapeSPR_ROCKET_5 = 374
+	shapeSPR_ROCKET_6 = 375
+	shapeSPR_ROCKET_7 = 376
+	shapeSPR_ROCKET_8 = 377
+	shapeSPR_SMOKE_1  = 378
+	shapeSPR_SMOKE_2  = 379
+	shapeSPR_SMOKE_3  = 380
+	shapeSPR_SMOKE_4  = 381
+	shapeSPR_BOOM_1   = 382
+	shapeSPR_BOOM_2   = 383
+	shapeSPR_BOOM_3   = 384
 
 	shapeSPR_KNIFEREADY      = 416
 	shapeSPR_KNIFEATK1       = 417
@@ -271,6 +288,10 @@ const (
 	seqActorBossShoot     AnimSequenceID = "actor.boss.shoot"
 	seqActorDogDeath      AnimSequenceID = "actor.dog.death"
 	seqActorBossDeath     AnimSequenceID = "actor.boss.death"
+	seqActorGretelStand   AnimSequenceID = "actor.gretel.stand"
+	seqActorGretelChase   AnimSequenceID = "actor.gretel.chase"
+	seqActorGretelShoot   AnimSequenceID = "actor.gretel.shoot"
+	seqActorGretelDeath   AnimSequenceID = "actor.gretel.death"
 	seqVictoryBJRun       AnimSequenceID = "victory.bj.run"
 	seqVictoryBJJump      AnimSequenceID = "victory.bj.jump"
 	seqProjectileRocket   AnimSequenceID = "projectile.rocket"
@@ -331,11 +352,17 @@ var staticDefs = []StaticDef{
 	{Info: 68, Shape: shapeSPR_STAT_45, Blocking: true},
 	{Info: 69, Shape: shapeSPR_STAT_46, Blocking: true},
 	{Info: 70, Shape: shapeSPR_STAT_47},
-	{Info: 74, Shape: shapeSPR_STAT_26, Pickup: pickupClip2},
+	// The non-Spear statinfo table ends with the dropped-clip entry and
+	// its terminator. SpawnStatic does not flag bo_clip2 as a bonus.
+	{Info: 71, Shape: shapeSPR_STAT_26},
+	{Info: 72, Shape: -1},
 	{Info: 124, Shape: shapeGuardDead},
 }
 
 var actorDefs = []ActorDef{
+	{Kind: actorKindGretel, SpawnMode: actorSpawnStand, MinDifficulty: difficultyHard, InfoStart: 197, InfoEnd: 197, BaseShape: shapeGretelBase, Rotate: false, Blocking: true, Shootable: true, HitPoints: 1200, PatrolSpeed: 512, ChaseSpeed: 512 * 3, StandSequence: seqActorGretelStand, ChaseSequence: seqActorGretelChase, ShootSequence: seqActorGretelShoot, DeathSequence: seqActorGretelDeath, DropPickup: pickupKey1, DropScore: 5000},
+	{Kind: actorKindGretel, SpawnMode: actorSpawnStand, MinDifficulty: difficultyMedium, InfoStart: 197, InfoEnd: 197, BaseShape: shapeGretelBase, Rotate: false, Blocking: true, Shootable: true, HitPoints: 1050, PatrolSpeed: 512, ChaseSpeed: 512 * 3, StandSequence: seqActorGretelStand, ChaseSequence: seqActorGretelChase, ShootSequence: seqActorGretelShoot, DeathSequence: seqActorGretelDeath, DropPickup: pickupKey1, DropScore: 5000},
+	{Kind: actorKindGretel, SpawnMode: actorSpawnStand, MinDifficulty: difficultyEasy, InfoStart: 197, InfoEnd: 197, BaseShape: shapeGretelBase, Rotate: false, Blocking: true, Shootable: true, HitPoints: 950, PatrolSpeed: 512, ChaseSpeed: 512 * 3, StandSequence: seqActorGretelStand, ChaseSequence: seqActorGretelChase, ShootSequence: seqActorGretelShoot, DeathSequence: seqActorGretelDeath, DropPickup: pickupKey1, DropScore: 5000},
 	{Kind: actorKindGuard, SpawnMode: actorSpawnStand, MinDifficulty: difficultyEasy, InfoStart: 108, InfoEnd: 111, BaseShape: shapeGuardBase, Rotate: true, Blocking: true, Shootable: true, HitPoints: 25, PatrolSpeed: 512, ChaseSpeed: 512 * 3, StandSequence: seqActorGuardStand, PatrolSequence: seqActorGuardPatrol, ChaseSequence: seqActorGuardChase, PainSequence: seqActorGuardPain, ShootSequence: seqActorGuardShoot, DeathSequence: seqActorGuardDeath, DropPickup: pickupClip2, DropScore: 100},
 	{Kind: actorKindGuard, SpawnMode: actorSpawnPatrol, MinDifficulty: difficultyEasy, InfoStart: 112, InfoEnd: 115, BaseShape: shapeGuardBase, Rotate: true, Blocking: true, Shootable: true, HitPoints: 25, PatrolSpeed: 512, ChaseSpeed: 512 * 3, StandSequence: seqActorGuardStand, PatrolSequence: seqActorGuardPatrol, ChaseSequence: seqActorGuardChase, PainSequence: seqActorGuardPain, ShootSequence: seqActorGuardShoot, DeathSequence: seqActorGuardDeath, DropPickup: pickupClip2, DropScore: 100},
 	{Kind: actorKindOfficer, SpawnMode: actorSpawnStand, MinDifficulty: difficultyEasy, InfoStart: 116, InfoEnd: 119, BaseShape: shapeOfficerBase, Rotate: true, Blocking: true, Shootable: true, HitPoints: 50, PatrolSpeed: 512, ChaseSpeed: 512 * 5, StandSequence: seqActorOfficerStand, PatrolSequence: seqActorOfficerPatrol, ChaseSequence: seqActorOfficerChase, PainSequence: seqActorOfficerPain, ShootSequence: seqActorOfficerShoot, DeathSequence: seqActorOfficerDeath, DropPickup: pickupClip2, DropScore: 400},
@@ -372,6 +399,43 @@ var actorDefs = []ActorDef{
 }
 
 var animSequences = map[AnimSequenceID]AnimSequence{
+	seqActorGretelStand: {
+		ID: seqActorGretelStand, Loop: true,
+		Frames: []AnimFrame{{Shape: shapeGretelBase, Tics: 0}},
+	},
+	seqActorGretelChase: {
+		ID: seqActorGretelChase, Loop: true,
+		Frames: []AnimFrame{
+			{Shape: shapeGretelBase, Tics: 10},
+			{Shape: shapeGretelBase, Tics: 3},
+			{Shape: shapeGretelBase + 1, Tics: 8},
+			{Shape: shapeGretelBase + 2, Tics: 10},
+			{Shape: shapeGretelBase + 2, Tics: 3},
+			{Shape: shapeGretelBase + 3, Tics: 8},
+		},
+	},
+	seqActorGretelShoot: {
+		ID: seqActorGretelShoot,
+		Frames: []AnimFrame{
+			{Shape: shapeGretelShoot1, Tics: 30},
+			{Shape: shapeGretelShoot2, Tics: 10, Action: animActionFireActor},
+			{Shape: shapeGretelShoot3, Tics: 10, Action: animActionFireActor},
+			{Shape: shapeGretelShoot2, Tics: 10, Action: animActionFireActor},
+			{Shape: shapeGretelShoot3, Tics: 10, Action: animActionFireActor},
+			{Shape: shapeGretelShoot2, Tics: 10, Action: animActionFireActor},
+			{Shape: shapeGretelShoot3, Tics: 10, Action: animActionFireActor},
+			{Shape: shapeGretelShoot1, Tics: 10},
+		},
+	},
+	seqActorGretelDeath: {
+		ID: seqActorGretelDeath,
+		Frames: []AnimFrame{
+			{Shape: shapeGretelDie1, Tics: 15},
+			{Shape: shapeGretelDie2, Tics: 15},
+			{Shape: shapeGretelDie3, Tics: 15},
+			{Shape: shapeGretelDead, Tics: 0},
+		},
+	},
 	seqActorGuardPain: {
 		ID: seqActorGuardPain,
 		Frames: []AnimFrame{

@@ -94,16 +94,19 @@ func (g *game) demoRayPassesTile(x, y, intercept, step int) bool {
 	if x < 0 || y < 0 || x >= g.levelWidth || y >= g.levelHeight {
 		return false
 	}
-	if g.pushWall.active && x == g.pushWall.x && y == g.pushWall.y {
+	tile := g.demoTileMapAt(x, y)
+	if tile == 0 {
+		return true
+	}
+	if tile&0xc0 == 0xc0 {
 		shifted := intercept + int(int64(step)*int64(g.pushWall.tics/2)>>6)
 		return shifted>>16 != intercept>>16
 	}
-	tile := g.level.Tile(x, y)
-	if tile.Door != nil {
+	if tile&0x80 != 0 {
 		middle := intercept + (step >> 1)
 		return middle>>16 != intercept>>16 || middle&65535 < int(math.Round(g.doorOpen[y*g.levelWidth+x]*65535))
 	}
-	return !tile.Solid
+	return false
 }
 
 func (g *game) demoActorTileVisible(a *actorInstance, visible []bool) bool {
@@ -113,7 +116,7 @@ func (g *game) demoActorTileVisible(a *actorInstance, visible []bool) bool {
 			if x < 0 || y < 0 || x >= g.levelWidth || y >= g.levelHeight {
 				continue
 			}
-			if visible[y*g.levelWidth+x] && (dx == 0 && dy == 0 || !g.isBlockingTile(x, y) && g.level.Tile(x, y).Door == nil) {
+			if visible[y*g.levelWidth+x] && (dx == 0 && dy == 0 || g.demoTileMapAt(x, y) == 0) {
 				return true
 			}
 		}

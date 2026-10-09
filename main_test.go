@@ -558,7 +558,7 @@ func TestLayoutInitializesGameplayWithoutWindowResize(t *testing.T) {
 
 func TestLookupStaticTable(t *testing.T) {
 	for info := uint16(23); info <= 74; info++ {
-		if info >= 71 && info <= 73 {
+		if info >= 73 {
 			if _, ok := LookupStatic(info); ok {
 				t.Fatalf("LookupStatic(%d) unexpectedly found sparse entry", info)
 			}
@@ -579,7 +579,8 @@ func TestLookupStaticTable(t *testing.T) {
 		{info: 49, shape: shapeSPR_STAT_26, blocking: false, pickup: pickupClip},
 		{info: 50, shape: shapeSPR_STAT_27, blocking: false, pickup: pickupMachineGun},
 		{info: 55, shape: shapeSPR_STAT_32, blocking: false, pickup: pickupCrown},
-		{info: 74, shape: shapeSPR_STAT_26, blocking: false, pickup: pickupClip2},
+		{info: 71, shape: shapeSPR_STAT_26, blocking: false, pickup: pickupNone},
+		{info: 72, shape: -1, blocking: false, pickup: pickupNone},
 		{info: 124, shape: shapeGuardDead, blocking: false, pickup: pickupNone},
 	}
 	for _, tt := range tests {
@@ -3979,8 +3980,8 @@ func TestDamageMutantActorDeathUsesMutantSound(t *testing.T) {
 
 	g.damageActor(&actor, 4)
 
-	if g.lastPlayedSound != soundEnemyDeathGuard8 {
-		t.Fatalf("lastPlayedSound = %v, want %v", g.lastPlayedSound, soundEnemyDeathGuard8)
+	if g.lastPlayedSound != soundEnemyDeathMutant {
+		t.Fatalf("lastPlayedSound = %v, want %v", g.lastPlayedSound, soundEnemyDeathMutant)
 	}
 }
 

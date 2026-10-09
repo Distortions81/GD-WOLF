@@ -45,6 +45,8 @@ mkdir -p "$OUT_DIR"
 cd "$ROOT_DIR"
 PYTHONDONTWRITEBYTECODE=1 python3 tools/wolfsrc-reference/build_demo_runtime.py --source "$SOURCE_DIR" \
   --output "$OUT_DIR/wolf-demo-runtime-reference" --cc "${CC:-cc}" 2>&1 | tee "$OUT_DIR/build.log"
+export GDWOLF_DEMO_OCCUPANCY=1
+export GDWOLF_DEMO_AREA_PLANE=1
 export GDWOLF_ENEMY_RUNTIME_REFERENCE="$OUT_DIR/wolf-demo-runtime-reference"
 export GDWOLF_ENEMY_RUNTIME_OUT="$OUT_DIR"
 export GDWOLF_ENEMY_RUNTIME_DATA="$DATA_DIR"
@@ -56,5 +58,5 @@ if [[ "$(uname -s)" == Linux && -z "${DISPLAY:-}" ]]; then
   command -v xvfb-run >/dev/null || { echo "Headless Ebiten tests require xvfb-run" >&2; exit 2; }
   RUNNER=(xvfb-run -a)
 fi
-"${RUNNER[@]}" go test -run '^TestWolfEnemyRuntimeCompare$' -count=1 -parallel=1 \
+"${RUNNER[@]}" go test -run '^(TestWolfEnemyRuntimeCompare|TestWolfRegisteredActorsRuntime|TestWolfActorMoveContactCompare|TestWolfProjectilesRuntimeCompare|TestWolfDemoDeathCamCompare|TestWolfAmbushAreaCompare|TestWolfPushWallIntoOpenDoorCompare|TestWolfDemoDOSAliasedDoorCompare|TestWolfStaticPoolCompare|TestWolfStaticCatalogCompare)$' -count=1 -parallel=1 \
   -timeout=5m -v . 2>&1 | tee "$OUT_DIR/compare.log"

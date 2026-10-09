@@ -14,6 +14,10 @@ const (
 
 func (g *game) playWorldSound(id soundID, x, y float64) {
 	g.lastPlayedSound = id
+	g.recordDemoSound(id)
+	if g.demoPlayback != nil && g.demoPlayback.sound != nil && g.demoPlayback.sound.mode == "off" {
+		return
+	}
 	voices := g.soundBanks[id]
 	if len(voices) == 0 {
 		return

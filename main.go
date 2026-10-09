@@ -190,6 +190,8 @@ type game struct {
 	lastFPSUpdate       time.Time
 	staticSprites       []staticSprite
 	actors              []actorInstance
+	pendingActors       []actorInstance
+	demoActorPool       *demoActorPool
 	demoPlayback        *wolfDemoPlayback
 	modernDoors         bool
 	doorOpen            []float64
@@ -207,6 +209,7 @@ type game struct {
 	lives               int
 	keys                byte
 	score               int
+	nextExtra           int
 	secretTotal         int
 	secretCount         int
 	treasureTotal       int
@@ -685,6 +688,7 @@ var wolfSoundIDs = map[soundID]int{
 	soundEnemyAlertOfficer: 66, // SPIONSND
 	soundEnemyAlertSS:      51, // SCHUTZADSND
 	soundEnemyAlertBoss:    55, // GUTENTAGSND
+	soundEnemyAlertGretel:  82, // KEINSND
 	soundEnemyAlertDog:     41, // DOGBARKSND
 	soundEnemyAttackGuard:  58, // NAZIFIRESND
 	soundEnemyAttackSS:     60, // SSFIRESND
@@ -693,15 +697,17 @@ var wolfSoundIDs = map[soundID]int{
 	soundEnemyDeathGuard:   29, // DEATHSCREAM1SND
 	soundEnemyDeathGuard2:  22, // DEATHSCREAM2SND
 	soundEnemyDeathGuard3:  25, // DEATHSCREAM3SND
-	soundEnemyDeathGuard4:  34, // DEATHSCREAM4SND
-	soundEnemyDeathGuard5:  35, // DEATHSCREAM5SND
-	soundEnemyDeathGuard6:  39, // DEATHSCREAM6SND
-	soundEnemyDeathGuard7:  40, // DEATHSCREAM7SND
-	soundEnemyDeathGuard8:  52, // AHHHGSND
-	soundEnemyDeathGuard9:  67, // NEINSOVASSND
+	soundEnemyDeathGuard4:  73, // DEATHSCREAM4SND
+	soundEnemyDeathGuard5:  74, // DEATHSCREAM5SND
+	soundEnemyDeathGuard6:  75, // DEATHSCREAM6SND
+	soundEnemyDeathGuard7:  76, // DEATHSCREAM7SND
+	soundEnemyDeathGuard8:  77, // DEATHSCREAM8SND
+	soundEnemyDeathGuard9:  78, // DEATHSCREAM9SND
+	soundEnemyDeathMutant:  52, // AHHHGSND
 	soundEnemyDeathOfficer: 67, // NEINSOVASSND
-	soundEnemyDeathSS:      63, // MEINGOTTSND
-	soundEnemyDeathBoss:    53, // DIESND
+	soundEnemyDeathSS:      56, // LEBENSND
+	soundEnemyDeathBoss:    50, // MUTTISND
+	soundEnemyDeathGretel:  83, // MEINSND
 	soundEnemyDeathDog:     10, // DOGDEATHSND
 	soundPlayerDeath:       9,  // PLAYERDEATHSND
 	soundPlayerHurt:        16, // TAKEDAMAGESND
@@ -724,6 +730,26 @@ var wolfSoundIDs = map[soundID]int{
 	soundPickupOneUp:       44, // BONUS1UPSND
 	soundPickupGibs:        61, // SLURPIESND
 	soundHitEnemy:          27, // HITENEMYSND
+	soundDoNothing:         20, // DONOTHINGSND
+	soundLevelDone:         40, // LEVELDONESND
+	soundHitWall:           0,  // HITWALLSND
+	soundVictoryYell:       72, // YEAHSND
+	soundEnemyAlertSchabbs: 64, // SCHABBSHASND
+	soundEnemyDeathSchabbs: 63, // MEINGOTTSND
+	soundEnemyAlertGift:    80, // EINACTUNGSND
+	soundEnemyDeathGift:    79, // DONNERSND
+	soundEnemyAlertFat:     81, // ERLAUBENSND
+	soundEnemyDeathFat:     84, // ROSESND
+	soundEnemyAlertFake:    62, // TOT_HUNDSND
+	soundEnemyDeathFake:    65, // HITLERHASND
+	soundEnemyAlertMecha:   53, // DIESND
+	soundEnemyDeathMecha:   57, // SCHEISTSND
+	soundEnemyDeathHitler:  54, // EVASND
+	soundProjectileNeedle:  8,  // SCHABBSTHROWSND
+	soundProjectileRocket:  85, // MISSILEFIRESND
+	soundProjectileHit:     86, // MISSILEHITSND
+	soundProjectileFire:    69, // FLAMETHROWERSND
+	soundMechaStep:         70, // MECHSTEPSND
 }
 
 func soundVoiceCount(id soundID) int {
@@ -942,6 +968,29 @@ const (
 	soundPickupOneUp
 	soundPickupGibs
 	soundHitEnemy
+	soundEnemyAlertGretel
+	soundEnemyDeathGretel
+	soundEnemyDeathMutant
+	soundDoNothing
+	soundLevelDone
+	soundHitWall
+	soundVictoryYell
+	soundEnemyAlertSchabbs
+	soundEnemyDeathSchabbs
+	soundEnemyAlertGift
+	soundEnemyDeathGift
+	soundEnemyAlertFat
+	soundEnemyDeathFat
+	soundEnemyAlertFake
+	soundEnemyDeathFake
+	soundEnemyAlertMecha
+	soundEnemyDeathMecha
+	soundEnemyDeathHitler
+	soundProjectileNeedle
+	soundProjectileRocket
+	soundProjectileHit
+	soundProjectileFire
+	soundMechaStep
 )
 
 func main() {
@@ -950,6 +999,8 @@ func main() {
 	threads := flag.Int("threads", 0, "number of render worker threads (0 = NumCPU)")
 	demoIndex := flag.Int("demo-index", -1, "play built-in Wolf3D demo 0-3")
 	demoFile := flag.String("demo-file", "", "play a recorded Wolf3D demo file")
+	demoSoundMode := flag.String("demo-sound-mode", "adlib-digi", "original demo sound routing: off, adlib, or adlib-digi")
+	demoMemoryProfile := flag.String("demo-memory-profile", "strict-source", "demo DOS memory layout: strict-source or registered-apogee-v1.4-2a969a97")
 	flag.Parse()
 	startMapSet := false
 	flag.Visit(func(f *flag.Flag) {
@@ -973,97 +1024,12 @@ func main() {
 	setSpriteCatalogVariant(files.Variant)
 
 	soundData := buildSoundBank(audioSampleRate)
-	if digi, err := files.LoadDigitizedSoundsResampled(audioSampleRate); err == nil {
-		if 5 < len(digi.Samples) && len(digi.Samples[5]) > 0 {
-			soundData[soundPistol] = digi.Samples[5]
-		}
-		if 4 < len(digi.Samples) && len(digi.Samples[4]) > 0 {
-			soundData[soundMachineGun] = digi.Samples[4]
-		}
-		if 6 < len(digi.Samples) && len(digi.Samples[6]) > 0 {
-			soundData[soundChainGun] = digi.Samples[6]
-		}
-		if 0 < len(digi.Samples) && len(digi.Samples[0]) > 0 {
-			soundData[soundEnemyAlertGuard] = digi.Samples[0]
-		}
-		if 27 < len(digi.Samples) && len(digi.Samples[27]) > 0 {
-			soundData[soundEnemyAlertOfficer] = digi.Samples[27]
-		}
-		if 7 < len(digi.Samples) && len(digi.Samples[7]) > 0 {
-			soundData[soundEnemyAlertSS] = digi.Samples[7]
-		}
-		if 8 < len(digi.Samples) && len(digi.Samples[8]) > 0 {
-			soundData[soundEnemyAlertBoss] = digi.Samples[8]
-		}
-		if 1 < len(digi.Samples) && len(digi.Samples[1]) > 0 {
-			soundData[soundEnemyAlertDog] = digi.Samples[1]
-		}
-		if 21 < len(digi.Samples) && len(digi.Samples[21]) > 0 {
-			soundData[soundEnemyAttackGuard] = digi.Samples[21]
-		}
-		if 11 < len(digi.Samples) && len(digi.Samples[11]) > 0 {
-			soundData[soundEnemyAttackSS] = digi.Samples[11]
-		}
-		if 10 < len(digi.Samples) && len(digi.Samples[10]) > 0 {
-			soundData[soundEnemyAttackBoss] = digi.Samples[10]
-		}
-		if 29 < len(digi.Samples) && len(digi.Samples[29]) > 0 {
-			soundData[soundEnemyAttackDog] = digi.Samples[29]
-		}
-		if 12 < len(digi.Samples) && len(digi.Samples[12]) > 0 {
-			soundData[soundEnemyDeathGuard] = digi.Samples[12]
-		}
-		if 13 < len(digi.Samples) && len(digi.Samples[13]) > 0 {
-			soundData[soundEnemyDeathGuard2] = digi.Samples[13]
-			soundData[soundEnemyDeathGuard3] = digi.Samples[13]
-		}
-		if 34 < len(digi.Samples) && len(digi.Samples[34]) > 0 {
-			soundData[soundEnemyDeathGuard4] = digi.Samples[34]
-		}
-		if 35 < len(digi.Samples) && len(digi.Samples[35]) > 0 {
-			soundData[soundEnemyDeathGuard5] = digi.Samples[35]
-		}
-		if 39 < len(digi.Samples) && len(digi.Samples[39]) > 0 {
-			soundData[soundEnemyDeathGuard6] = digi.Samples[39]
-		}
-		if 40 < len(digi.Samples) && len(digi.Samples[40]) > 0 {
-			soundData[soundEnemyDeathGuard7] = digi.Samples[40]
-		}
-		if 41 < len(digi.Samples) && len(digi.Samples[41]) > 0 {
-			soundData[soundEnemyDeathGuard8] = digi.Samples[41]
-		}
-		if 42 < len(digi.Samples) && len(digi.Samples[42]) > 0 {
-			soundData[soundEnemyDeathGuard9] = digi.Samples[42]
-		}
-		if 28 < len(digi.Samples) && len(digi.Samples[28]) > 0 {
-			soundData[soundEnemyDeathOfficer] = digi.Samples[28]
-		}
-		if 20 < len(digi.Samples) && len(digi.Samples[20]) > 0 {
-			soundData[soundEnemyDeathSS] = digi.Samples[20]
-		}
-		if 9 < len(digi.Samples) && len(digi.Samples[9]) > 0 {
-			soundData[soundEnemyDeathBoss] = digi.Samples[9]
-		}
-		if 16 < len(digi.Samples) && len(digi.Samples[16]) > 0 {
-			soundData[soundEnemyDeathDog] = digi.Samples[16]
-		}
-		if 9 < len(digi.Samples) && len(digi.Samples[9]) > 0 {
-			soundData[soundPlayerDeath] = digi.Samples[9]
-		}
-		if 14 < len(digi.Samples) && len(digi.Samples[14]) > 0 {
-			soundData[soundPlayerHurt] = digi.Samples[14]
-		}
-		if 3 < len(digi.Samples) && len(digi.Samples[3]) > 0 {
-			soundData[soundDoorOpen] = digi.Samples[3]
-		}
-		if 2 < len(digi.Samples) && len(digi.Samples[2]) > 0 {
-			soundData[soundDoorClose] = digi.Samples[2]
-		}
-		if 15 < len(digi.Samples) && len(digi.Samples[15]) > 0 {
-			soundData[soundPushWall] = digi.Samples[15]
-		}
-		if 22 < len(digi.Samples) && len(digi.Samples[22]) > 0 {
-			soundData[soundPickupGibs] = digi.Samples[22]
+	if digi, err := files.LoadDigitizedSoundsResampled(audioSampleRate); err == nil && ((*demoIndex < 0 && *demoFile == "") || *demoSoundMode == "adlib-digi") {
+		for id, rawSound := range wolfSoundIDs {
+			index, ok := wolfDigitizedSoundIndex(rawSound, files.Variant.Ext == "WL1")
+			if ok && index < len(digi.Samples) && len(digi.Samples[index]) > 0 {
+				soundData[id] = digi.Samples[index]
+			}
 		}
 	}
 	populateMissingWolfSounds(files, audioSampleRate, soundData)
@@ -1163,6 +1129,13 @@ func main() {
 		if err := g.startDemo(demo); err != nil {
 			log.Fatal(err)
 		}
+		g.demoPlayback.sound, err = newWolfDemoSound(files, *demoSoundMode)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if err := g.configureDemoMemory(*demoMemoryProfile); err != nil {
+			log.Fatal(err)
+		}
 	}
 	g.syncMusicTrack()
 
@@ -1243,13 +1216,13 @@ func (g *game) Update() error {
 	}
 
 	gameplayTics := g.consumeWolfTics(&g.gameplayTickAccum)
-	if g.demoPlayback != nil && (g.playerDying || g.victoryActive) {
+	if g.demoPlayback != nil && (g.playerDying || g.demoPlayback.levelExit != 0) {
 		return ebiten.Termination
 	}
 	if g.playerDying {
 		return g.updatePlayerDeath(gameplayTics)
 	}
-	if g.victoryActive {
+	if g.victoryActive && g.demoPlayback == nil {
 		return g.updateVictorySequence(gameplayTics)
 	}
 	if g.demoPlayback != nil {
@@ -5488,11 +5461,14 @@ func (g *game) resetLoadout() {
 
 func (g *game) startNewGame() {
 	g.demoPlayback = nil
+	g.demoActorPool = nil
+	g.pendingActors = nil
 	g.resetLoadout()
 	g.health = 100
 	g.lives = 3
 	g.keys = 0
 	g.score = 0
+	g.nextExtra = extraLifePoints
 	g.secretCount = 0
 	g.treasureCount = 0
 	g.hudNotice = ""
@@ -5608,6 +5584,11 @@ func (g *game) startDeathWaitSound() {
 func (g *game) beginPlayerDeath(killerX, killerY float64, hasKiller bool) {
 	g.health = 0
 	g.playerDying = true
+	if g.demoPlayback != nil {
+		// PlayDemo exits PlayLoop directly; interactive Died() and its
+		// weapon reset, camera rotation and audio never run for a demo.
+		return
+	}
 	g.deathPhase = deathPhaseRotate
 	g.deathTimer = 0
 	g.deathKillerX = killerX
@@ -5659,6 +5640,11 @@ func (g *game) finishPlayerDeath() {
 }
 
 func (g *game) isSoundPlaying(id soundID) bool {
+	if g.demoPlayback != nil {
+		index, ok := wolfSoundIDs[id]
+		sound := g.demoPlayback.sound
+		return ok && sound != nil && sound.remaining > 0 && sound.playingSound() == index
+	}
 	for _, voice := range g.soundBanks[id] {
 		if voice.player.IsPlaying() {
 			return true
@@ -5721,7 +5707,7 @@ func (g *game) advancePlayerDeathTics(tics int) error {
 }
 
 func (g *game) checkVictoryTile() bool {
-	if g.victoryActive || g.level == nil {
+	if (g.victoryActive && g.demoPlayback == nil) || g.level == nil {
 		return false
 	}
 	tileX := int(math.Floor(g.playerX))
@@ -5737,6 +5723,10 @@ func (g *game) checkVictoryTile() bool {
 }
 
 func (g *game) startVictorySequence() {
+	if g.demoPlayback != nil {
+		g.spawnDemoVictoryBJ()
+		return
+	}
 	g.victoryActive = true
 	g.victoryPhase = victoryPhaseRun
 	g.victoryRunDistance = 6
@@ -5826,8 +5816,8 @@ func (g *game) giveAmmo(ammo int) {
 	if ammo <= 0 {
 		return
 	}
-	if g.ammo <= 0 && !g.attacking {
-		g.weapon = g.chosenWeapon
+	if g.ammo <= 0 && g.weaponFrameIdx == 0 {
+		g.setCurrentWeapon(g.chosenWeapon)
 	}
 	g.ammo = minInt(99, g.ammo+ammo)
 }
@@ -5836,8 +5826,41 @@ func (g *game) giveWeapon(weapon int) {
 	g.giveAmmo(6)
 	if g.bestWeapon < weapon {
 		g.bestWeapon = weapon
-		g.weapon = weapon
+		g.setCurrentWeapon(weapon)
 		g.chosenWeapon = weapon
+	}
+}
+
+func (g *game) setCurrentWeapon(weapon int) {
+	g.weapon = weapon
+	if g.attacking {
+		// T_Attack reads attackinfo[gamestate.weapon] on every frame. A
+		// pickup changes that table without restarting the attack timer.
+		if def, ok := WeaponAnim(weapon); ok {
+			g.weaponSequence = def.AttackSequence
+		}
+	}
+}
+
+const extraLifePoints = 40000
+
+func (g *game) giveExtraLife() {
+	if g.lives < 9 {
+		g.lives++
+	}
+	g.playSound(soundPickupOneUp)
+}
+
+// GivePoints advances the threshold even at the nine-life cap. Keeping it
+// separate from score also prevents re-awarding lives after a score rollback.
+func (g *game) givePoints(points int) {
+	if g.nextExtra == 0 {
+		g.nextExtra = extraLifePoints
+	}
+	g.score += points
+	for g.score >= g.nextExtra {
+		g.nextExtra += extraLifePoints
+		g.giveExtraLife()
 	}
 }
 
@@ -5925,7 +5948,7 @@ func (g *game) buildStaticSprites() ([]staticSprite, int) {
 					y:        float64(y) + 0.5,
 					shapenum: def.Shape,
 					blocking: def.Blocking,
-					alive:    true,
+					alive:    def.Shape != -1,
 					pickup:   def.Pickup,
 				})
 				continue
@@ -6509,11 +6532,24 @@ func (g *game) visibleSprites(forwardX, forwardY float64) []spriteVis {
 		}
 		dx := actor.x - g.playerX
 		dy := actor.y - g.playerY
+		shape, rotate := actor.shapenum, actor.rotate
+		if g.demoPlayback != nil || actor.kind == actorKindRocket {
+			angle := wolfDemoAngle(g.playerA)
+			if g.demoPlayback != nil {
+				angle = g.demoPlayback.angle
+			}
+			cos, sin := wolfDemoTrigTable[angle+90], wolfDemoTrigTable[angle]
+			viewX := int(math.Round(g.playerX*65536)) - wolfDemoFixedByFrac(0x5700, cos)
+			viewY := int(math.Round(g.playerY*65536)) + wolfDemoFixedByFrac(0x5700, sin)
+			projection := demoActorProjection{}
+			transformDemoActor(&actor, &projection, viewX, viewY, cos, sin)
+			shape, rotate = g.demoActorRenderShape(&actor, projection.viewX), false
+		}
 		g.spriteVisBuf = append(g.spriteVisBuf, spriteVis{
 			x:         dx,
 			y:         dy,
-			shapenum:  actor.shapenum,
-			rotate:    actor.rotate,
+			shapenum:  shape,
+			rotate:    rotate,
 			facingDir: actor.facingDir,
 			depth:     dx*forwardX + dy*forwardY,
 		})
@@ -6737,7 +6773,7 @@ func (g *game) drawWallColumnsScaled() {
 }
 
 func shouldDrawActorSprite(actor actorInstance) bool {
-	return actor.alive || actor.aiState == actorStateDead
+	return !actor.removed && (actor.alive || actor.aiState == actorStateDead)
 }
 
 func (g *game) spriteRotateOffset(spriteDX, spriteDY float64, facingDir int) int {
@@ -7090,27 +7126,18 @@ func (g *game) doorBlockedByPlayer(tileX, tileY int, door *wl6.Door) bool {
 }
 
 func (g *game) doorActorOccupantAt(x, y int) *actorInstance {
-	if a := g.blockingActorAt(nil, x, y); a != nil {
-		return a
-	}
 	if g.demoPlayback != nil {
-		for i := range g.actors {
-			a := &g.actors[i]
-			// DoActor re-marks a corpse's physical tile when actorat is empty.
-			if a.aiState == actorStateDead && a.tileX == x && a.tileY == y {
-				return a
-			}
-			if a.demoHasDeathGoal && a.demoDeathGoalX == x && a.demoDeathGoalY == y {
-				return a
-			}
-		}
+		return g.demoActorGridAt(x, y)
 	}
-	return nil
+	return g.blockingActorAt(nil, x, y)
 }
 
 func (g *game) doorBlockedByActors(tileX, tileY int, door *wl6.Door) bool {
 	if door == nil {
 		return false
+	}
+	if g.demoPlayback != nil && g.demoActorTagAt(tileX, tileY) != 0 {
+		return true
 	}
 	if g.doorActorOccupantAt(tileX, tileY) != nil {
 		return true
@@ -7134,7 +7161,7 @@ func (g *game) doorBlockedByActors(tileX, tileY int, door *wl6.Door) bool {
 }
 
 func (g *game) updateDoors(tics int) {
-	if tics <= 0 {
+	if tics <= 0 || (g.demoPlayback != nil && g.victoryActive) {
 		return
 	}
 	if g.level == nil || len(g.doorOpen) != g.level.Width*g.level.Height || len(g.doorState) != len(g.doorOpen) || len(g.doorTimer) != len(g.doorOpen) {
@@ -7143,42 +7170,42 @@ func (g *game) updateDoors(tics int) {
 	for i, state := range g.doorState {
 		switch state {
 		case 1: // opening
+			wasClosed := g.doorOpen[i] == 0
 			g.doorOpen[i] += doorOpenRatePerTic * float64(tics)
+			if g.demoPlayback != nil && wasClosed {
+				// DoorOpening connects the areas and emits sound on its first
+				// movement tick, after OpenDoor has only changed the action.
+				g.rebuildPlayerAreas()
+				g.playDoorSound(soundDoorOpen, i%g.level.Width, i/g.level.Width)
+			}
 			if g.doorOpen[i] >= 1 {
 				g.doorOpen[i] = 1
 				g.doorState[i] = 2
 				g.doorTimer[i] = 0
-				if g.demoPlayback != nil {
-					// DoorOpening clears actorat on the door tile when fully open.
-					for ai := range g.actors {
-						a := &g.actors[ai]
-						if a.demoHasDeathGoal && a.demoDeathGoalX == i%g.levelWidth && a.demoDeathGoalY == i/g.levelWidth {
-							a.demoHasDeathGoal = false
-						}
-					}
-				}
+				g.setDemoDoorActorMark(i%g.levelWidth, i/g.levelWidth, false)
 			}
 		case 2: // open
 			g.doorTimer[i] += tics
 			if g.doorTimer[i] >= doorOpenHoldTics {
 				x := i % g.level.Width
 				y := i / g.level.Width
-				door := g.level.Tile(x, y).Door
+				door := g.doorDefinitionAt(x, y)
 				if g.doorBlockedByPlayer(x, y, door) || g.doorBlockedByActors(x, y, door) {
 					continue
 				}
 				g.doorState[i] = 3
-				g.playWorldSound(soundDoorClose, float64(x)+0.5, float64(y)+0.5)
+				g.setDemoDoorActorMark(x, y, true)
+				g.playDoorSound(soundDoorClose, x, y)
 			}
 		case 3: // closing
 			x := i % g.level.Width
 			y := i / g.level.Width
-			door := g.level.Tile(x, y).Door
+			door := g.doorDefinitionAt(x, y)
 			blocked := g.doorBlockedByPlayer(x, y, door) || g.doorBlockedByActors(x, y, door) || playerOverlapsTile(g.playerX, g.playerY, x, y)
 			if g.demoPlayback != nil {
 				// DoorClosing reopens on an occupied reservation or the
 				// player's center tile; CloseDoor checks the wider bounds.
-				blocked = g.doorActorOccupantAt(x, y) != nil || (int(g.playerX) == x && int(g.playerY) == y)
+				blocked = g.demoActorTagAt(x, y) != g.demoDoorActorTag(x, y) || (int(g.playerX) == x && int(g.playerY) == y)
 			}
 			if blocked {
 				g.doorState[i] = 1
@@ -7193,11 +7220,31 @@ func (g *game) updateDoors(tics int) {
 				g.doorOpen[i] = 0
 				g.doorState[i] = 0
 				g.doorTimer[i] = 0
+				if g.demoPlayback != nil {
+					// Later doors in MoveDoors use the disconnected area graph.
+					g.rebuildPlayerAreas()
+				}
 			}
 		default:
 			g.doorOpen[i] = max(0, g.doorOpen[i])
 		}
 	}
+}
+
+func (g *game) playDoorSound(id soundID, x, y int) {
+	if g.demoPlayback != nil {
+		door := g.doorDefinitionAt(x, y)
+		if door == nil {
+			return
+		}
+		// SpawnDoor assigns the door tile the left/top area's number.
+		// Disconnected doors must not interrupt the synthesized channel.
+		area, _, ok := g.doorAreas(x, y, door.Vertical)
+		if !ok || !g.isAreaConnectedToPlayer(area) {
+			return
+		}
+	}
+	g.playWorldSound(id, float64(x)+0.5, float64(y)+0.5)
 }
 
 func (g *game) useDoorAhead() {
@@ -7211,11 +7258,18 @@ func (g *game) useDoorAhead() {
 	}
 	tile := g.level.Tile(x, y)
 	if tile.RawInfo == pushableTile {
+		if g.demoPlayback != nil && (g.pushWall.active || !tile.Solid) {
+			return
+		}
 		dx, dy := g.cardinalUseVector()
 		if !g.startPushWall(x, y, dx, dy) {
 			g.playSound(soundNoWay)
 			g.setNotice("No secret push")
 		}
+		return
+	}
+	if g.demoPlayback != nil && g.demoPlayback.buttons&demoButtonUse != 0 {
+		g.playSound(soundDoNothing)
 		return
 	}
 	if tile.RawWall == wolfElevatorTile && g.canUseElevatorSwitch() {
@@ -7224,7 +7278,15 @@ func (g *game) useDoorAhead() {
 		}
 		return
 	}
+	if g.demoPlayback != nil {
+		if tag := g.demoTileMapAt(x, y); tag&0x80 != 0 && g.operateDemoAliasedDoor(int(tag&0x7f)) {
+			return
+		}
+	}
 	if tile.Door == nil {
+		if g.demoPlayback != nil {
+			g.playSound(soundDoNothing)
+		}
 		return
 	}
 	if !canOpenDoorLock(tile.Door.Lock, g.keys) {
@@ -7235,13 +7297,11 @@ func (g *game) useDoorAhead() {
 	i := y*g.level.Width + x
 	if g.demoPlayback != nil {
 		switch g.doorState[i] {
-		case 1:
-			// CloseDoor rejects the tagged occupied tile while opening.
-			return
-		case 2:
+		case 1, 2:
 			if !g.doorBlockedByPlayer(x, y, tile.Door) && !g.doorBlockedByActors(x, y, tile.Door) {
 				g.doorState[i] = 3
-				g.playWorldSound(soundDoorClose, float64(x)+0.5, float64(y)+0.5)
+				g.setDemoDoorActorMark(x, y, true)
+				g.playDoorSound(soundDoorClose, x, y)
 			}
 			return
 		}
@@ -7256,14 +7316,15 @@ func (g *game) useDoorAhead() {
 			g.doorOpen[i] = max(g.doorOpen[i], 0.01)
 		}
 		g.doorTimer[i] = 0
-		g.playWorldSound(soundDoorOpen, float64(x)+0.5, float64(y)+0.5)
+		if g.demoPlayback == nil {
+			g.playWorldSound(soundDoorOpen, float64(x)+0.5, float64(y)+0.5)
+		}
 	}
 }
 
 func (g *game) canUseElevatorSwitch() bool {
-	dirX := math.Cos(g.playerA)
-	dirY := math.Sin(g.playerA)
-	return math.Abs(dirX) >= math.Abs(dirY)
+	dirX, _ := g.cardinalUseVector()
+	return dirX != 0
 }
 
 func (g *game) currentEpisodeIndex() int {
@@ -7298,6 +7359,20 @@ func (g *game) useElevator() error {
 		secret = g.level.Tile(playerTileX, playerTileY).RawWall == wolfAltElevatorTile
 	}
 	g.flipElevatorSwitch(switchX, switchY)
+	if g.demoPlayback != nil {
+		g.playSound(soundLevelDone)
+		// Cmd_Use waits for the synthesized channel, including an earlier
+		// effect when LEVELDONESND itself is routed to digitized playback.
+		if sound := g.demoPlayback.sound; sound.playingSound() != 0 {
+			sound.service(sound.remaining)
+		}
+		g.demoPlayback.levelExit = 1
+		g.demoPlayback.usedExit = true
+		if secret {
+			g.demoPlayback.levelExit = 9
+		}
+		return nil
+	}
 	nextMap := g.nextElevatorMap(secret)
 	g.playSound(soundMenuConfirm)
 	if g.mapData != nil && g.level != nil {
@@ -7331,6 +7406,21 @@ func (g *game) cardinalUseTile() (int, int) {
 }
 
 func (g *game) cardinalUseVector() (int, int) {
+	if g.demoPlayback != nil {
+		// Cmd_Use's integer boundaries are asymmetric at exactly 45/315
+		// degrees; floating-point nearest-axis tests do not preserve them.
+		angle := g.demoPlayback.angle
+		switch {
+		case angle < 45 || angle > 315:
+			return 1, 0
+		case angle < 135:
+			return 0, -1
+		case angle < 225:
+			return -1, 0
+		default:
+			return 0, 1
+		}
+	}
 	dirX := math.Cos(g.playerA)
 	dirY := math.Sin(g.playerA)
 	if math.Abs(dirX) >= math.Abs(dirY) {
@@ -7349,6 +7439,9 @@ func (g *game) setLevelTile(x, y int, tile wl6.Tile) {
 	if g.level == nil || x < 0 || y < 0 || x >= g.levelWidth || y >= g.levelHeight {
 		return
 	}
+	g.updateDemoTileMapTile(x, y, tile)
+	g.updateDemoActorGridTile(x, y, tile)
+	g.updateDemoAreaPlaneTile(x, y, tile)
 	g.level.Tiles[y*g.levelWidth+x] = tile
 }
 
@@ -7372,6 +7465,9 @@ func (g *game) floorTileFor(x, y int) wl6.Tile {
 }
 
 func (g *game) pushWallDestinationClear(x, y int) bool {
+	if g.demoPlayback != nil {
+		return g.demoActorTagAt(x, y) == 0
+	}
 	if g.level == nil || x < 0 || y < 0 || x >= g.levelWidth || y >= g.levelHeight {
 		return false
 	}
@@ -7414,6 +7510,7 @@ func (g *game) startPushWall(x, y, dx, dy int) bool {
 		leading := tile
 		leading.Area = g.level.Tile(x+dx, y+dy).Area
 		g.setLevelTile(x+dx, y+dy, leading)
+		g.setDemoActorTag(x+dx, y+dy, int(g.demoTileMapAt(x, y)))
 	} else {
 		g.setLevelTile(x, y, g.floorTileFor(x, y))
 	}
@@ -7491,7 +7588,7 @@ func (g *game) updateSpriteAnimations(tics int) {
 }
 
 func (g *game) applyItemCheat() {
-	g.score += 100000
+	g.givePoints(100000)
 	g.health = 100
 	if g.bestWeapon < 3 {
 		g.giveWeapon(g.bestWeapon + 1)
@@ -7721,6 +7818,10 @@ func (g *game) applySFXVolume() {
 
 func (g *game) playSound(id soundID) {
 	g.lastPlayedSound = id
+	g.recordDemoSound(id)
+	if g.demoPlayback != nil && g.demoPlayback.sound != nil && g.demoPlayback.sound.mode == "off" {
+		return
+	}
 	voices := g.soundBanks[id]
 	if len(voices) == 0 {
 		return
@@ -7751,6 +7852,10 @@ func (g *game) playSound(id soundID) {
 }
 
 func (g *game) collectPickups() {
+	if g.demoPlayback != nil {
+		g.collectDemoPickups()
+		return
+	}
 	if len(g.staticSprites) == 0 {
 		return
 	}
@@ -7762,14 +7867,8 @@ func (g *game) collectPickups() {
 		if !spr.alive || spr.pickup == pickupNone {
 			continue
 		}
-		if g.demoPlayback != nil {
-			if !g.demoPickupInReach(int(spr.x), int(spr.y)) {
-				continue
-			}
-		} else {
-			if int(spr.x) != playerTileX || int(spr.y) != playerTileY {
-				continue
-			}
+		if int(spr.x) != playerTileX || int(spr.y) != playerTileY {
+			continue
 		}
 		if !g.applyPickup(spr.pickup) {
 			continue
@@ -7841,8 +7940,6 @@ func (g *game) applyPickup(pickup pickupType) bool {
 		g.playSound(soundPickupKey)
 	case pickupCross, pickupChalice, pickupBible, pickupCrown:
 		score, _ := pickupTreasureValue(pickup)
-		g.score += score
-		g.treasureCount++
 		switch pickup {
 		case pickupCross:
 			g.playSound(soundPickupTreasure1)
@@ -7853,14 +7950,16 @@ func (g *game) applyPickup(pickup pickupType) bool {
 		case pickupCrown:
 			g.playSound(soundPickupTreasure4)
 		}
+		g.givePoints(score)
+		g.treasureCount++
 	case pickupFullHeal:
-		g.health = 100
+		g.health = minInt(100, g.health+99)
 		g.giveAmmo(25)
 		_, counts := pickupTreasureValue(pickup)
 		if counts {
 			g.treasureCount++
 		}
-		g.playSound(soundPickupOneUp)
+		g.giveExtraLife()
 	default:
 		return false
 	}
@@ -7875,13 +7974,18 @@ func (g *game) spawnDroppedPickup(x, y float64, pickup pickupType) {
 	}
 	dropX := math.Floor(x) + 0.5
 	dropY := math.Floor(y) + 0.5
-	g.staticSprites = append(g.staticSprites, staticSprite{
+	sprite := staticSprite{
 		x:        dropX,
 		y:        dropY,
 		shapenum: def.Shape,
 		alive:    true,
 		pickup:   pickup,
-	})
+	}
+	if g.demoPlayback != nil {
+		g.placeDemoStaticItem(sprite)
+		return
+	}
+	g.staticSprites = append(g.staticSprites, sprite)
 }
 
 func (g *game) shootAhead() {
@@ -7990,7 +8094,7 @@ func (g *game) shootAhead() {
 		spr.rotate = false
 		spr.blocking = false
 		spr.shootable = false
-		g.score += spr.scoreValue
+		g.givePoints(spr.scoreValue)
 		if spr.dropPickup != pickupNone {
 			g.spawnDroppedPickup(spr.x, spr.y, spr.dropPickup)
 			spr.dropPickup = pickupNone
@@ -8447,6 +8551,8 @@ func (g *game) setMap(index int) error {
 	g.secretTotal = g.countSecretWalls()
 	g.staticSprites, g.treasureTotal = g.buildStaticSprites()
 	g.actors = g.buildActors()
+	g.demoActorPool = nil
+	g.pendingActors = nil
 	g.doorOpen = make([]float64, g.levelWidth*g.levelHeight)
 	g.doorState = make([]byte, g.levelWidth*g.levelHeight)
 	g.doorTimer = make([]int, g.levelWidth*g.levelHeight)
@@ -8682,15 +8788,15 @@ func (g *game) rebuildPlayerAreas() {
 		queue = queue[1:]
 		for y := 0; y < g.levelHeight; y++ {
 			for x := 0; x < g.levelWidth; x++ {
-				tile := g.level.Tile(x, y)
-				if tile.Door == nil {
+				door := g.doorDefinitionAt(x, y)
+				if door == nil {
 					continue
 				}
 				i := y*g.levelWidth + x
 				if g.doorState[i] == 0 || (g.demoPlayback != nil && g.doorOpen[i] == 0) {
 					continue
 				}
-				a, b, ok := g.doorAreas(x, y, tile.Door.Vertical)
+				a, b, ok := g.doorAreas(x, y, door.Vertical)
 				if !ok {
 					continue
 				}

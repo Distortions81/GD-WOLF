@@ -14,8 +14,25 @@ const (
 )
 
 type wolfDemoPlayback struct {
+	sound        *wolfDemoSound
 	demo         *wl6.Demo
 	command      int
+	levelExit    int // Original playstate: 1 = demo complete/normal exit, 6 = victory, 9 = secret exit.
+	usedExit     bool
+	timeCount    int
+	victoryTileY int // VictorySpin keeps the tile from the final Thrust.
+	victoryEntry bool
+	deathCam     bool
+	bossKillX    float64
+	bossKillY    float64
+	tileMap      []byte
+	staticSlots  []int // Original statobjlist order; excludes SpawnDeadGuard actors.
+	staticInfo   []demoStaticInfo
+	memory       *wolfDemoMemory
+	areaPlane    []uint16
+	spawnAreas   []byte
+	doors        []demoDoor
+	doorIndices  []int
 	ticAccum     int
 	buttons      byte
 	inputButtons byte // T_Attack can suppress new use/attack presses this frame.
@@ -60,7 +77,14 @@ func (g *game) startDemo(demo *wl6.Demo) error {
 		return err
 	}
 	g.demoPlayback = &wolfDemoPlayback{demo: demo, angle: wolfDemoAngle(g.playerA)}
+	g.initializeDemoTileMap()
+	var err error
+	g.demoPlayback.sound, err = newWolfDemoSound(g.files, "adlib-digi")
+	if err != nil {
+		return err
+	}
 	g.initializeDemoActorTimers()
+	g.initializeDemoActorPool()
 	g.fadePhase = 0
 	g.uiState = uiStatePlaying
 	g.mode = modeRaycast
@@ -71,6 +95,7 @@ func (g *game) startDemo(demo *wl6.Demo) error {
 // A random zero ticcount is special: DoActor thinks without advancing states
 // until another state is entered. Stand states consume no random bytes.
 func (g *game) initializeDemoActorTimers() {
+	g.initializeDemoActorAreas()
 	for i := range g.actors {
 		a := &g.actors[i]
 		// Interactive actor speeds historically used a 60 Hz conversion.
@@ -85,9 +110,7 @@ func (g *game) initializeDemoActorTimers() {
 		remaining := g.rng.Intn(tics)
 		a.frameTimer = tics - remaining
 		a.spawnAnimationFrozen = remaining == 0
-		// SpawnPatrol keeps the physical spawn area's number while reserving
-		// the next tile. Movement later updates the area on tile arrival.
-		a.area = g.actorAreaAt(int(a.x), int(a.y))
+
 	}
 }
 
@@ -119,7 +142,7 @@ func (g *game) updateDemoPlayback(tics int) {
 	d.ticAccum += tics
 	for d.ticAccum >= wl6.DemoTics && d.command < len(d.demo.Commands) {
 		d.ticAccum -= wl6.DemoTics
-		if g.playerDying || g.victoryActive {
+		if g.playerDying || d.levelExit != 0 {
 			break
 		}
 		g.stepDemoCommand(d.demo.Commands[d.command])
@@ -137,16 +160,33 @@ func (g *game) stepDemoCommand(command wl6.DemoCommand) {
 
 func (g *game) prepareDemoCommand(command wl6.DemoCommand) bool {
 	d := g.demoPlayback
+	// PollControls marks completion before this command's gameplay. A death,
+	// elevator or victory later in the command can replace that playstate.
+	if d.demo != nil && d.command+1 == len(d.demo.Commands) {
+		d.levelExit = 1
+	}
 	d.hits = nil
 	d.shots = 0
 	g.madeNoise = false
+	d.sound.advance(wl6.DemoTics)
 	g.updateDoors(wl6.DemoTics)
 	g.updatePushWall(wl6.DemoTics)
 	g.updateSpriteAnimations(wl6.DemoTics)
 	g.updateScreenFlashes(wl6.DemoTics)
-	g.updateDemoFace(wl6.DemoTics, g.isSoundPlaying(soundPickupChaingun))
 	wasAttacking := g.attacking
+	d.victoryEntry = g.victoryActive
 	d.inputButtons = command.Buttons
+	if d.deathCam {
+		return wasAttacking
+	}
+	// T_Attack updates the face before its victory check; T_Player checks
+	// first. The attack state and its counters survive VictoryTile.
+	if !g.victoryActive || wasAttacking {
+		g.updateDemoFace(wl6.DemoTics, g.isSoundPlaying(soundPickupChaingun))
+	}
+	if g.victoryActive {
+		return wasAttacking
+	}
 	if wasAttacking {
 		for _, button := range []byte{demoButtonAttack, demoButtonUse} {
 			if command.Buttons&button != 0 && d.buttons&button == 0 {
@@ -155,7 +195,7 @@ func (g *game) prepareDemoCommand(command wl6.DemoCommand) bool {
 		}
 	}
 	if !wasAttacking {
-		if command.Buttons&demoButtonUse != 0 && d.buttons&demoButtonUse == 0 {
+		if command.Buttons&demoButtonUse != 0 {
 			g.useDoorAhead()
 		}
 		if g.ammo > 0 {
@@ -175,17 +215,25 @@ func (g *game) prepareDemoCommand(command wl6.DemoCommand) bool {
 }
 
 func (g *game) finishDemoCommand(command wl6.DemoCommand, wasAttacking bool) {
-	if wasAttacking {
+	if wasAttacking && !g.victoryActive {
 		g.updateWeaponAttackWithInput(wl6.DemoTics, g.demoPlayback.inputButtons&demoButtonAttack != 0)
 	}
 	g.updateDemoActors(wl6.DemoTics)
 	g.refreshDemoActorProjections()
 	g.collectPickups()
+	g.demoPlayback.timeCount += wl6.DemoTics
 	g.demoPlayback.buttons = g.demoPlayback.inputButtons
 }
 
 func (g *game) moveDemoPlayer(command wl6.DemoCommand) {
 	d := g.demoPlayback
+	if d.deathCam {
+		return
+	}
+	if d.victoryEntry {
+		g.advanceDemoVictoryPlayer(wl6.DemoTics)
+		return
+	}
 	cx, cy := int(command.ControlX)*wl6.DemoTics, int(command.ControlY)*wl6.DemoTics
 	thrust := func(angle, speed int) {
 		if speed >= 0xb000 {
@@ -194,6 +242,10 @@ func (g *game) moveDemoPlayer(command wl6.DemoCommand) {
 		dx := wolfDemoFixedByFrac(speed, wolfDemoTrigTable[angle+90])
 		dy := -wolfDemoFixedByFrac(speed, wolfDemoTrigTable[angle])
 		g.clipDemoPlayer(float64(dx)/65536, float64(dy)/65536)
+		d.victoryTileY = int(g.playerY)
+		// Original Thrust checks EXITTILE after every movement, including
+		// the strafe leg of a combined strafe/forward command.
+		g.checkVictoryTile()
 	}
 	if command.Buttons&demoButtonStrafe != 0 {
 		if cx > 0 {
@@ -235,6 +287,9 @@ func (g *game) clipDemoPlayer(dx, dy float64) {
 		g.playerX, g.playerY = x+dx, y+dy
 		return
 	}
+	if g.demoPlayback.sound.playingSound() == 0 {
+		g.playSound(soundHitWall)
+	}
 	if g.demoPlayerPositionClear(x+dx, y) {
 		g.playerX = x + dx
 		return
@@ -245,38 +300,7 @@ func (g *game) clipDemoPlayer(dx, dy float64) {
 }
 
 func (g *game) demoPlayerPositionClear(x, y float64) bool {
-	xl, xh, yl, yh := playerTileSpan(x, y)
-	for ty := yl; ty <= yh; ty++ {
-		for tx := xl; tx <= xh; tx++ {
-			if g.demoBlockingActorAt(tx, ty) != nil {
-				continue
-			}
-			if g.demoSolidTile(tx, ty) {
-				return false
-			}
-		}
-	}
-	// TryMove expands the tile box by one before checking shootable actors.
-	for i := range g.actors {
-		a := &g.actors[i]
-		if !a.alive || !a.blocking || !a.shootable || a.tileX < xl-1 || a.tileX > xh+1 || a.tileY < yl-1 || a.tileY > yh+1 {
-			continue
-		}
-		if math.Abs(x-a.x) <= 1 && math.Abs(y-a.y) <= 1 {
-			return false
-		}
-	}
-	return true
-}
-
-func (g *game) demoBlockingActorAt(x, y int) *actorInstance {
-	for i := range g.actors {
-		a := &g.actors[i]
-		if a.alive && a.blocking && a.shootable && a.tileX == x && a.tileY == y {
-			return a
-		}
-	}
-	return nil
+	return g.demoActorGridPlayerPositionClear(x, y)
 }
 
 func (g *game) demoSolidTile(x, y int) bool {
