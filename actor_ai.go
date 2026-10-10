@@ -1557,7 +1557,11 @@ func (g *game) actorPathBlocked(a *actorInstance, fromX, fromY, toX, toY float64
 		return g.actorWorldBlockedAt(a, toX, toY)
 	}
 
-	ts := []float64{0, 1}
+	// Normal movement crosses at most one boundary per axis. Keep that common
+	// case on the stack, while allowing longer diagnostic paths to grow.
+	var crossings [8]float64
+	ts := crossings[:2]
+	ts[1] = 1
 	collectCrossings := func(start, delta float64) {
 		if delta == 0 {
 			return

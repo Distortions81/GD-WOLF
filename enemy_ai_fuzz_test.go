@@ -44,6 +44,7 @@ func buildEnemyAIFuzzBaseline(files *wl6.Files, mapIndex int) (*game, error) {
 
 func cloneEnemyAIFuzzBaseline(src *game, rngSeed byte) *game {
 	dst := *src
+	dst.areaConnections, dst.areaQueue = nil, nil
 	dst.actors = append([]actorInstance(nil), src.actors...)
 	dst.staticSprites = append([]staticSprite(nil), src.staticSprites...)
 	dst.doorOpen = append([]float64(nil), src.doorOpen...)

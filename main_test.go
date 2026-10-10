@@ -216,8 +216,8 @@ func TestRenderModeMenuMapping(t *testing.T) {
 		index int
 	}{
 		{mode: renderModeDOS, index: 0},
-		{mode: renderModeHQ, index: 1},
-		{mode: renderModeUltra, index: 2},
+		{mode: renderModeUltra, index: 1},
+		{mode: renderModeHQ, index: 2},
 	}
 
 	items := renderModeMenuItems()

@@ -22,10 +22,18 @@ var demoFineTangents, demoPixelAngles = func() ([900]int, [demoViewWidth]int) {
 
 // demoVisibleTiles translates the traversal in WL_DR_A.ASM AsmRefresh.
 // Only floor visibility is needed; wall heights and texture drawing are omitted.
+// The returned mask remains valid until the next raycast for this playback.
 func (g *game) demoVisibleTiles(viewX, viewY int) []bool {
-	visible := make([]bool, len(g.level.Tiles))
-	for _, offset := range demoPixelAngles {
-		angle := (g.demoPlayback.angle*10 + offset + 3600) % 3600
+	d := g.demoPlayback
+	if len(d.visibilityScratch) != len(g.level.Tiles) {
+		d.visibilityScratch = make([]bool, len(g.level.Tiles))
+	} else {
+		clear(d.visibilityScratch)
+	}
+	visible := d.visibilityScratch[:len(g.level.Tiles):len(g.level.Tiles)]
+	viewAngle := g.demoPlayback.angle * 10
+	for column := range demoPixelAngles {
+		angle := (viewAngle + demoPixelAngles[column] + 3600) % 3600
 		var dx, dy, xStep, yStep, xPartial, yPartial int
 		switch {
 		case angle < 900:

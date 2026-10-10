@@ -159,6 +159,7 @@ func (w *enemyAIHarnessReportWriter) Close() error {
 
 func cloneAIHarnessGame(src *game, actorIndex int, playerPos [2]float64) *game {
 	dst := *src
+	dst.areaConnections, dst.areaQueue = nil, nil
 	dst.actors = []actorInstance{src.actors[actorIndex]}
 	dst.staticSprites = append([]staticSprite(nil), src.staticSprites...)
 	dst.doorOpen = append([]float64(nil), src.doorOpen...)

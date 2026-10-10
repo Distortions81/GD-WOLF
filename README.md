@@ -82,10 +82,24 @@ verified four-demo TWIId corpus, exact asset hashes and importer commands.
 
 Alongside parity work, this port also includes some modern extras that are outside the original Wolfenstein 3D scope:
 
-- selectable `DOS`, `HQ`, and `ULTRA` render modes, plus VSync control
+- selectable `Classic`, `Full`, and `Classic 2x` resolutions, plus VSync control
 - persistent native config storage for input/audio/render settings
 - save slot previews with embedded thumbnails, plus browser save persistence on wasm
 - a textured map-view mode for inspecting levels outside the original presentation
+
+### Choosing Resolution
+
+Choose a resolution on first launch, or open **Options > Graphics > Resolution**
+from the main menu or pause menu. Press **Enter** to open the chooser, use
+**Up/Down** to select, then **Enter** to apply. **Esc** cancels. You can also use
+**Left/Right** on the Graphics resolution row to switch immediately.
+
+- **Classic** uses the original 320×160 gameplay view, scaled to the window.
+- **Full** renders at the game view's current window size and follows resizing.
+- **Classic 2x** offers the intermediate 640×320 gameplay view.
+
+The selection is remembered in native `config.toml` and browser local storage.
+HD texture replacements are available with Full resolution when enabled.
 
 ## Intentional Gameplay Deviations
 
@@ -133,6 +147,9 @@ go test ./...
 Go resolves the pinned dependencies from `go.mod`. The palette test uses the embedded fixture included in this repo.
 
 On headless Linux, run the tests under a virtual display with `xvfb-run -a go test ./...` so Ebiten can initialize.
+
+See [runtime performance checks](docs/wolf-performance.md) for measured hot-path
+improvements, repeatable benchmarks and output-equivalence checks.
 
 Browser save import/export regression tests use Node.js 22 or later:
 

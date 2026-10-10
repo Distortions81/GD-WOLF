@@ -199,6 +199,8 @@ type game struct {
 	doorTimer           []int
 	pushWall            pushWallState
 	playerAreas         []bool
+	areaConnections     []areaConnection
+	areaQueue           []int
 	renderThreads       int
 	difficulty          gameDifficulty
 	weapon              int
@@ -252,6 +254,7 @@ type game struct {
 	vsyncEnabled        bool
 	renderMode          renderMode
 	renderModePrompted  bool
+	renderModeReturn    uiState
 	rng                 *wolfRNG
 	lastPlayedSound     soundID
 
@@ -1980,6 +1983,7 @@ func (g *game) updateFrontend() error {
 			next := g.nextTitleInputState()
 			return g.fadeToUIState(next, func() {
 				if next == uiStateRenderModePrompt {
+					g.renderModeReturn = uiStateTitle
 					g.menuIndex = renderModeMenuIndex(g.renderMode)
 					return
 				}
@@ -1991,7 +1995,11 @@ func (g *game) updateFrontend() error {
 		g.updateMenuSelection(len(items))
 		if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
 			g.playSound(soundMenuBack)
-			return g.fadeToUIState(uiStateTitle, nil)
+			next := uiStateTitle
+			if g.renderModeReturn == uiStateGraphicsMenu {
+				next = uiStateGraphicsMenu
+			}
+			return g.fadeToUIState(next, func() { g.menuIndex = 0 })
 		}
 		if inpututil.IsKeyJustPressed(ebiten.KeyEnter) || inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 			g.setRenderMode(renderModeMenuChoice(g.menuIndex))
@@ -2000,7 +2008,11 @@ func (g *game) updateFrontend() error {
 				log.Printf("config save failed: %v", err)
 			}
 			g.playSound(soundMenuConfirm)
-			return g.fadeToUIState(uiStateMainMenu, func() {
+			next := uiStateMainMenu
+			if g.renderModeReturn == uiStateGraphicsMenu {
+				next = uiStateGraphicsMenu
+			}
+			return g.fadeToUIState(next, func() {
 				g.menuIndex = 0
 			})
 		}
@@ -2124,7 +2136,7 @@ func (g *game) updateFrontend() error {
 				}
 				g.modernDoors = !g.modernDoors
 				if err := g.savePersistentConfig(); err != nil {
-					return err
+					log.Printf("config save failed: %v", err)
 				}
 			case 4:
 				g.playSound(soundMenuBack)
@@ -2289,7 +2301,13 @@ func (g *game) updateFrontend() error {
 		}
 		if inpututil.IsKeyJustPressed(ebiten.KeyEnter) || inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 			switch g.menuIndex {
-			case 0, 1, 2:
+			case 0:
+				g.playSound(soundMenuConfirm)
+				return g.fadeToUIState(uiStateRenderModePrompt, func() {
+					g.renderModeReturn = uiStateGraphicsMenu
+					g.menuIndex = renderModeMenuIndex(g.renderMode)
+				})
+			case 1, 2:
 				toggleSelection(true)
 			case 3:
 				g.playSound(soundMenuBack)
@@ -2811,7 +2829,7 @@ func (g *game) controlsMenuItems() []string {
 
 func (g *game) graphicsMenuItems() []string {
 	return []string{
-		fmt.Sprintf("Render Mode   %s", g.renderMode.label()),
+		submenuLabel(fmt.Sprintf("Resolution  %s", g.renderMode.displayLabel())),
 		fmt.Sprintf("HD Textures   %s", onOffLabel(g.hdTexturesEnabled)),
 		fmt.Sprintf("VSync         %s", onOffLabel(g.vsyncEnabled)),
 		"Back",
@@ -2833,6 +2851,17 @@ func (m renderMode) label() string {
 	}
 }
 
+func (m renderMode) displayLabel() string {
+	switch m {
+	case renderModeDOS:
+		return "Classic"
+	case renderModeHQ:
+		return "Classic 2x"
+	default:
+		return "Full"
+	}
+}
+
 func parseRenderMode(text string) renderMode {
 	switch strings.ToUpper(strings.TrimSpace(text)) {
 	case "DOS":
@@ -2845,7 +2874,7 @@ func parseRenderMode(text string) renderMode {
 }
 
 func renderModeMenuItems() []string {
-	return []string{"DOS", "HQ", "ULTRA"}
+	return []string{"Classic resolution", "Full resolution", "Classic 2x"}
 }
 
 func renderModeMenuIndex(mode renderMode) int {
@@ -2853,9 +2882,9 @@ func renderModeMenuIndex(mode renderMode) int {
 	case renderModeDOS:
 		return 0
 	case renderModeHQ:
-		return 1
-	default:
 		return 2
+	default:
+		return 1
 	}
 }
 
@@ -2863,7 +2892,7 @@ func renderModeMenuChoice(index int) renderMode {
 	switch index {
 	case 0:
 		return renderModeDOS
-	case 1:
+	case 2:
 		return renderModeHQ
 	default:
 		return renderModeUltra
@@ -2881,18 +2910,18 @@ func renderModeDescriptionLines(mode renderMode) []string {
 	switch mode {
 	case renderModeDOS:
 		return []string{
-			"320x160 render.",
-			"Closest to the original look.",
+			"Original 320x160 game view.",
+			"Classic pixels, lowest graphics load.",
 		}
 	case renderModeHQ:
 		return []string{
-			"640x320 render.",
-			"Sharper, still retro.",
+			"640x320 game view.",
+			"Sharper pixels, still retro.",
 		}
 	default:
 		return []string{
-			"Native-size render.",
-			"Sharpest image.",
+			"Matches the game window size.",
+			"Sharpest image, higher graphics load.",
 		}
 	}
 }
@@ -2906,25 +2935,12 @@ func (g *game) setRenderMode(mode renderMode) {
 }
 
 func (g *game) cycleRenderMode() {
-	switch g.renderMode {
-	case renderModeDOS:
-		g.setRenderMode(renderModeHQ)
-	case renderModeHQ:
-		g.setRenderMode(renderModeUltra)
-	default:
-		g.setRenderMode(renderModeDOS)
-	}
+	g.setRenderMode(renderModeMenuChoice((renderModeMenuIndex(g.renderMode) + 1) % len(renderModeMenuItems())))
 }
 
 func (g *game) cycleRenderModeBackward() {
-	switch g.renderMode {
-	case renderModeDOS:
-		g.setRenderMode(renderModeUltra)
-	case renderModeHQ:
-		g.setRenderMode(renderModeDOS)
-	default:
-		g.setRenderMode(renderModeHQ)
-	}
+	count := len(renderModeMenuItems())
+	g.setRenderMode(renderModeMenuChoice((renderModeMenuIndex(g.renderMode) + count - 1) % count))
 }
 
 func (g *game) setHDTexturesEnabled(enabled bool) error {
@@ -3373,15 +3389,15 @@ func (g *game) drawMainMenu(canvas *ebiten.Image) {
 func (g *game) drawRenderModePrompt(canvas *ebiten.Image) {
 	g.drawMenuBackground(canvas, g.files.Variant.OptionsPicChunk, true)
 	g.drawMenuWindow(canvas, 20, 24, 280, 160)
-	w, _ := g.measureWolfText("Choose Render Mode", wolfFontLarge)
-	g.drawWolfText(canvas, (wolfScreenWidth-w)/2, 28, "Choose Render Mode", wolfTextLargeStyle())
-	g.drawWolfText(canvas, 34, 46, "You can change this later in options.", wolfTextHintStyle())
+	w, _ := g.measureWolfText("Choose Resolution", wolfFontLarge)
+	g.drawWolfText(canvas, (wolfScreenWidth-w)/2, 28, "Choose Resolution", wolfTextLargeStyle())
+	g.drawWolfText(canvas, 34, 46, "Change anytime: Options > Graphics", wolfTextHintStyle())
 
 	items := renderModeMenuItems()
 	g.drawTextLines(canvas, 58, 66, items, g.menuIndex, 28)
 
 	mode := renderModeMenuChoice(g.menuIndex)
-	g.drawWolfText(canvas, 34, 112, fmt.Sprintf("%s:", mode.label()), wolfTextSelectedStyle())
+	g.drawWolfText(canvas, 34, 112, fmt.Sprintf("%s:", mode.displayLabel()), wolfTextSelectedStyle())
 	descY := 124
 	for _, line := range renderModeDescriptionLines(mode) {
 		for _, wrapped := range g.wrapWolfText(line, 248, wolfFontSmall) {
@@ -3389,7 +3405,8 @@ func (g *game) drawRenderModePrompt(canvas *ebiten.Image) {
 			descY += 10
 		}
 	}
-	g.drawWolfText(canvas, 34, 176, "Enter select  Esc back", wolfTextHintStyle())
+	g.drawWolfText(canvas, 34, 160, fmt.Sprintf("Current: %s", g.renderMode.displayLabel()), wolfTextMutedStyle())
+	g.drawWolfText(canvas, 34, 172, "Up/Down choose  Enter apply  Esc back", wolfTextHintStyle())
 }
 
 func (g *game) drawVictoryIntermission(canvas *ebiten.Image) {
@@ -3455,6 +3472,13 @@ func (g *game) drawGraphicsMenu(canvas *ebiten.Image) {
 	w, _ := g.measureWolfText("Graphics", wolfFontLarge)
 	g.drawWolfText(canvas, (wolfScreenWidth-w)/2, 58, "Graphics", wolfTextLargeStyle())
 	g.drawTextLines(canvas, 84, 78, g.graphicsMenuItems(), g.menuIndex, 60)
+	if g.menuIndex == 0 {
+		g.drawWolfText(canvas, 84, 145, "Enter: choose resolution", wolfTextHintStyle())
+		g.drawWolfText(canvas, 84, 157, "Left/Right: change now", wolfTextHintStyle())
+	} else if g.menuIndex == 1 && g.renderMode != renderModeUltra {
+		g.drawWolfText(canvas, 84, 145, "HD textures require", wolfTextHintStyle())
+		g.drawWolfText(canvas, 84, 157, "Full resolution.", wolfTextHintStyle())
+	}
 }
 
 func (g *game) drawKeybindsMenu(canvas *ebiten.Image) {
@@ -8774,44 +8798,56 @@ func (g *game) rebuildPlayerAreas() {
 	if len(g.playerAreas) == 0 {
 		return
 	}
-	for i := range g.playerAreas {
-		g.playerAreas[i] = false
-	}
+	clear(g.playerAreas)
 	startArea := g.playerArea()
 	if startArea < 0 || startArea >= len(g.playerAreas) {
 		return
 	}
-	queue := []int{startArea}
-	g.playerAreas[startArea] = true
-	for len(queue) > 0 {
-		area := queue[0]
-		queue = queue[1:]
-		for y := 0; y < g.levelHeight; y++ {
-			for x := 0; x < g.levelWidth; x++ {
-				door := g.doorDefinitionAt(x, y)
-				if door == nil {
-					continue
-				}
-				i := y*g.levelWidth + x
-				if g.doorState[i] == 0 || (g.demoPlayback != nil && g.doorOpen[i] == 0) {
-					continue
-				}
-				a, b, ok := g.doorAreas(x, y, door.Vertical)
-				if !ok {
-					continue
-				}
-				if a == area && b >= 0 && b < len(g.playerAreas) && !g.playerAreas[b] {
-					g.playerAreas[b] = true
-					queue = append(queue, b)
-				}
-				if b == area && a >= 0 && a < len(g.playerAreas) && !g.playerAreas[a] {
-					g.playerAreas[a] = true
-					queue = append(queue, a)
-				}
+	// Build the open-door graph once. The old traversal rescanned every map
+	// cell for each reachable area, even though only doors connect areas.
+	connections := g.areaConnections[:0]
+	addDoor := func(i, x, y int, vertical bool) {
+		if g.doorState[i] == 0 || (g.demoPlayback != nil && g.doorOpen[i] == 0) {
+			return
+		}
+		a, b, ok := g.doorAreas(x, y, vertical)
+		if ok {
+			connections = append(connections, areaConnection{a, b})
+		}
+	}
+	if g.demoPlayback != nil {
+		g.initializeDemoDoors()
+		for _, door := range g.demoPlayback.doors {
+			addDoor(door.y*g.levelWidth+door.x, door.x, door.y, door.definition.Vertical)
+		}
+	} else {
+		for i, tile := range g.level.Tiles {
+			if tile.Door != nil {
+				addDoor(i, i%g.levelWidth, i/g.levelWidth, tile.Door.Vertical)
 			}
 		}
 	}
+	g.areaConnections = connections
+	queue := append(g.areaQueue[:0], startArea)
+	g.playerAreas[startArea] = true
+	for head := 0; head < len(queue); head++ {
+		area := queue[head]
+		for _, connection := range connections {
+			a, b := connection.a, connection.b
+			if a == area && b >= 0 && b < len(g.playerAreas) && !g.playerAreas[b] {
+				g.playerAreas[b] = true
+				queue = append(queue, b)
+			}
+			if b == area && a >= 0 && a < len(g.playerAreas) && !g.playerAreas[a] {
+				g.playerAreas[a] = true
+				queue = append(queue, a)
+			}
+		}
+	}
+	g.areaQueue = queue
 }
+
+type areaConnection struct{ a, b int }
 
 func (g *game) doorAreas(x, y int, vertical bool) (int, int, bool) {
 	if g.level == nil {

@@ -153,11 +153,12 @@ func (c *wolfGPUCommands) rect(texture *ebiten.Image, x0, y0, x1, y1 int, baseU,
 		Custom3: stepVFraction,
 	}
 	offset := uint16(len(batch.vertices))
-	for _, p := range [4][2]int{{x0, y0}, {x1 + 1, y0}, {x0, y1 + 1}, {x1 + 1, y1 + 1}} {
-		vertex.DstX = float32(p[0])
-		vertex.DstY = float32(p[1])
-		batch.vertices = append(batch.vertices, vertex)
-	}
+	vertex.DstX, vertex.DstY = float32(x0), float32(y0)
+	batch.vertices = append(batch.vertices, vertex, vertex, vertex, vertex)
+	batch.vertices[int(offset)+1].DstX = float32(x1 + 1)
+	batch.vertices[int(offset)+2].DstY = float32(y1 + 1)
+	batch.vertices[int(offset)+3].DstX = float32(x1 + 1)
+	batch.vertices[int(offset)+3].DstY = float32(y1 + 1)
 	batch.indices = append(batch.indices, offset, offset+1, offset+2, offset+1, offset+2, offset+3)
 }
 
@@ -173,17 +174,26 @@ func (g *game) drawWallColumnsGPU(r *wolfGPURenderer) {
 	if len(g.wallColumns) < g.layout.bufferWidth {
 		return
 	}
+	var lastWallID uint16
+	var lastSide, lastOverride int
+	var textureImage *ebiten.Image
+	var textureWidth, textureHeight int
+	haveTexture := false
 	for x := 0; x < g.layout.bufferWidth; x++ {
 		column := g.wallColumns[x]
 		if !column.hit || column.drawBottom <= column.drawTop {
 			continue
 		}
-		texture := g.pickWallTexture(column.wallID, column.side, column.texOverride)
-		image, ok := g.wallTextureImage(texture)
-		if !ok {
+		if !haveTexture || column.wallID != lastWallID || column.side != lastSide || column.texOverride != lastOverride {
+			lastWallID, lastSide, lastOverride = column.wallID, column.side, column.texOverride
+			haveTexture = true
+			texture := g.pickWallTexture(column.wallID, column.side, column.texOverride)
+			textureImage, _ = g.wallTextureImage(texture)
+			textureWidth, textureHeight = wallTextureDimensions(texture)
+		}
+		if textureImage == nil {
 			continue
 		}
-		textureWidth, textureHeight := wallTextureDimensions(texture)
 		fullHeight := column.origBottom - column.origTop
 		if textureWidth <= 0 || textureHeight <= 0 || fullHeight <= 0 {
 			continue
@@ -191,7 +201,7 @@ func (g *game) drawWallColumnsGPU(r *wolfGPURenderer) {
 		texX := textureXFromU(column.texU, textureWidth)
 		texStep := uint32(textureHeight<<16) / uint32(fullHeight)
 		texPos := uint32(column.drawTop-column.origTop) * texStep
-		r.commands.rect(image, x, column.drawTop, x, column.drawBottom-1, uint32(texX<<16), texPos, 0, texStep)
+		r.commands.rect(textureImage, x, column.drawTop, x, column.drawBottom-1, uint32(texX<<16), texPos, 0, texStep)
 	}
 }
 

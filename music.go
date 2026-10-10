@@ -75,6 +75,7 @@ type musicStreamSource struct {
 	synth      *impsynth.Synth
 	sequencer  *musicSequencer
 	pending    []byte
+	lastFrame  [4]byte
 	outputGain float64
 }
 
@@ -100,34 +101,28 @@ func (s *musicStreamSource) Read(p []byte) (int, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	n := 0
-	for n < len(p) {
-		if len(s.pending) > 0 {
-			copied := copy(p[n:], s.pending)
-			s.pending = s.pending[copied:]
-			n += copied
-			continue
-		}
-
-		needFrames := (len(p) - n + 3) / 4
-		if needFrames < 1 {
-			needFrames = 1
-		}
-		s.pending = s.pending[:0]
-		s.pending = append(s.pending, s.renderFrames(needFrames)...)
+	n := copy(p, s.pending)
+	s.pending = s.pending[n:]
+	aligned := (len(p) - n) &^ 3
+	s.renderFrames(p[n : n+aligned])
+	n += aligned
+	if n < len(p) {
+		// io.Reader callers may stop inside a stereo frame. Keep only that
+		// frame's unread bytes; complete frames go directly into their buffer.
+		s.renderFrames(s.lastFrame[:])
+		copied := copy(p[n:], s.lastFrame[:])
+		s.pending = s.lastFrame[copied:]
+		n += copied
 	}
 	return n, nil
 }
 
-func (s *musicStreamSource) renderFrames(frames int) []byte {
-	if frames <= 0 {
-		return nil
-	}
-	out := make([]byte, 0, frames*4)
+func (s *musicStreamSource) renderFrames(out []byte) {
+	frames := len(out) / 4
 	for frames > 0 {
 		if s.sequencer.chunk == nil {
-			out = append(out, make([]byte, frames*4)...)
-			break
+			clear(out)
+			return
 		}
 		if s.sequencer.framesUntilNext <= 0 {
 			s.sequencer.advance(s.synth.WriteReg)
@@ -141,15 +136,13 @@ func (s *musicStreamSource) renderFrames(frames int) []byte {
 		}
 		pcm := s.synth.GenerateStereoS16(chunkFrames)
 		applyMusicOutputGainSoftKnee(pcm, s.outputGain)
-		start := len(out)
-		out = append(out, make([]byte, len(pcm)*2)...)
 		for i, sample := range pcm {
-			binary.LittleEndian.PutUint16(out[start+i*2:], uint16(sample))
+			binary.LittleEndian.PutUint16(out[i*2:], uint16(sample))
 		}
+		out = out[len(pcm)*2:]
 		frames -= chunkFrames
 		s.sequencer.framesUntilNext -= chunkFrames
 	}
-	return out
 }
 
 func applyMusicOutputGainSoftKnee(samples []int16, gain float64) {

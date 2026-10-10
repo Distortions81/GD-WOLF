@@ -18,12 +18,20 @@ func autosaveSlotPath(index int) string {
 	return fmt.Sprintf("%sautosave-%d%s", browserSaveSlotPrefix, index+1, saveFileExtension)
 }
 
-func browserLocalStorage() (js.Value, bool) {
+func browserLocalStorage() (storage js.Value, available bool) {
+	defer func() {
+		if recover() != nil {
+			storage = js.Undefined()
+			available = false
+		}
+	}()
 	global := js.Global()
 	if global.IsUndefined() || global.IsNull() {
 		return js.Undefined(), false
 	}
-	storage := global.Get("localStorage")
+	// Privacy settings may make the property getter throw. A JS call makes that
+	// exception recoverable in Go; Value.Get would escape the WASM runtime.
+	storage = global.Get("Reflect").Call("get", global, "localStorage")
 	if storage.IsUndefined() || storage.IsNull() {
 		return js.Undefined(), false
 	}

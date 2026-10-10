@@ -44,6 +44,8 @@ type wolfDemoPlayback struct {
 	hits         []demoActorHit
 	shots        int
 	visibleTiles []bool
+
+	visibilityScratch []bool // Owned raycast storage; probe-supplied masks remain separate.
 }
 
 // WOLFSRC BuildTables accumulates a float (32-bit) angle and stores sine
