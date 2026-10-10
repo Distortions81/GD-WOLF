@@ -253,7 +253,7 @@ type game struct {
 	mapMoveSpeed        float64
 	vsyncEnabled        bool
 	renderMode          renderMode
-	renderModePrompted  bool
+	renderModePrompted  bool // Tracks confirmation during this launch only.
 	renderModeReturn    uiState
 	rng                 *wolfRNG
 	lastPlayedSound     soundID
@@ -1981,12 +1981,10 @@ func (g *game) updateFrontend() error {
 		if anyFrontendInput() {
 			g.playSound(soundMenuConfirm)
 			next := g.nextTitleInputState()
+			if next == uiStateRenderModePrompt {
+				return g.openRenderModePrompt(uiStateTitle)
+			}
 			return g.fadeToUIState(next, func() {
-				if next == uiStateRenderModePrompt {
-					g.renderModeReturn = uiStateTitle
-					g.menuIndex = renderModeMenuIndex(g.renderMode)
-					return
-				}
 				g.menuIndex = 0
 			})
 		}
@@ -2303,10 +2301,7 @@ func (g *game) updateFrontend() error {
 			switch g.menuIndex {
 			case 0:
 				g.playSound(soundMenuConfirm)
-				return g.fadeToUIState(uiStateRenderModePrompt, func() {
-					g.renderModeReturn = uiStateGraphicsMenu
-					g.menuIndex = renderModeMenuIndex(g.renderMode)
-				})
+				return g.openRenderModePrompt(uiStateGraphicsMenu)
 			case 1, 2:
 				toggleSelection(true)
 			case 3:
@@ -2906,6 +2901,17 @@ func (g *game) nextTitleInputState() uiState {
 	return uiStateRenderModePrompt
 }
 
+func (g *game) openRenderModePrompt(returnState uiState) error {
+	return g.fadeToUIState(uiStateRenderModePrompt, func() {
+		g.renderModeReturn = returnState
+		mode := g.renderMode
+		if returnState == uiStateTitle {
+			mode = renderModeUltra
+		}
+		g.menuIndex = renderModeMenuIndex(mode)
+	})
+}
+
 func renderModeDescriptionLines(mode renderMode) []string {
 	switch mode {
 	case renderModeDOS:
@@ -3405,7 +3411,11 @@ func (g *game) drawRenderModePrompt(canvas *ebiten.Image) {
 			descY += 10
 		}
 	}
-	g.drawWolfText(canvas, 34, 160, fmt.Sprintf("Current: %s", g.renderMode.displayLabel()), wolfTextMutedStyle())
+	status := fmt.Sprintf("Current: %s", g.renderMode.displayLabel())
+	if g.renderModeReturn == uiStateTitle {
+		status = "Default: Full resolution"
+	}
+	g.drawWolfText(canvas, 34, 160, status, wolfTextMutedStyle())
 	g.drawWolfText(canvas, 34, 172, "Up/Down choose  Enter apply  Esc back", wolfTextHintStyle())
 }
 

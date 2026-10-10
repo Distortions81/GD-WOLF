@@ -89,7 +89,8 @@ Alongside parity work, this port also includes some modern extras that are outsi
 
 ### Choosing Resolution
 
-Choose a resolution on first launch, or open **Options > Graphics > Resolution**
+Choose a resolution after the title screen on every launch, with **Full resolution**
+selected by default. You can also open **Options > Graphics > Resolution**
 from the main menu or pause menu. Press **Enter** to open the chooser, use
 **Up/Down** to select, then **Enter** to apply. **Esc** cancels. You can also use
 **Left/Right** on the Graphics resolution row to switch immediately.
@@ -98,7 +99,8 @@ from the main menu or pause menu. Press **Enter** to open the chooser, use
 - **Full** renders at the game view's current window size and follows resizing.
 - **Classic 2x** offers the intermediate 640×320 gameplay view.
 
-The selection is remembered in native `config.toml` and browser local storage.
+The applied selection is saved in native `config.toml` and browser local storage,
+but the launch chooser always starts on Full resolution.
 HD texture replacements are available with Full resolution when enabled.
 
 ## Intentional Gameplay Deviations

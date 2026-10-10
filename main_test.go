@@ -340,43 +340,22 @@ func TestPopulateMissingWolfSoundsUsesOriginalAdLibChunks(t *testing.T) {
 	}
 }
 
-func TestCurrentPersistentConfigIncludesRenderPromptFlag(t *testing.T) {
-	g := &game{
-		renderMode:         renderModeDOS,
-		renderModePrompted: true,
-		hdTexturesEnabled:  true,
-		sfxVolume:          0.5,
-		musicVolume:        1.0,
-		mouseLook:          defaultMouseLook,
-		turnSpeed:          defaultTurnSpeed,
-		mapMoveSpeed:       defaultMapMoveSpeed,
-		vsyncEnabled:       true,
-		keybinds:           defaultKeybinds(),
-	}
-
-	cfg := g.currentPersistentConfig()
-	if !cfg.RenderModePrompted {
-		t.Fatal("RenderModePrompted = false, want true")
-	}
-}
-
-func TestApplyPersistentConfigSetsRenderPromptFlag(t *testing.T) {
+func TestApplyPersistentConfigSetsRenderPreferences(t *testing.T) {
 	g := &game{keybinds: defaultKeybinds()}
 	g.applyPersistentConfig(persistentConfig{
-		SFXVolume:          0.5,
-		MusicVolume:        1.0,
-		MouseSensitivity:   defaultMouseLook,
-		TurnSpeed:          defaultTurnSpeed,
-		MapMoveSpeed:       defaultMapMoveSpeed,
-		RenderMode:         renderModeHQ.label(),
-		RenderModePrompted: true,
-		HDTexturesEnabled:  false,
-		VsyncEnabled:       true,
-		Keybinds:           map[string]persistentKeybind{},
+		SFXVolume:         0.5,
+		MusicVolume:       1.0,
+		MouseSensitivity:  defaultMouseLook,
+		TurnSpeed:         defaultTurnSpeed,
+		MapMoveSpeed:      defaultMapMoveSpeed,
+		RenderMode:        renderModeHQ.label(),
+		HDTexturesEnabled: false,
+		VsyncEnabled:      true,
+		Keybinds:          map[string]persistentKeybind{},
 	})
 
-	if !g.renderModePrompted {
-		t.Fatal("renderModePrompted = false, want true")
+	if g.renderModePrompted {
+		t.Fatal("loading settings must not skip the launch prompt")
 	}
 	if g.renderMode != renderModeHQ {
 		t.Fatalf("renderMode = %v, want HQ", g.renderMode)
@@ -444,7 +423,7 @@ func TestOptionsMenuItemsUseGraphicsSubmenu(t *testing.T) {
 	}
 }
 
-func TestNextTitleInputStateHonorsPromptFlag(t *testing.T) {
+func TestNextTitleInputStateHonorsSessionPromptFlag(t *testing.T) {
 	g := &game{}
 	if got := g.nextTitleInputState(); got != uiStateRenderModePrompt {
 		t.Fatalf("nextTitleInputState() = %v, want render mode prompt", got)
@@ -452,6 +431,36 @@ func TestNextTitleInputStateHonorsPromptFlag(t *testing.T) {
 	g.renderModePrompted = true
 	if got := g.nextTitleInputState(); got != uiStateMainMenu {
 		t.Fatalf("nextTitleInputState() = %v, want main menu", got)
+	}
+}
+
+func TestRenderModePromptDefaultsAtLaunchAndPreservesGraphicsSelection(t *testing.T) {
+	for _, mode := range []renderMode{renderModeDOS, renderModeUltra, renderModeHQ} {
+		for _, returnState := range []uiState{uiStateTitle, uiStateGraphicsMenu} {
+			g := &game{renderMode: mode, uiState: returnState}
+			if err := g.openRenderModePrompt(returnState); err != nil {
+				t.Fatal(err)
+			}
+			if g.fadeAction == nil {
+				t.Fatal("expected a pending transition to the resolution chooser")
+			}
+			if err := g.fadeAction(); err != nil {
+				t.Fatal(err)
+			}
+			if g.uiState != uiStateRenderModePrompt || g.renderModeReturn != returnState {
+				t.Fatalf("prompt state = %v, return = %v, want prompt returning to %v", g.uiState, g.renderModeReturn, returnState)
+			}
+			want := mode
+			if returnState == uiStateTitle {
+				want = renderModeUltra
+			}
+			if got := renderModeMenuChoice(g.menuIndex); got != want {
+				t.Fatalf("prompt from %v with current mode %v selects %v, want %v", returnState, mode, got, want)
+			}
+			if g.renderMode != mode || g.renderModePrompted {
+				t.Fatal("opening the chooser must wait for confirmation before applying a mode")
+			}
+		}
 	}
 }
 

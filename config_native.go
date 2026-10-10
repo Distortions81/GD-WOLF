@@ -16,17 +16,16 @@ import (
 )
 
 type persistentConfig struct {
-	SFXVolume          float64
-	MusicVolume        float64
-	MouseSensitivity   float64
-	TurnSpeed          float64
-	MapMoveSpeed       float64
-	RenderMode         string
-	RenderModePrompted bool
-	HDTexturesEnabled  bool
-	VsyncEnabled       bool
-	ModernDoors        bool
-	Keybinds           map[string]persistentKeybind
+	SFXVolume         float64
+	MusicVolume       float64
+	MouseSensitivity  float64
+	TurnSpeed         float64
+	MapMoveSpeed      float64
+	RenderMode        string
+	HDTexturesEnabled bool
+	VsyncEnabled      bool
+	ModernDoors       bool
+	Keybinds          map[string]persistentKeybind
 }
 
 type persistentKeybind struct {
@@ -62,17 +61,16 @@ func decodeConfigKey(value string) (ebiten.Key, error) {
 
 func (g *game) currentPersistentConfig() persistentConfig {
 	cfg := persistentConfig{
-		SFXVolume:          g.sfxVolume,
-		MusicVolume:        g.musicVolume,
-		MouseSensitivity:   g.mouseLook,
-		TurnSpeed:          g.turnSpeed,
-		MapMoveSpeed:       g.mapMoveSpeed,
-		RenderMode:         g.renderMode.label(),
-		RenderModePrompted: g.renderModePrompted,
-		HDTexturesEnabled:  g.hdTexturesEnabled,
-		VsyncEnabled:       g.vsyncEnabled,
-		ModernDoors:        g.modernDoors,
-		Keybinds:           make(map[string]persistentKeybind, len(g.keybinds)),
+		SFXVolume:         g.sfxVolume,
+		MusicVolume:       g.musicVolume,
+		MouseSensitivity:  g.mouseLook,
+		TurnSpeed:         g.turnSpeed,
+		MapMoveSpeed:      g.mapMoveSpeed,
+		RenderMode:        g.renderMode.label(),
+		HDTexturesEnabled: g.hdTexturesEnabled,
+		VsyncEnabled:      g.vsyncEnabled,
+		ModernDoors:       g.modernDoors,
+		Keybinds:          make(map[string]persistentKeybind, len(g.keybinds)),
 	}
 	for _, binding := range g.keybinds {
 		if binding.id == "" {
@@ -93,7 +91,6 @@ func (g *game) applyPersistentConfig(cfg persistentConfig) {
 	g.turnSpeed = clampTurnSpeed(cfg.TurnSpeed)
 	g.mapMoveSpeed = clampMapMoveSpeed(cfg.MapMoveSpeed)
 	g.renderMode = parseRenderMode(cfg.RenderMode)
-	g.renderModePrompted = cfg.RenderModePrompted
 	g.hdTexturesEnabled = cfg.HDTexturesEnabled
 	g.vsyncEnabled = cfg.VsyncEnabled
 	g.modernDoors = cfg.ModernDoors
@@ -116,7 +113,6 @@ func marshalPersistentConfig(cfg persistentConfig) ([]byte, error) {
 	fmt.Fprintf(&buf, "turn_speed = %.6f\n\n", cfg.TurnSpeed)
 	fmt.Fprintf(&buf, "map_move_speed = %.6f\n", cfg.MapMoveSpeed)
 	fmt.Fprintf(&buf, "render_mode = %q\n", cfg.RenderMode)
-	fmt.Fprintf(&buf, "render_mode_prompted = %t\n", cfg.RenderModePrompted)
 	fmt.Fprintf(&buf, "hd_textures = %t\n", cfg.HDTexturesEnabled)
 	fmt.Fprintf(&buf, "vsync = %t\n\n", cfg.VsyncEnabled)
 	fmt.Fprintf(&buf, "[gameplay]\nmodern_doors = %t\n\n", cfg.ModernDoors)
@@ -138,17 +134,16 @@ func marshalPersistentConfig(cfg persistentConfig) ([]byte, error) {
 
 func parsePersistentConfig(data []byte) (persistentConfig, error) {
 	cfg := persistentConfig{
-		SFXVolume:          0.5,
-		MusicVolume:        1.0,
-		MouseSensitivity:   defaultMouseLook,
-		TurnSpeed:          defaultTurnSpeed,
-		MapMoveSpeed:       defaultMapMoveSpeed,
-		RenderMode:         renderModeUltra.label(),
-		RenderModePrompted: false,
-		HDTexturesEnabled:  true,
-		VsyncEnabled:       true,
-		ModernDoors:        true,
-		Keybinds:           map[string]persistentKeybind{},
+		SFXVolume:         0.5,
+		MusicVolume:       1.0,
+		MouseSensitivity:  defaultMouseLook,
+		TurnSpeed:         defaultTurnSpeed,
+		MapMoveSpeed:      defaultMapMoveSpeed,
+		RenderMode:        renderModeUltra.label(),
+		HDTexturesEnabled: true,
+		VsyncEnabled:      true,
+		ModernDoors:       true,
+		Keybinds:          map[string]persistentKeybind{},
 	}
 
 	section := ""
@@ -222,12 +217,7 @@ func parsePersistentConfig(data []byte) (persistentConfig, error) {
 				cfg.HDTexturesEnabled = b
 				continue
 			}
-			if key == "render_mode_prompted" {
-				b, err := strconv.ParseBool(value)
-				if err != nil {
-					return cfg, err
-				}
-				cfg.RenderModePrompted = b
+			if key != "mouse_sensitivity" && key != "turn_speed" && key != "map_move_speed" {
 				continue
 			}
 			f, err := strconv.ParseFloat(value, 64)

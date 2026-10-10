@@ -3,6 +3,7 @@
 package main
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -10,16 +11,15 @@ import (
 
 func TestPersistentConfigRoundTrip(t *testing.T) {
 	cfg := persistentConfig{
-		SFXVolume:          0.35,
-		MusicVolume:        0.8,
-		MouseSensitivity:   defaultMouseLook * 1.5,
-		TurnSpeed:          defaultTurnSpeed * 0.75,
-		MapMoveSpeed:       defaultMapMoveSpeed * 1.25,
-		RenderMode:         renderModeHQ.label(),
-		RenderModePrompted: true,
-		HDTexturesEnabled:  false,
-		VsyncEnabled:       false,
-		ModernDoors:        false,
+		SFXVolume:         0.35,
+		MusicVolume:       0.8,
+		MouseSensitivity:  defaultMouseLook * 1.5,
+		TurnSpeed:         defaultTurnSpeed * 0.75,
+		MapMoveSpeed:      defaultMapMoveSpeed * 1.25,
+		RenderMode:        renderModeHQ.label(),
+		HDTexturesEnabled: false,
+		VsyncEnabled:      false,
+		ModernDoors:       false,
 		Keybinds: map[string]persistentKeybind{
 			"forward": {
 				Primary:   ebiten.KeyW,
@@ -41,16 +41,15 @@ func TestPersistentConfigRoundTrip(t *testing.T) {
 		t.Fatalf("parsePersistentConfig: %v", err)
 	}
 
-	if got.SFXVolume != cfg.SFXVolume || got.MusicVolume != cfg.MusicVolume || got.MouseSensitivity != cfg.MouseSensitivity || got.TurnSpeed != cfg.TurnSpeed || got.MapMoveSpeed != cfg.MapMoveSpeed || got.RenderMode != cfg.RenderMode || got.RenderModePrompted != cfg.RenderModePrompted || got.HDTexturesEnabled != cfg.HDTexturesEnabled || got.VsyncEnabled != cfg.VsyncEnabled {
+	if got.SFXVolume != cfg.SFXVolume || got.MusicVolume != cfg.MusicVolume || got.MouseSensitivity != cfg.MouseSensitivity || got.TurnSpeed != cfg.TurnSpeed || got.MapMoveSpeed != cfg.MapMoveSpeed || got.RenderMode != cfg.RenderMode || got.HDTexturesEnabled != cfg.HDTexturesEnabled || got.VsyncEnabled != cfg.VsyncEnabled {
 		t.Fatalf(
-			"config values = (%v, %v, %v, %v, %v, %v, %v, %v, %v), want (%v, %v, %v, %v, %v, %v, %v, %v, %v)",
+			"config values = (%v, %v, %v, %v, %v, %v, %v, %v), want (%v, %v, %v, %v, %v, %v, %v, %v)",
 			got.SFXVolume,
 			got.MusicVolume,
 			got.MouseSensitivity,
 			got.TurnSpeed,
 			got.MapMoveSpeed,
 			got.RenderMode,
-			got.RenderModePrompted,
 			got.HDTexturesEnabled,
 			got.VsyncEnabled,
 			cfg.SFXVolume,
@@ -59,7 +58,6 @@ func TestPersistentConfigRoundTrip(t *testing.T) {
 			cfg.TurnSpeed,
 			cfg.MapMoveSpeed,
 			cfg.RenderMode,
-			cfg.RenderModePrompted,
 			cfg.HDTexturesEnabled,
 			cfg.VsyncEnabled,
 		)
@@ -75,6 +73,29 @@ func TestPersistentConfigRoundTrip(t *testing.T) {
 	}
 	if got.ModernDoors != cfg.ModernDoors {
 		t.Fatalf("modern doors = %t, want %t", got.ModernDoors, cfg.ModernDoors)
+	}
+}
+
+func TestPersistentConfigDoesNotSuppressLaunchPrompt(t *testing.T) {
+	cfg, err := parsePersistentConfig([]byte("[input]\nrender_mode = \"DOS\"\nrender_mode_prompted = true\n"))
+	if err != nil {
+		t.Fatalf("parse config with old prompt setting: %v", err)
+	}
+	g := &game{}
+	g.applyPersistentConfig(cfg)
+	if g.renderMode != renderModeDOS {
+		t.Fatalf("render mode = %v, want DOS", g.renderMode)
+	}
+	if got := g.nextTitleInputState(); got != uiStateRenderModePrompt {
+		t.Fatalf("title input state = %v, want launch prompt", got)
+	}
+	g.renderModePrompted = true
+	data, err := marshalPersistentConfig(g.currentPersistentConfig())
+	if err != nil {
+		t.Fatalf("marshal config: %v", err)
+	}
+	if strings.Contains(string(data), "render_mode_prompted") {
+		t.Fatal("session-only launch prompt flag was written to config")
 	}
 }
 

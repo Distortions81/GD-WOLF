@@ -10,8 +10,7 @@ import (
 const browserResolutionConfigKey = "gd-wolf.resolution"
 
 type browserResolutionConfig struct {
-	RenderMode         string `json:"render_mode"`
-	RenderModePrompted bool   `json:"render_mode_prompted"`
+	RenderMode string `json:"render_mode"`
 }
 
 func (g *game) loadPersistentConfig() error {
@@ -27,14 +26,12 @@ func (g *game) loadPersistentConfig() error {
 		return nil
 	}
 	cfg := browserResolutionConfig{
-		RenderMode:         g.renderMode.label(),
-		RenderModePrompted: g.renderModePrompted,
+		RenderMode: g.renderMode.label(),
 	}
 	if err := json.Unmarshal([]byte(item.String()), &cfg); err != nil {
 		return fmt.Errorf("decode browser resolution settings: %w", err)
 	}
 	g.renderMode = parseRenderMode(cfg.RenderMode)
-	g.renderModePrompted = cfg.RenderModePrompted
 	return nil
 }
 
@@ -44,8 +41,7 @@ func (g *game) savePersistentConfig() error {
 		return nil
 	}
 	data, err := json.Marshal(browserResolutionConfig{
-		RenderMode:         g.renderMode.label(),
-		RenderModePrompted: g.renderModePrompted,
+		RenderMode: g.renderMode.label(),
 	})
 	if err != nil {
 		return err
